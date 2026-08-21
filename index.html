@@ -628,7 +628,7 @@ function LogView({ logs, setLogs, unit, prefill, clearPrefill, toast }) {
 }
 
 /* ---------------- Settings view ---------------- */
-function SettingsView({ settings, setSettings, z, goalMP, exportData, importData, resetAll, toast }) {
+function SettingsView({ settings, setSettings, z, goalMP, exportData, importData, resetAll, toast, strava, stravaBusy, onConnect, onSync, onDisconnect }) {
   const s = settings;
   const up = (k, v) => setSettings({ ...s, [k]: v });
   const daysToRace = Math.max(0, Math.round((ymd(RACE_DATE) - (window.__TODAY__ ? Date.UTC(new Date(window.__TODAY__).getFullYear(), new Date(window.__TODAY__).getMonth(), new Date(window.__TODAY__).getDate()) : (() => { const n = new Date(); return Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()); })())) / 86400000));
@@ -670,6 +670,22 @@ function SettingsView({ settings, setSettings, z, goalMP, exportData, importData
       <div class="hintbar"><b style="color:var(--gold)">${daysToRace} days</b> to race · Week ${Math.min(16, Math.max(1, Math.floor(Math.min(111, Math.max(0, todayIndex())) / 7) + 1))} of 16 · starts 2026-08-17</div>
     </div>
 
+    <div class="section-t">Connections</div>
+    <div class="card">
+      <div class="lbl" style="margin-bottom:4px">Strava</div>
+      ${!strava ? html`
+        <p class="dim" style="margin:0 0 10px;font-size:13px">Auto-fill your log from Strava. COROS runs come through too when COROS→Strava sync is on.</p>
+        <button class="btn" onClick=${onConnect}>${stravaBusy ? 'Connecting…' : 'Connect Strava'}</button>
+      ` : html`
+        <div class="row" style="margin-top:2px"><span>Connected${strava.athlete && strava.athlete.firstname ? ' as ' + strava.athlete.firstname : ''}</span><span class="dim">${strava.lastSync ? 'synced ' + timeAgo(strava.lastSync) : 'not synced'}</span></div>
+        <div class="two" style="margin-top:10px">
+          <button class="btn ghost sm" onClick=${onSync}>${stravaBusy ? 'Syncing…' : '↻ Sync now'}</button>
+          <button class="btn ghost sm" style="color:#b5473a" onClick=${onDisconnect}>Disconnect</button>
+        </div>
+        <div class="hintbar" style="margin-top:10px">Runs matched to plan days by date. Tap a run in the Log to edit or delete.</div>
+      `}
+    </div>
+
     <div class="section-t">Your Data</div>
     <div class="card">
       <p class="dim" style="margin:0 0 10px;font-size:13px">Saved to: <b>${Store.name}</b>. Back it up regularly — export keeps a copy you can re-import on any device.</p>
@@ -685,6 +701,36 @@ function SettingsView({ settings, setSettings, z, goalMP, exportData, importData
   </div>`;
 }
 
+/* ---------------- Strava sync ---------------- */
+const STRAVA_CLIENT_ID = '273574';
+const STRAVA_RELAY = 'https://strava-relay.pauldonnelly2001.workers.dev';
+const STRAVA_SCOPE = 'activity:read_all';
+const stravaRedirect = () => location.origin + location.pathname;
+function stravaAuthUrl() {
+  const p = new URLSearchParams({ client_id: STRAVA_CLIENT_ID, response_type: 'code', redirect_uri: stravaRedirect(), approval_prompt: 'auto', scope: STRAVA_SCOPE });
+  return 'https://www.strava.com/oauth/authorize?' + p.toString();
+}
+async function stravaPost(path, body) {
+  const r = await fetch(STRAVA_RELAY + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok || j.error || (j.errors && j.errors.length)) throw new Error(j.message || j.error || 'Strava error');
+  return j;
+}
+async function stravaActivities(token, afterEpoch) {
+  let all = [];
+  for (let page = 1; page <= 5; page++) {
+    const r = await fetch(STRAVA_RELAY + '/activities?after=' + afterEpoch + '&per_page=100&page=' + page, { headers: { Authorization: 'Bearer ' + token } });
+    const arr = await r.json().catch(() => null);
+    if (!Array.isArray(arr) || arr.length === 0) break;
+    all = all.concat(arr);
+    if (arr.length < 100) break;
+  }
+  return all;
+}
+const RUN_TYPE_BY_DOW = ['recovery', 'threshold', 'aerobic', 'hills', 'rest', 'marathon', 'long'];
+function plannedType(dstr) { const t = RUN_TYPE_BY_DOW[(new Date(ymd(dstr)).getUTCDay() + 6) % 7]; return t === 'rest' ? 'aerobic' : t; }
+function timeAgo(ms) { if (!ms) return ''; const s = Math.floor((Date.now() - ms) / 1000); if (s < 60) return 'just now'; if (s < 3600) return Math.floor(s / 60) + 'm ago'; if (s < 86400) return Math.floor(s / 3600) + 'h ago'; return Math.floor(s / 86400) + 'd ago'; }
+
 /* ---------------- App root ---------------- */
 const DEF_SETTINGS = { unit: 'km', theme: 'system', curDist: 'full', curTime: '3:26:00', goalTime: '3:10:00' };
 const DEF_VIDEOS = { recovery: '', threshold: '', aerobic: '', hills: '', marathon: '', long: '', rest: '' };
@@ -698,6 +744,57 @@ function App() {
   const [prefill, setPrefill] = useState(null);
   const [toastMsg, setToastMsg] = useState(null);
   const toast = (m) => { setToastMsg(m); clearTimeout(window.__tt); window.__tt = setTimeout(() => setToastMsg(null), 1800); };
+
+  // Strava
+  const [strava, setStrava] = usePersistent('mtp:strava', null);
+  const [stravaBusy, setStravaBusy] = useState(false);
+  async function doSync(rec0) {
+    let rec = rec0 || strava;
+    if (!rec) { toast('Connect Strava first'); return; }
+    setStravaBusy(true);
+    try {
+      const now = Math.floor(Date.now() / 1000);
+      if (!rec.expires_at || rec.expires_at <= now + 60) {
+        const t = await stravaPost('/refresh', { refresh_token: rec.refresh_token });
+        rec = { ...rec, access_token: t.access_token, refresh_token: t.refresh_token, expires_at: t.expires_at };
+      }
+      const after = Math.floor(ymd(PLAN_START) / 1000) - 86400;
+      const acts = await stravaActivities(rec.access_token, after);
+      const runs = acts.filter(a => /run/i.test(a.sport_type || a.type || ''));
+      let added = 0;
+      setLogs(prev => {
+        const seen = new Set(prev.map(l => String(l.id)));
+        const mk = runs.filter(a => !seen.has('strava-' + a.id)).map(a => {
+          const date = (a.start_date_local || a.start_date || '').slice(0, 10);
+          return { id: 'strava-' + a.id, date, type: plannedType(date || todayStr()), km: +((a.distance || 0) / 1000).toFixed(3), sec: Math.round(a.moving_time || a.elapsed_time || 0), notes: a.name || 'Strava run', src: 'strava' };
+        }).filter(x => x.km > 0 && x.sec > 0 && x.date);
+        added = mk.length;
+        return [...mk, ...prev].sort((a, b) => (a.date < b.date ? 1 : -1));
+      });
+      setStrava({ ...rec, lastSync: Date.now() });
+      toast(added ? ('Synced ' + added + ' new run' + (added > 1 ? 's' : '') + ' ✓') : 'Strava up to date');
+    } catch (e) { toast('Strava sync failed — try again'); }
+    finally { setStravaBusy(false); }
+  }
+  const connectStrava = () => { location.href = stravaAuthUrl(); };
+  const disconnectStrava = () => { setStrava(null); toast('Strava disconnected'); };
+  useEffect(() => {
+    const q = new URLSearchParams(location.search);
+    if (q.get('error')) { history.replaceState(null, '', location.pathname); toast('Strava connection cancelled'); return; }
+    const code = q.get('code');
+    if (code && q.get('scope')) {
+      setStravaBusy(true);
+      stravaPost('/exchange', { code }).then(async tk => {
+        if (tk && tk.access_token) {
+          const rec = { access_token: tk.access_token, refresh_token: tk.refresh_token, expires_at: tk.expires_at, athlete: tk.athlete || null, lastSync: 0 };
+          setStrava(rec);
+          history.replaceState(null, '', location.pathname);
+          toast('Strava connected ✓');
+          await doSync(rec);
+        } else { setStravaBusy(false); toast('Strava connect failed'); }
+      }).catch(() => { setStravaBusy(false); toast('Strava connect failed'); });
+    }
+  }, []);
 
   // theme
   useEffect(() => {
@@ -745,7 +842,7 @@ function App() {
     ${tab === 'plan' && html`<${PlanView} setView=${setView} setTab=${setTab}/>`}
     ${tab === 'zones' && html`<${ZonesView} z=${z} unit=${unit} goalMP=${goalMP} cur=${cur} goal=${goal} setTab=${setTab}/>`}
     ${tab === 'log' && html`<${LogView} logs=${logs} setLogs=${setLogs} unit=${unit} prefill=${prefill} clearPrefill=${() => setPrefill(null)} toast=${toast}/>`}
-    ${tab === 'settings' && html`<${SettingsView} settings=${settings} setSettings=${setSettings} z=${z} goalMP=${goalMP} exportData=${exportData} importData=${importData} resetAll=${resetAll} toast=${toast}/>`}
+    ${tab === 'settings' && html`<${SettingsView} settings=${settings} setSettings=${setSettings} z=${z} goalMP=${goalMP} exportData=${exportData} importData=${importData} resetAll=${resetAll} toast=${toast} strava=${strava} stravaBusy=${stravaBusy} onConnect=${connectStrava} onSync=${() => doSync()} onDisconnect=${disconnectStrava}/>`}
 
     ${toastMsg && html`<div class="toast">${toastMsg}</div>`}
     <div class="tabbar">
