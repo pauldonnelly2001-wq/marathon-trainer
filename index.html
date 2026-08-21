@@ -443,7 +443,7 @@ function TodayView({ view, setView, settings, z, goalMP, unit, videos, setVideos
   const dt = dateOfIndex(view);
   const isToday = view === todayIndex();
   useEffect(() => { setOea(false); }, [view]);
-  const vid = videos[s.type] || '';
+  const vid = (videos[s.type] && videos[s.type].trim()) || DEF_VIDEOS[s.type] || '';
   const embed = toEmbed(vid);
   return html`<div>
     <div class="navrow">
@@ -750,7 +750,15 @@ function timeAgo(ms) { if (!ms) return ''; const s = Math.floor((Date.now() - ms
 
 /* ---------------- App root ---------------- */
 const DEF_SETTINGS = { unit: 'km', theme: 'system', curDist: 'full', curTime: '3:26:00', goalTime: '3:10:00' };
-const DEF_VIDEOS = { recovery: '', threshold: '', aerobic: '', hills: '', marathon: '', long: '', rest: '' };
+const DEF_VIDEOS = {
+  recovery: 'https://www.youtube.com/watch?v=iqH4HsSNY_Q',
+  threshold: 'https://www.youtube.com/watch?v=a48FA3YwShM',
+  aerobic: 'https://www.youtube.com/watch?v=sdCIir5rrzQ',
+  hills: 'https://www.youtube.com/watch?v=H3yJ8d4aEf4',
+  marathon: 'https://www.youtube.com/watch?v=Q5faozr-mWM',
+  long: 'https://www.youtube.com/watch?v=p8qSHEDRir8',
+  rest: 'https://www.youtube.com/watch?v=Sew5C70DhDQ'
+};
 
 function App() {
   const [settings, setSettings] = usePersistent('mtp:settings', DEF_SETTINGS, true);
