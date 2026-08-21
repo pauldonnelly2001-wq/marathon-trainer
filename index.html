@@ -140,21 +140,28 @@ textarea{min-height:64px;resize:vertical}
 </style>
 </head>
 <body>
-<div id="splash" aria-label="Valencia Marathon 2026 — 3.09. Tap for sound; tap again to start.">
+<div id="splash" aria-label="Valencia Marathon 2026 — 3.09">
   <img class="bg" src="start.jpg" alt="" aria-hidden="true"/>
-  <video class="fg" id="splashVid" src="start.mp4" poster="start-poster.jpg" muted autoplay playsinline preload="auto"></video>
+  <video class="fg" id="splashVid" src="start.mp4" poster="start-poster.jpg" muted autoplay loop playsinline preload="auto"></video>
   <button id="splashSound" type="button" aria-label="Play with sound">🔊 Sound</button>
+  <button id="splashGo" type="button">LET&rsquo;S GO KID</button>
 </div>
 <style>
 #splash{position:fixed;inset:0;z-index:9999;background:#0c0b09;display:block;
-  transition:opacity .5s ease;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent}
-#splash .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(30px) brightness(.55);transform:scale(1.12)}
+  transition:opacity .5s ease;overflow:hidden;-webkit-tap-highlight-color:transparent}
+#splash .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(30px) brightness(.5);transform:scale(1.12)}
 #splash .fg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:transparent}
 #splashSound{position:absolute;top:calc(env(safe-area-inset-top,0px) + 14px);right:14px;z-index:2;
   border:0;border-radius:999px;height:40px;padding:0 15px;font:600 14px/1 -apple-system,system-ui,sans-serif;
   display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.5);color:#fff;
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);cursor:pointer;animation:sndPulse 1.8s ease-in-out infinite}
 @keyframes sndPulse{0%,100%{opacity:.72}50%{opacity:1}}
+#splashGo{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 26px);z-index:2;
+  border:1.5px solid rgba(206,165,90,.75);border-radius:999px;padding:15px 34px;
+  font:700 16px/1 -apple-system,system-ui,sans-serif;letter-spacing:.09em;
+  background:rgba(20,16,11,.92);color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);animation:goPulse 2s ease-in-out infinite}
+@keyframes goPulse{0%,100%{box-shadow:0 8px 24px rgba(0,0,0,.45)}50%{box-shadow:0 8px 30px rgba(206,165,90,.55)}}
 #splash.hide{opacity:0;pointer-events:none}
 </style>
 <script>
@@ -163,21 +170,20 @@ textarea{min-height:64px;resize:vertical}
     var s=document.getElementById('splash'); if(!s) return;
     var v=document.getElementById('splashVid');
     var snd=document.getElementById('splashSound');
-    var done=false, soundOn=false, fallback;
-    function arm(){ clearTimeout(fallback); fallback=setTimeout(enter, 8500); }
-    function enter(){ if(done) return; done=true; clearTimeout(fallback); try{ if(v) v.pause(); }catch(e){} s.classList.add('hide'); setTimeout(function(){ s.style.display='none'; },520); }
-    function playSound(){ if(!v||soundOn) return; soundOn=true; v.muted=false; try{ v.currentTime=0; }catch(e){} var p=v.play&&v.play(); if(p&&p.catch) p.catch(function(){}); if(snd) snd.style.display='none'; arm(); }
+    var go=document.getElementById('splashGo');
+    var done=false, soundOn=false;
+    function enter(){ if(done) return; done=true; try{ if(v) v.pause(); }catch(e){} s.classList.add('hide'); setTimeout(function(){ s.style.display='none'; },520); }
+    function playSound(){ if(!v||soundOn) return; soundOn=true; v.muted=false; try{ v.currentTime=0; }catch(e){} var p=v.play&&v.play(); if(p&&p.catch) p.catch(function(){}); if(snd) snd.style.display='none'; }
     if(v){
-      v.addEventListener('ended', enter);
-      // try to open WITH sound; where the browser blocks that, fall back to a muted autoplay and let a tap start the music
+      // try to open WITH sound; where the browser blocks that, fall back to a muted looping autoplay
       v.muted=false;
       var p=v.play&&v.play();
       if(p&&p.then){ p.then(function(){ soundOn=true; if(snd) snd.style.display='none'; }).catch(function(){ v.muted=true; var q=v.play&&v.play(); if(q&&q.catch) q.catch(function(){}); }); }
     }
-    arm();
     if(snd&&v) snd.addEventListener('click', function(ev){ ev.stopPropagation(); playSound(); });
-    // first tap anywhere starts the music; once it's playing, a tap enters the app
-    s.addEventListener('click', function(){ if(!soundOn && v && v.muted){ playSound(); } else { enter(); } });
+    if(go) go.addEventListener('click', function(ev){ ev.stopPropagation(); enter(); });
+    // tapping the backdrop starts the music; the LET'S GO KID button enters the app
+    s.addEventListener('click', function(){ if(!soundOn && v && v.muted){ playSound(); } });
   }
   if(document.readyState!=='loading') boot(); else document.addEventListener('DOMContentLoaded', boot);
 })();
