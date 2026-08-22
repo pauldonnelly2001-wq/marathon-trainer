@@ -131,6 +131,9 @@ textarea{min-height:64px;resize:vertical}
 .stat .b{font-size:22px;font-weight:600}
 .embed{position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;margin-top:6px;background:var(--bg2)}
 .embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vidpills{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.vpill{border:1px solid var(--line);background:var(--card2);color:var(--muted);border-radius:999px;min-width:34px;padding:6px 12px;font-size:12.5px;font-weight:700;cursor:pointer}
+.vpill.on{background:var(--gold);color:#fff;border-color:var(--gold)}
 .hintbar{font-size:12px;color:var(--muted);background:var(--card2);border-radius:10px;padding:9px 12px;margin-top:6px}
 .link{color:var(--gold);font-weight:600;text-decoration:none}
 .sr-gap{height:8px}
@@ -438,12 +441,18 @@ function PaceCards({ session, z, unit, goalMP }) {
 
 function TodayView({ view, setView, settings, z, goalMP, unit, videos, setVideos, onLog }) {
   const [oea, setOea] = useState(false);
+  const [vidIx, setVidIx] = useState(null);
   const w = Math.floor(view / 7) + 1, dow = ((view % 7) + 7) % 7;
   const s = buildDay(w, dow);
   const dt = dateOfIndex(view);
   const isToday = view === todayIndex();
-  useEffect(() => { setOea(false); }, [view]);
-  const vid = (videos[s.type] && videos[s.type].trim()) || DEF_VIDEOS[s.type] || '';
+  useEffect(() => { setOea(false); setVidIx(null); }, [view]);
+  const custom = (videos[s.type] && videos[s.type].trim()) || '';
+  const baseList = CURATED_VIDEOS[s.type] || [];
+  const vids = custom ? [custom, ...baseList.filter(u => u !== custom)] : baseList.slice();
+  const defIx = vids.length ? ((w - 1) % vids.length) : 0;
+  const curIx = vidIx == null ? defIx : Math.min(vidIx, vids.length - 1);
+  const vid = vids[curIx] || '';
   const embed = toEmbed(vid);
   return html`<div>
     <div class="navrow">
@@ -498,9 +507,12 @@ function TodayView({ view, setView, settings, z, goalMP, unit, videos, setVideos
       <div class="lbl" style="color:var(--gold);margin-bottom:8px">Guidance Video · ${TYPE_LABEL[s.type]}</div>
       ${embed && html`<div class="embed"><iframe src=${embed} allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`}
       ${!embed && vid && html`<a class="link" href=${vid} target="_blank" rel="noopener">Open video →</a>`}
-      <input style=${embed ? 'margin-top:8px' : ''} placeholder="Paste a YouTube/Vimeo or any link…" value=${vid}
-        onChange=${e => setVideos({ ...videos, [s.type]: e.target.value.trim() })}/>
-      <div class="hintbar">Saved for every ${TYPE_LABEL[s.type]} session. Leave blank to hide.</div>
+      ${vids.length > 1 && html`<div class="vidpills">
+        ${vids.map((u, i) => html`<button class=${'vpill' + (i === curIx ? ' on' : '')} onClick=${() => setVidIx(i)}>${custom && i === 0 ? '★' : i + 1}</button>`)}
+      </div>`}
+      <div class="hintbar">${vids.length > 1 ? vids.length + ' clips — tap a number to switch. ' : ''}A new one leads each week.</div>
+      <input style="margin-top:8px" placeholder="Add your own link (★)…" value=${custom}
+        onChange=${e => { setVideos({ ...videos, [s.type]: e.target.value.trim() }); setVidIx(null); }}/>
     </div>
 
     ${s.type !== 'rest' && html`<button class="btn" style="margin-top:4px" onClick=${() => onLog(s, view)}>${s.race ? '🏁 Log race result' : '+  Log this run'}</button>`}
@@ -750,14 +762,16 @@ function timeAgo(ms) { if (!ms) return ''; const s = Math.floor((Date.now() - ms
 
 /* ---------------- App root ---------------- */
 const DEF_SETTINGS = { unit: 'km', theme: 'system', curDist: 'full', curTime: '3:26:00', goalTime: '3:10:00' };
-const DEF_VIDEOS = {
-  recovery: 'https://www.youtube.com/watch?v=iqH4HsSNY_Q',
-  threshold: 'https://www.youtube.com/watch?v=a48FA3YwShM',
-  aerobic: 'https://www.youtube.com/watch?v=sdCIir5rrzQ',
-  hills: 'https://www.youtube.com/watch?v=H3yJ8d4aEf4',
-  marathon: 'https://www.youtube.com/watch?v=Q5faozr-mWM',
-  long: 'https://www.youtube.com/watch?v=p8qSHEDRir8',
-  rest: 'https://www.youtube.com/watch?v=Sew5C70DhDQ'
+const DEF_VIDEOS = { recovery: '', threshold: '', aerobic: '', hills: '', marathon: '', long: '', rest: '' };
+const YT = id => 'https://www.youtube.com/watch?v=' + id;
+const CURATED_VIDEOS = {
+  recovery: ['yjB23ki0HHE', 'UQltlMDoh1Q', 'iqH4HsSNY_Q'].map(YT),
+  threshold: ['Jpd2XtGX8wo', 'lPXdra-X1DE', '67ylr5oCNBk', 'a48FA3YwShM'].map(YT),
+  aerobic: ['XhBPB1Hxsp4', 'T5M5NHPt3wY', 'sdCIir5rrzQ'].map(YT),
+  hills: ['170kvQ04IVo', 'Cie5htX3T0o', 'H3yJ8d4aEf4'].map(YT),
+  marathon: ['YKYd0ch8x38', 'VRimgg7hc1k', 'Q5faozr-mWM'].map(YT),
+  long: ['hXoiKl8RFRI', 'UsQX0tK8HHo', 'p8qSHEDRir8'].map(YT),
+  rest: ['O7PNhV-CMJ4', 'tBlN2ZsjLeM', 'Sew5C70DhDQ'].map(YT)
 };
 
 function App() {
