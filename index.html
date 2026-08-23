@@ -327,12 +327,18 @@ function todayIndex() {
 }
 function phaseOf(w) { return w <= 4 ? 'Base' : w <= 10 ? 'Build' : w <= 12 ? 'Peak' : w <= 15 ? 'Taper' : 'Race Week'; }
 
-const VOL = { 1: 56, 2: 62, 3: 68, 4: 58, 5: 66, 6: 72, 7: 76, 8: 64, 9: 74, 10: 78, 11: 82, 12: 76, 13: 68, 14: 54, 15: 40, 16: null };
+const VOL = { 1: 60, 2: 63, 3: 66, 4: 70, 5: 74, 6: 77, 7: 80, 8: 64, 9: 79, 10: 82, 11: 85, 12: 82, 13: 64, 14: 52, 15: 40, 16: null };
+/* Per-day prescribed distances (km). Quality intervals + Saturday marathon-pace block stay fixed;
+   easy / recovery / long-run / warm-up volume is scaled to the athlete (base 60→70, peak 85, long run → 32). */
+const REC_KM = { 1: 5, 2: 5, 3: 5, 4: 6, 5: 6, 6: 6, 7: 6, 8: 5, 9: 6, 10: 6, 11: 5, 12: 6, 13: 6, 14: 5, 15: 4, 16: 5.5 };      // Mon recovery
+const TUE_KM = { 1: 10, 2: 10, 3: 10, 4: 10, 5: 11, 6: 11, 7: 11, 8: 11, 9: 11, 10: 10.5, 11: 10.5, 12: 10, 13: 8, 14: 7, 15: 6, 16: 7 }; // Tue threshold (intervals unchanged, warm-up trimmed)
+const AER_KM = { 1: 11, 2: 11, 3: 11, 4: 14, 5: 12, 6: 12, 7: 11, 8: 10, 9: 8, 10: 8, 11: 10.5, 12: 10, 13: 10, 14: 9, 15: 8, 16: 8 };   // Wed aerobic
+const THU_KM = { 1: 11, 2: 11, 3: 11, 4: 11, 5: 11, 6: 11, 7: 11, 8: 11, 9: 11, 10: 10.5, 11: 10, 12: 9, 13: 7, 14: 6, 15: 5, 16: 5 };   // Thu hills/VO₂ (intervals unchanged, warm-up trimmed)
 const THR = { 1: 'Tempo 20 min continuous @ LT2', 2: '4 × 6 min @ LT2 · 90 s jog', 3: '5 × 6 min @ LT2 · 90 s jog', 4: '2 × 12 min @ LT2 · 2 min jog', 5: '5 × 8 min @ LT2 · 2 min jog', 6: '3 × 12 min @ LT2 · 2 min jog', 7: '4 × 2 km @ LT2 · 2 min jog', 8: '5 × 6 min @ LT2 · 90 s jog', 9: '2 × 20 min @ LT2 · 3 min jog', 10: '6 × 1 mile @ LT2 · 2 min jog', 11: '3 × 2 km @ LT2 · 2:30 jog', 12: '2 × 3 km @ LT2 · 3 min jog', 13: '4 × 6 min @ LT2 · 90 s jog', 14: '3 × 6 min @ LT2 · 90 s jog', 15: '2 × 6 min @ LT2 sharpener', 16: '3 × 3 min @ LT2 + strides' };
 const HIL = { 1: '8 × 60 s hills · jog-down', 2: '10 × 60 s hills · jog-down', 3: '10 × 75 s hills · jog-down', 4: '8 × 90 s hills · jog-down', 5: '6 × 1000 m @ VO₂ · 2:30 jog', 6: '5 × 1200 m @ VO₂ · 3 min jog', 7: '8 × 600 m @ VO₂ · 90 s jog', 8: '8 × 60 s hills · jog-down', 9: '5 × 1200 m @ VO₂ · 3 min jog', 10: '6 × 1000 m @ VO₂ · 2:30 jog', 11: '5 × 1000 m @ VO₂ · 2:30 jog', 12: '4 × 1000 m @ VO₂ · 2:30 jog', 13: '6 × 400 m @ rep · full rec', 14: '5 × 300 m @ rep · full rec', 15: '4 × 200 m @ rep + strides', 16: '15 min easy + 4 strides' };
-const SAT_KM = { 1: 14, 2: 15, 3: 16, 4: 14, 5: 16, 6: 17, 7: 18, 8: 15, 9: 18, 10: 19, 11: 20, 12: 18, 13: 15, 14: 12, 15: 8, 16: 6 };
+const SAT_KM = { 1: 9, 2: 10, 3: 11, 4: 9, 5: 12, 6: 13, 7: 15, 8: 10, 9: 15, 10: 17, 11: 19, 12: 15, 13: 11, 14: 9, 15: 7, 16: 6 };
 const SAT_MP = { 1: 4, 2: 5, 3: 6, 4: 4, 5: 8, 6: 10, 7: 12, 8: 6, 9: 12, 10: 14, 11: 16, 12: 12, 13: 8, 14: 6, 15: 4, 16: 0 };
-const LR = { 1: 20, 2: 24, 3: 26, 4: 22, 5: 26, 6: 28, 7: 30, 8: 24, 9: 30, 10: 32, 11: 32, 12: 28, 13: 24, 14: 20, 15: 14, 16: MAR };
+const LR = { 1: 14, 2: 16, 3: 18, 4: 20, 5: 22, 6: 24, 7: 26, 8: 17, 9: 28, 10: 30, 11: 30, 12: 32, 13: 22, 14: 16, 15: 10, 16: MAR };
 const LR_MP = { 6: 8, 9: 10, 10: 8 };
 const isHillWk = w => [1, 2, 3, 4, 8].includes(w);
 
@@ -371,10 +377,10 @@ function pick(t, o) { return o[t] != null ? o[t] : o.base; }
 function buildDay(w, dow) { // dow 0=Mon..6=Sun
   const t = tierBase(w);
   if (dow === 4) return { day: 'Fri', type: 'rest', title: 'Rest', badge: 'rest', badgeLabel: 'Rest', volume: '—', km: 0, intensity: 'Rest', recovery: 'Full', zone: null, spec: 'Full rest or gentle mobility.' };
-  if (dow === 0) return { day: 'Mon', type: 'recovery', title: 'Recovery + Strides', badge: '', badgeLabel: 'Easy', volume: pick(t, { base: '7–8 km', build: '8–10 km', peak: '8–10 km', taper: '6–8 km', race: '5–6 km' }), km: pick(t, { base: 7.5, build: 9, peak: 9, taper: 7, race: 5.5 }), intensity: 'Easy', recovery: 'Full', zone: 'recovery', spec: `Easy recovery run + ${pick(t, { base: 5, build: 6, peak: 6, taper: 4, race: 4 })} × 100 m strides.` };
-  if (dow === 1) return { day: 'Tue', type: 'threshold', title: 'Threshold', badge: 'strong', badgeLabel: 'Quality', volume: pick(t, { base: '10–11 km', build: '11–13 km', peak: '12–13 km', taper: '9–10 km', race: '7 km' }), km: pick(t, { base: 10.5, build: 12, peak: 12.5, taper: 9.5, race: 7 }), intensity: 'Threshold', recovery: 'Standard', zone: 'threshold', spec: `Warm up with drills + strides. ${THR[w]}. Warm down easy.` };
-  if (dow === 2) return { day: 'Wed', type: 'aerobic', title: 'Aerobic Endurance', badge: '', badgeLabel: 'Easy', volume: pick(t, { base: '10–12 km', build: '12–14 km', peak: '13–14 km', taper: '10–11 km', race: '8 km' }), km: pick(t, { base: 11, build: 13, peak: 13.5, taper: 10.5, race: 8 }), intensity: 'Aerobic', recovery: 'N/A', zone: 'easy', spec: 'Easy aerobic running, relaxed and steady throughout.' };
-  if (dow === 3) { const hill = isHillWk(w); const race = w === 16; return { day: 'Thu', type: race ? 'recovery' : 'hills', title: race ? 'Easy + Strides' : (hill ? 'Hill Strength' : w <= 12 ? 'VO₂ Intervals' : 'Sharpening'), badge: race ? '' : 'strong', badgeLabel: race ? 'Easy' : 'Strong', volume: pick(t, { base: '11–13 km', build: '11–13 km', peak: '11–12 km', taper: '8–9 km', race: '5 km' }), km: pick(t, { base: 12, build: 12, peak: 11.5, taper: 8.5, race: 5 }), intensity: race ? 'Easy' : 'Strong', recovery: race ? 'Full' : 'Jog-down', zone: race ? 'recovery' : (hill ? 'hill' : 'vo2'), spec: `Warm up well. ${HIL[w]}. Finish easy.` }; }
+  if (dow === 0) return { day: 'Mon', type: 'recovery', title: 'Recovery + Strides', badge: '', badgeLabel: 'Easy', volume: `${REC_KM[w]} km`, km: REC_KM[w], intensity: 'Easy', recovery: 'Full', zone: 'recovery', spec: `Easy recovery run + ${pick(t, { base: 5, build: 6, peak: 6, taper: 4, race: 4 })} × 100 m strides.` };
+  if (dow === 1) return { day: 'Tue', type: 'threshold', title: 'Threshold', badge: 'strong', badgeLabel: 'Quality', volume: `${TUE_KM[w]} km`, km: TUE_KM[w], intensity: 'Threshold', recovery: 'Standard', zone: 'threshold', spec: `Warm up with drills + strides. ${THR[w]}. Warm down easy.` };
+  if (dow === 2) return { day: 'Wed', type: 'aerobic', title: 'Aerobic Endurance', badge: '', badgeLabel: 'Easy', volume: `${AER_KM[w]} km`, km: AER_KM[w], intensity: 'Aerobic', recovery: 'N/A', zone: 'easy', spec: 'Easy aerobic running, relaxed and steady throughout.' };
+  if (dow === 3) { const hill = isHillWk(w); const race = w === 16; return { day: 'Thu', type: race ? 'recovery' : 'hills', title: race ? 'Easy + Strides' : (hill ? 'Hill Strength' : w <= 12 ? 'VO₂ Intervals' : 'Sharpening'), badge: race ? '' : 'strong', badgeLabel: race ? 'Easy' : 'Strong', volume: `${THU_KM[w]} km`, km: THU_KM[w], intensity: race ? 'Easy' : 'Strong', recovery: race ? 'Full' : 'Jog-down', zone: race ? 'recovery' : (hill ? 'hill' : 'vo2'), spec: `Warm up well. ${HIL[w]}. Finish easy.` }; }
   if (dow === 5) { const mp = SAT_MP[w]; return { day: 'Sat', type: 'marathon', title: w === 16 ? 'Pre-race Shakeout' : 'Marathon Rhythm', badge: w === 16 ? '' : 'controlled', badgeLabel: w === 16 ? 'Easy' : 'Controlled', volume: `${SAT_KM[w]} km`, km: SAT_KM[w], intensity: w === 16 ? 'Easy' : 'Controlled', recovery: 'N/A', zone: w === 16 ? 'easy' : 'marathon', spec: mp ? `Progression: ${SAT_KM[w]} km, easy → steady, with ${mp} km @ marathon pace to finish.` : `${SAT_KM[w]} km easy shakeout + 3 strides.` }; }
   // dow 6 = Sun
   if (w === 16) return { day: 'Sun', type: 'long', title: 'RACE DAY', race: true, badge: 'strong', badgeLabel: 'Race', volume: '42.2 km', km: MAR, intensity: 'Race', recovery: '—', zone: 'marathon', spec: 'Valencia Marathon. Trust the plan — even pace, fuel early, race the second half.' };
@@ -539,7 +545,7 @@ function PlanView({ setView, setTab }) {
   for (let w = 1; w <= 16; w++) weeks.push(w);
   return html`<div>
     <div class="section-t">The 16-Week Block</div>
-    <p class="dim" style="margin:0 2px 14px;font-size:13.5px">Mon 17 Aug → Sun 6 Dec 2026 · Valencia. Weekly targets flex the easy running; the quality sessions stay fixed.</p>
+    <p class="dim" style="margin:0 2px 14px;font-size:13.5px">Mon 17 Aug → Sun 6 Dec 2026 · Valencia. Weekly volume flexes the easy / recovery / long-run running; the marathon-pace and interval sessions stay fixed. Base builds 60 → 70 km (~5%/wk), peaks at 85 km (wk 11) with the long run reaching 32 km (wk 12). If the low-80s weeks feel fresh you can nudge the wk 9–11 long runs up ~3–4 km toward a ~90 km peak — otherwise hold, and let the wk-8 cutback and the taper absorb the load.</p>
     ${weeks.map(w => {
       const isOpen = open === w;
       return html`<div class=${'wk' + (w === cur ? ' cur' : '')}>
