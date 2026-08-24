@@ -677,7 +677,7 @@ function PlanView({ setView, setTab }) {
   for (let w = 1; w <= 16; w++) weeks.push(w);
   return html`<div>
     <div class="section-t">The 16-Week Block</div>
-    <p class="dim" style="margin:0 2px 14px;font-size:13.5px">Mon 17 Aug → Sun 6 Dec 2026 · Valencia. Weekly volume flexes the easy / recovery / long-run running; the marathon-pace and interval sessions stay fixed. Base builds 60 → 70 km (~5%/wk), peaks at 80 km (wk 11) with the long run reaching 32 km (wk 12). If the high-70s weeks feel fresh you can nudge the wk 9–11 long runs up ~2–3 km toward an ~85 km peak — otherwise hold, and let the wk-8 cutback and the taper absorb the load.</p>
+    <p class="dim" style="margin:0 2px 14px;font-size:13.5px">Mon 17 Aug → Sun 6 Dec 2026 · Valencia. Base builds 60 → 70 km, peaking at 80 km (wk 11). Easy, recovery and long-run volume flexes; marathon-pace and interval work stay fixed.</p>
     ${weeks.map(w => {
       const isOpen = open === w;
       return html`<div class=${'wk' + (w === cur ? ' cur' : '')}>
@@ -844,17 +844,20 @@ function ZonesView({ z, unit, goalMP, cur, goal, setTab, logs }) {
     </div>`;
   });
   return html`<div>
-    <div class="section-t">Training Pyramid</div>
-    <p class="dim" style="margin:0 2px 12px;font-size:13.5px">Your recent running stacked easiest to hardest — weighted by time, so long runs carry the weight they should. A broad base of easy running with less toward the top is the classic pyramid shape.</p>
-    <${RunningPyramid} logs=${logs} unit=${unit} setTab=${setTab}/>
-    <div class="section-t">Your Pace Zones</div>
-    <p class="dim" style="margin:0 2px 14px;font-size:13.5px">Calculated live from your current fitness. Update it in Settings and every pace here recalculates.</p>
-    ${rows}
+    <button class="btn ghost" onClick=${() => setTab('settings')}>Update fitness →</button>
+
     <div class="section-t">References</div>
     <div class="card pace"><div class="row"><div><div style="font-weight:650">Current fitness</div><div class="m" style="color:var(--muted);font-size:12.5px">${fmtClock(cur)} marathon-equivalent</div></div><div class="serif" style="font-size:20px">${paceStr(z.MP, unit)}</div></div></div>
     <div class="card pace"><div class="row"><div><div style="font-weight:650">Goal pace</div><div class="m" style="color:var(--muted);font-size:12.5px">${fmtClock(goal)} target</div></div><div class="serif" style="font-size:20px">${paceStr(goalMP, unit)}</div></div></div>
     <div class="card pace"><div class="row"><div><div style="font-weight:650">Gap to close</div><div class="m" style="color:var(--muted);font-size:12.5px">Current → goal marathon pace</div></div><div class="serif" style="font-size:20px">${Math.round(z.MP - goalMP)} s/km</div></div></div>
-    <button class="btn ghost" style="margin-top:6px" onClick=${() => setTab('settings')}>Update fitness →</button>
+
+    <div class="section-t">Your Pace Zones</div>
+    <p class="dim" style="margin:0 2px 14px;font-size:13.5px">Calculated live from your current fitness. Update it in Settings and every pace here recalculates.</p>
+    ${rows}
+
+    <div class="section-t">Training Pyramid</div>
+    <p class="dim" style="margin:0 2px 12px;font-size:13.5px">Your recent running stacked easiest to hardest — weighted by time, so long runs carry the weight they should. A broad base of easy running with less toward the top is the classic pyramid shape.</p>
+    <${RunningPyramid} logs=${logs} unit=${unit} setTab=${setTab}/>
     <div class="sr-gap"></div>
   </div>`;
 }
