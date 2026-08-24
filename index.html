@@ -506,7 +506,18 @@ function shade(hex, amt) {
   const r = cl((num >> 16) + amt), g = cl(((num >> 8) & 0xff) + amt), b = cl((num & 0xff) + amt);
   return '#' + (0x1000000 + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
-if (typeof module !== 'undefined' && module.exports) module.exports = { TYPE_ZONE, ZONE_BAND, ZRANK, isRun, classifyLog, dedupeRuns, filterWindow, buildRows, assessDistribution, shade };
+/* Time-weighting: one brick per fixed block of time. Unit auto-scales so the pyramid
+   stays legible (~44 bricks) and snaps to a friendly minute value. */
+const NICE_UNITS = [300, 600, 900, 1200, 1800, 2700, 3600, 5400]; // 5,10,15,20,30,45,60,90 min
+function timeUnitFor(totalSec, target) {
+  if (!(totalSec > 0)) return 900;
+  const raw = totalSec / (target || 44);
+  for (const u of NICE_UNITS) if (u >= raw) return u;
+  return NICE_UNITS[NICE_UNITS.length - 1];
+}
+function bricksForRun(sec, unitSec) { return Math.max(1, Math.round((+sec || 0) / (unitSec || 900))); }
+
+if (typeof module !== 'undefined' && module.exports) module.exports = { TYPE_ZONE, ZONE_BAND, ZRANK, isRun, classifyLog, dedupeRuns, filterWindow, buildRows, assessDistribution, shade, timeUnitFor, bricksForRun };
 
 /* ---------------- small components ---------------- */
 function Seg({ value, onChange, options }) {
@@ -684,6 +695,7 @@ function RunningPyramid({ logs, unit, setTab }) {
   const [hovId, setHovId] = useState(null);
   const [filterZone, setFilterZone] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
+  const [mode, setMode] = useState('time');
   const [cols, setCols] = useState(6);
   useEffect(() => {
     const f = () => { const w = Math.min(window.innerWidth, 468) - 6; setCols(Math.max(5, Math.min(7, Math.floor(w / 66)))); };
@@ -706,12 +718,21 @@ function RunningPyramid({ logs, unit, setTab }) {
       if (cls) classified.push({ ...l, zone: cls.zone, band: cls.band });
       else unclassified.push(l);
     }
-    const bricks = classified.slice().sort((a, b) => ZRANK(a.zone) - ZRANK(b.zone) || (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
-    build = { classified, unclassified, bricks, rows: buildRows(bricks, cols) };
+    const totalSec = classified.reduce((a, l) => a + (+l.sec || 0), 0);
+    const sortedRuns = classified.slice().sort((a, b) => ZRANK(a.zone) - ZRANK(b.zone) || (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+    let brickList, unitSec = null;
+    if (mode === 'time') {
+      unitSec = timeUnitFor(totalSec, 44);
+      brickList = []; let n = 0;
+      for (const r of sortedRuns) { const cnt = bricksForRun(r.sec, unitSec); for (let i = 0; i < cnt; i++) brickList.push({ run: r, k: r.id + '_' + (n++) }); }
+    } else {
+      brickList = sortedRuns.map(r => ({ run: r, k: String(r.id) }));
+    }
+    build = { classified, unclassified, unitSec, rows: buildRows(brickList, cols) };
   } catch (e) {
     return html`<div class="pyr-empty">The pyramid couldn't be built from the current data — your runs are safe in the Log.</div>`;
   }
-  const { classified, unclassified, bricks, rows } = build;
+  const { classified, unclassified, unitSec, rows } = build;
   const totDist = classified.reduce((a, l) => a + l.km, 0);
   const totSec = classified.reduce((a, l) => a + l.sec, 0);
   const zonesPresent = ZONE_ORDER.filter(zk => classified.some(b => b.zone === zk));
@@ -724,6 +745,10 @@ function RunningPyramid({ logs, unit, setTab }) {
   return html`<div class="pyr">
     <div class="pyr-range" role="group" aria-label="Date range">
       ${[[7, '7d'], [28, '28d'], [42, '6wk'], [84, '12wk']].map(([d, l]) => html`<button class=${'rpill' + (days === d ? ' on' : '')} aria-pressed=${days === d} onClick=${() => setDays(d)}>${l}</button>`)}
+    </div>
+    <div class="seg" style="margin:0 0 12px" role="group" aria-label="Weight the pyramid by">
+      <button class=${mode === 'time' ? 'on' : ''} aria-pressed=${mode === 'time'} onClick=${() => setMode('time')}>By time</button>
+      <button class=${mode === 'sessions' ? 'on' : ''} aria-pressed=${mode === 'sessions'} onClick=${() => setMode('sessions')}>By session</button>
     </div>
     ${classified.length === 0 ? html`<div class="pyr-empty">
         ${unclassified.length ? `No classified runs in the last ${rangeLabel}. ${unclassified.length} run${unclassified.length > 1 ? 's' : ''} couldn't be given a zone.` : `No runs logged in the last ${rangeLabel}. Log a run or connect Strava to build your pyramid.`}
@@ -740,9 +765,9 @@ function RunningPyramid({ logs, unit, setTab }) {
       </div>
       <div class="pyr-rows">
         ${rows.slice().reverse().map(row => html`<div class="pyr-row">
-          ${row.map(b => {
-    const c = ZMETA[b.zone].dot, dim = filterZone && filterZone !== b.zone, sel = selId === b.id;
-    return html`<button class=${'brick' + (dim ? ' dim' : '') + (sel ? ' sel' : '')}
+          ${row.map(it => {
+    const b = it.run, c = ZMETA[b.zone].dot, dim = filterZone && filterZone !== b.zone, sel = selId === b.id;
+    return html`<button key=${it.k} class=${'brick' + (dim ? ' dim' : '') + (sel ? ' sel' : '')}
               style=${`background:linear-gradient(180deg, ${shade(c, 28)}, ${shade(c, -18)})`}
               aria-label=${`${ZMETA[b.zone].label} session · ${dateStr(b.date)} · ${dispDist(b.km)} · ${fmtClock(b.sec)}`} aria-pressed=${sel}
               onClick=${() => setSelId(sel ? null : b.id)}
@@ -751,6 +776,7 @@ function RunningPyramid({ logs, unit, setTab }) {
   })}
         </div>`)}
       </div>
+      <p class="dim" style="font-size:11.5px;margin:2px 2px 0">${mode === 'time' ? `Weighted by time — each brick ≈ ${Math.round((unitSec || 900) / 60)} min. Long runs stack taller.` : 'One brick per session. Switch to “By time” to weight by duration.'}</p>
       ${active ? html`<div class="pyr-detail">
         <div class="row" style="margin-bottom:4px">
           <span class="lbl" style="color:var(--gold)">${ZMETA[active.zone].label} · ${BAND_META[active.band].label} intensity</span>
@@ -805,7 +831,7 @@ function ZonesView({ z, unit, goalMP, cur, goal, setTab, logs }) {
   });
   return html`<div>
     <div class="section-t">Training Pyramid</div>
-    <p class="dim" style="margin:0 2px 12px;font-size:13.5px">Your recent sessions stacked easiest to hardest — one brick per run. A broad base of easy running with less toward the top is the classic pyramid shape.</p>
+    <p class="dim" style="margin:0 2px 12px;font-size:13.5px">Your recent running stacked easiest to hardest — weighted by time, so long runs carry the weight they should. A broad base of easy running with less toward the top is the classic pyramid shape.</p>
     <${RunningPyramid} logs=${logs} unit=${unit} setTab=${setTab}/>
     <div class="section-t">Your Pace Zones</div>
     <p class="dim" style="margin:0 2px 14px;font-size:13.5px">Calculated live from your current fitness. Update it in Settings and every pace here recalculates.</p>
