@@ -477,10 +477,24 @@ function filterWindow(logs, days, todayS) {
   const today = ymd(todayS), cutoff = today - (days - 1) * 86400000;
   return (logs || []).filter(l => l.date && ymd(l.date) >= cutoff && ymd(l.date) <= today);
 }
-/* Split classified bricks (sorted easiest→hardest) into centered rows, bottom row first. */
+/* Split a pre-sorted list into centered rows of width `cols`. */
 function buildRows(bricks, cols) {
   const c = Math.max(1, cols | 0), rows = [];
   for (let i = 0; i < bricks.length; i += c) rows.push(bricks.slice(i, i + c));
+  return rows;
+}
+/* Same, but starts a new row at every change of keyFn(item) — so a row never spans
+   two zones. This is what actually produces the pyramid's taper: each zone steps
+   in at its own row rather than being padded out to a fixed rectangle width. */
+function buildPyramidRows(items, cols, keyFn) {
+  const c = Math.max(1, cols | 0), rows = [];
+  let i = 0;
+  while (i < items.length) {
+    let j = i + 1;
+    while (j < items.length && keyFn(items[j]) === keyFn(items[i])) j++;
+    for (let k = i; k < j; k += c) rows.push(items.slice(k, Math.min(k + c, j)));
+    i = j;
+  }
   return rows;
 }
 /* Time-in-band assessment from accumulated session duration (the model stores no per-zone time). */
@@ -517,7 +531,7 @@ function timeUnitFor(totalSec, target) {
 }
 function bricksForRun(sec, unitSec) { return Math.max(1, Math.round((+sec || 0) / (unitSec || 900))); }
 
-if (typeof module !== 'undefined' && module.exports) module.exports = { TYPE_ZONE, ZONE_BAND, ZRANK, isRun, classifyLog, dedupeRuns, filterWindow, buildRows, assessDistribution, shade, timeUnitFor, bricksForRun };
+if (typeof module !== 'undefined' && module.exports) module.exports = { TYPE_ZONE, ZONE_BAND, ZRANK, isRun, classifyLog, dedupeRuns, filterWindow, buildRows, buildPyramidRows, assessDistribution, shade, timeUnitFor, bricksForRun };
 
 /* ---------------- small components ---------------- */
 function Seg({ value, onChange, options }) {
@@ -728,7 +742,7 @@ function RunningPyramid({ logs, unit, setTab }) {
     } else {
       brickList = sortedRuns.map(r => ({ run: r, k: String(r.id) }));
     }
-    build = { classified, unclassified, unitSec, rows: buildRows(brickList, cols) };
+    build = { classified, unclassified, unitSec, rows: buildPyramidRows(brickList, cols, it => it.run.zone) };
   } catch (e) {
     return html`<div class="pyr-empty">The pyramid couldn't be built from the current data — your runs are safe in the Log.</div>`;
   }
