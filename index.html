@@ -477,6 +477,12 @@ function filterWindow(logs, days, todayS) {
   const today = ymd(todayS), cutoff = today - (days - 1) * 86400000;
   return (logs || []).filter(l => l.date && ymd(l.date) >= cutoff && ymd(l.date) <= today);
 }
+/* The equal-length window immediately preceding the current one — for trend comparisons. */
+function filterPriorWindow(logs, days, todayS) {
+  const curStart = ymd(todayS) - (days - 1) * 86400000;
+  const priorEnd = curStart - 86400000, priorStart = priorEnd - (days - 1) * 86400000;
+  return (logs || []).filter(l => l.date && ymd(l.date) >= priorStart && ymd(l.date) <= priorEnd);
+}
 /* Split a pre-sorted list into centered rows of width `cols`. */
 function buildRows(bricks, cols) {
   const c = Math.max(1, cols | 0), rows = [];
@@ -513,6 +519,49 @@ function assessDistribution(classified) {
   else { key = 'low'; label = 'Low-intensity dominant'; }
   return { t, n, total, totalN, enough, key, label, pct };
 }
+/* Deterministic, descriptive auto-analysis of a period's actual data — no external
+   AI call, no judgement words. Each insight is skipped rather than guessed if the
+   inputs it needs aren't reliably there. `fmt` optionally formats a date string for
+   display (defaults to returning it unchanged, e.g. for tests). */
+function buildInsights({ classified, assess, prevAssess, rangeLabel, unclassifiedCount }, fmt) {
+  const dateLabel = fmt || (d => d);
+  const out = [];
+  if (!assess || !assess.enough) return out;
+
+  if (prevAssess && prevAssess.enough) {
+    const dLow = assess.pct.low - prevAssess.pct.low, dHigh = assess.pct.high - prevAssess.pct.high;
+    if (Math.abs(dLow) >= 5 || Math.abs(dHigh) >= 5) {
+      const word = d => d > 0 ? 'up' : d < 0 ? 'down' : 'flat';
+      out.push(`Versus the previous ${rangeLabel}, low-intensity time is ${word(dLow)} ${Math.abs(dLow)} points to ${assess.pct.low}%, and high-intensity time is ${word(dHigh)} ${Math.abs(dHigh)} points to ${assess.pct.high}%.`);
+    } else {
+      out.push(`The intensity split has stayed close to the previous ${rangeLabel} — within ${Math.max(Math.abs(dLow), Math.abs(dHigh))} points on every band.`);
+    }
+  }
+
+  const dates = (classified || []).map(l => l.date).slice().sort();
+  if (dates.length >= 2) {
+    const spanDays = Math.round((ymd(dates[dates.length - 1]) - ymd(dates[0])) / 86400000) + 1;
+    const perWeek = spanDays > 0 ? classified.length / (spanDays / 7) : classified.length;
+    let maxGap = 0, gStart = dates[0], gEnd = dates[0];
+    for (let i = 1; i < dates.length; i++) {
+      const g = Math.round((ymd(dates[i]) - ymd(dates[i - 1])) / 86400000);
+      if (g > maxGap) { maxGap = g; gStart = dates[i - 1]; gEnd = dates[i]; }
+    }
+    out.push(`Averaging ${perWeek.toFixed(1)} session${perWeek === 1 ? '' : 's'} a week` +
+      (maxGap >= 4 ? `, with a ${maxGap}-day gap between ${dateLabel(gStart)} and ${dateLabel(gEnd)}.` : ` with no gap longer than ${maxGap} day${maxGap === 1 ? '' : 's'}.`));
+  }
+
+  const longest = (classified || []).reduce((a, b) => (b.band === 'low' && (+b.km || 0) > (a ? a.km : 0)) ? b : a, null);
+  const hardest = (classified || []).filter(l => l.band === 'high').reduce((a, b) => ((+b.sec || 0) > (a ? a.sec : 0)) ? b : a, null);
+  const bits = [];
+  if (longest) bits.push(`the longest run was ${(+longest.km).toFixed(1)}km on ${dateLabel(longest.date)}`);
+  if (hardest) bits.push(`the most sustained high-intensity work was on ${dateLabel(hardest.date)}`);
+  if (bits.length) out.push('In this period, ' + bits.join('; ') + '.');
+
+  if (unclassifiedCount > 0) out.push(`${unclassifiedCount} session${unclassifiedCount === 1 ? '' : 's'} in this period ${unclassifiedCount === 1 ? "wasn't" : "weren't"} classified and ${unclassifiedCount === 1 ? "isn't" : "aren't"} included above.`);
+
+  return out;
+}
 /* Lighten (+) or darken (−) a hex colour for brick gradients. */
 function shade(hex, amt) {
   let h = String(hex).replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join('');
@@ -531,7 +580,7 @@ function timeUnitFor(totalSec, target) {
 }
 function bricksForRun(sec, unitSec) { return Math.max(1, Math.round((+sec || 0) / (unitSec || 900))); }
 
-if (typeof module !== 'undefined' && module.exports) module.exports = { TYPE_ZONE, ZONE_BAND, ZRANK, isRun, classifyLog, dedupeRuns, filterWindow, buildRows, buildPyramidRows, assessDistribution, shade, timeUnitFor, bricksForRun };
+if (typeof module !== 'undefined' && module.exports) module.exports = { TYPE_ZONE, ZONE_BAND, ZRANK, isRun, classifyLog, dedupeRuns, filterWindow, filterPriorWindow, buildRows, buildPyramidRows, assessDistribution, buildInsights, shade, timeUnitFor, bricksForRun };
 
 /* ---------------- small components ---------------- */
 function Seg({ value, onChange, options }) {
@@ -751,6 +800,14 @@ function RunningPyramid({ logs, unit, setTab }) {
   const totSec = classified.reduce((a, l) => a + l.sec, 0);
   const zonesPresent = ZONE_ORDER.filter(zk => classified.some(b => b.zone === zk));
   const assess = assessDistribution(classified);
+  let prevAssess = null, insights = [];
+  try {
+    const prevWin = filterPriorWindow(dedupeRuns(logs), days, todayStr());
+    const prevClassified = [];
+    for (const l of prevWin) { if (!isRun(l)) continue; const cls = classifyLog(l); if (cls) prevClassified.push({ ...l, zone: cls.zone, band: cls.band }); }
+    prevAssess = assessDistribution(prevClassified);
+    insights = buildInsights({ classified, assess, prevAssess, rangeLabel, unclassifiedCount: unclassified.length }, dateStr);
+  } catch (e) { insights = []; }
   const active = (hovId || selId) ? classified.find(b => b.id === (hovId || selId)) : null;
   const labelColor = { pyramid: '#3f7a52', low: '#4f8f6a', middle: '#c0872e', top: '#b5473a', none: 'var(--muted)' }[assess.key];
   const labelBg = { pyramid: 'var(--greensoft)', low: 'var(--greensoft)', middle: 'var(--goldsoft)', top: '#f3ddd8', none: 'var(--card2)' }[assess.key];
@@ -824,6 +881,11 @@ function RunningPyramid({ logs, unit, setTab }) {
           </div>`)}
         </div>
         <p style="margin:12px 2px 2px;font-size:13px;line-height:1.55;color:var(--muted)">Your last ${rangeLabel} contain ${assess.pct.low}% low, ${assess.pct.moderate}% moderate and ${assess.pct.high}% high-intensity running. ${sentence}</p>
+        ${insights.length ? html`<div class="card" style="margin-top:14px">
+          <div class="lbl" style="color:var(--gold);margin-bottom:8px">Auto Analysis</div>
+          ${insights.map(line => html`<p style="margin:0 0 8px;font-size:13.5px;line-height:1.55">${line}</p>`)}
+          <p class="dim" style="margin:6px 0 0;font-size:11px">Generated from this period's logged data. Descriptive only — not coaching or medical advice.</p>
+        </div>` : ''}
       </div>` : html`<div class="pyr-empty">Not enough training in the last ${rangeLabel} to describe a distribution yet.</div>`}
     </div>`}
   </div>`;
@@ -985,6 +1047,12 @@ function SettingsView({ settings, setSettings, z, goalMP, exportData, importData
       `}
     </div>
 
+    <div class="section-t">Calendar</div>
+    <div class="card">
+      <p class="dim" style="margin:0 0 10px;font-size:13px">Export the full 16-week plan as a calendar file — one session per day, rest days left out. Import it once into Google, Apple or Outlook calendar.</p>
+      <button class="btn ghost sm" onClick=${downloadICS}>📅 Export plan to calendar</button>
+    </div>
+
     <div class="section-t">Your Data</div>
     <div class="card">
       <p class="dim" style="margin:0 0 10px;font-size:13px">Saved to: <b>${Store.name}</b>. Back it up regularly — export keeps a copy you can re-import on any device.</p>
@@ -1029,6 +1097,37 @@ async function stravaActivities(token, afterEpoch) {
 const RUN_TYPE_BY_DOW = ['recovery', 'threshold', 'aerobic', 'hills', 'rest', 'marathon', 'long'];
 function plannedType(dstr) { const t = RUN_TYPE_BY_DOW[(new Date(ymd(dstr)).getUTCDay() + 6) % 7]; return t === 'rest' ? 'aerobic' : t; }
 function timeAgo(ms) { if (!ms) return ''; const s = Math.floor((Date.now() - ms) / 1000); if (s < 60) return 'just now'; if (s < 3600) return Math.floor(s / 60) + 'm ago'; if (s < 86400) return Math.floor(s / 3600) + 'h ago'; return Math.floor(s / 86400) + 'd ago'; }
+
+/* ---------------- calendar export (.ics) ---------------- */
+function icsEsc(str) { return String(str == null ? '' : str).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n'); }
+function icsDateStamp(d) { return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`; }
+function buildICS() {
+  const now = window.__TODAY__ ? new Date(window.__TODAY__) : new Date();
+  const stamp = icsDateStamp(now);
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//3.09 Marathon Trainer//Valencia 2026//EN', 'CALSCALE:GREGORIAN'];
+  for (let idx = 0; idx <= 111; idx++) {
+    const w = Math.floor(idx / 7) + 1, dow = idx % 7;
+    const s = buildDay(w, dow);
+    if (s.type === 'rest') continue;
+    const dt = dateOfIndex(idx);
+    const ds = `${dt.getUTCFullYear()}${pad(dt.getUTCMonth() + 1)}${pad(dt.getUTCDate())}`;
+    const nd = new Date(dt.getTime() + 86400000);
+    const de = `${nd.getUTCFullYear()}${pad(nd.getUTCMonth() + 1)}${pad(nd.getUTCDate())}`;
+    lines.push('BEGIN:VEVENT', `UID:mtp-${ds}-${idx}@marathon-trainer`, `DTSTAMP:${stamp}`,
+      `DTSTART;VALUE=DATE:${ds}`, `DTEND;VALUE=DATE:${de}`,
+      `SUMMARY:${icsEsc(`${s.title} — ${s.volume}`)}`, `DESCRIPTION:${icsEsc(s.spec || '')}`, 'END:VEVENT');
+  }
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n');
+}
+function downloadICS() {
+  const blob = new Blob([buildICS()], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'valencia-marathon-plan.ics'; a.rel = 'noopener';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
 
 /* ---------------- App root ---------------- */
 const DEF_SETTINGS = { unit: 'km', theme: 'system', curDist: 'full', curTime: '3:26:00', goalTime: '3:10:00' };
