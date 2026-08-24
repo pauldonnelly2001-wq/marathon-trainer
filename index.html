@@ -134,6 +134,45 @@ textarea{min-height:64px;resize:vertical}
 .vidpills{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .vpill{border:1px solid var(--line);background:var(--card2);color:var(--muted);border-radius:999px;min-width:34px;padding:6px 12px;font-size:12.5px;font-weight:700;cursor:pointer}
 .vpill.on{background:var(--gold);color:#fff;border-color:var(--gold)}
+/* running pyramid */
+.pyr-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:2px}
+.pyr-range{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 12px}
+.rpill{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:700;cursor:pointer}
+.rpill.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pyr-stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.ptile{flex:1 1 0;min-width:74px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.ptile b{display:block;font-size:19px;font-weight:600;letter-spacing:-.01em}
+.ptile span{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;margin-top:1px}
+.zlegend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}
+.zchip{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--muted);cursor:pointer}
+.zchip .sw{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
+.zchip.on{border-color:var(--ink);color:var(--ink)}
+.zchip.all.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pyr-rows{display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 0 6px}
+.pyr-row{display:flex;justify-content:center;gap:7px}
+.brick{position:relative;flex:0 0 auto;width:clamp(40px,13vw,58px);height:34px;border-radius:9px;border:0;padding:0;cursor:pointer;
+  box-shadow:0 1px 2px rgba(40,32,10,.22),inset 0 1px 0 rgba(255,255,255,.28);display:grid;place-items:center;
+  transition:transform .12s ease,opacity .12s ease,box-shadow .12s ease}
+.brick .bc{font-size:8px;font-weight:800;letter-spacing:.02em;color:rgba(255,255,255,.78);text-shadow:0 1px 1px rgba(0,0,0,.22)}
+.brick:hover{transform:translateY(-2px);box-shadow:0 3px 8px rgba(40,32,10,.28),inset 0 1px 0 rgba(255,255,255,.28)}
+.brick.dim{opacity:.2}
+.brick.sel{transform:translateY(-2px)}
+.brick.sel::after{content:"";position:absolute;inset:-3px;border-radius:11px;border:2.5px solid var(--ink)}
+.brick:focus-visible{outline:0}
+.brick:focus-visible::after{content:"";position:absolute;inset:-3px;border-radius:11px;border:2.5px solid var(--ink)}
+.pyr-detail{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:15px 16px;margin:4px 0 4px}
+.pyr-empty{background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:22px 16px;text-align:center;color:var(--muted);font-size:13.5px}
+.pyr-uncl{font-size:12px;color:var(--muted);margin:8px 2px 0}
+.dist-bar{display:flex;height:12px;border-radius:999px;overflow:hidden;border:1px solid var(--line);margin:10px 0}
+.dist-bar > i{display:block;height:100%}
+.drow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:13.5px}
+.drow:first-child{border-top:0}
+.drow .dk{display:flex;align-items:center;gap:9px}
+.drow .sw{width:11px;height:11px;border-radius:3px;flex:0 0 auto}
+.distlabel{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 12px;border-radius:999px}
+.infobtn{width:20px;height:20px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--muted);font-size:11px;font-weight:700;line-height:1;display:inline-grid;place-items:center;cursor:pointer;flex:0 0 auto}
+.infonote{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:12.5px;color:var(--muted);margin:2px 0 12px;line-height:1.5}
+@media (prefers-reduced-motion: reduce){.brick,.brick:hover,.brick.sel{transition:none;transform:none}}
 .hintbar{font-size:12px;color:var(--muted);background:var(--card2);border-radius:10px;padding:9px 12px;margin-top:6px}
 .link{color:var(--gold);font-weight:600;text-decoration:none}
 .sr-gap{height:8px}
@@ -401,6 +440,74 @@ const ZMETA = {
 };
 const ZONE_ORDER = ['recovery', 'easy', 'long', 'steady', 'marathon', 'threshold', 'vo2', 'hill'];
 
+/* ---------------- running-pyramid utilities (pure, testable) ---------------- */
+/* Map a loggable session type to one of the app's existing pace zones. */
+const TYPE_ZONE = { recovery: 'recovery', aerobic: 'easy', long: 'long', marathon: 'marathon', threshold: 'threshold', hills: 'vo2' };
+/* Group the app's existing zones into low / moderate / high intensity using its own
+   threshold definitions: easy family (below LT1) = low, marathon/steady (LT1→LT2) = moderate,
+   threshold and above (LT2+) = high. No new physiological boundaries are invented. */
+const ZONE_BAND = { recovery: 'low', easy: 'low', long: 'low', steady: 'moderate', marathon: 'moderate', threshold: 'high', vo2: 'high', hill: 'high' };
+const BAND_META = { low: { label: 'Low', color: '#4f8f6a' }, moderate: { label: 'Moderate', color: '#c0872e' }, high: { label: 'High', color: '#b5473a' } };
+const ZONE_ABBR = { recovery: 'REC', easy: 'EASY', long: 'LONG', steady: 'LT1', marathon: 'MP', threshold: 'LT2', vo2: 'VO₂', hill: 'HILL' };
+const ZRANK = k => { const i = ZONE_ORDER.indexOf(k); return i < 0 ? 99 : i; };
+
+/* A usable completed run: positive distance + duration + a date. */
+function isRun(l) { return !!l && +l.km > 0 && +l.sec > 0 && !!l.date; }
+/* Classify a run into { zone, band } using the existing session type; null if it can't be classified confidently. */
+function classifyLog(l) {
+  if (!isRun(l)) return null;
+  const zone = TYPE_ZONE[l.type];
+  if (!zone) return null;
+  const band = ZONE_BAND[zone];
+  if (!band) return null;
+  return { zone, band };
+}
+/* Drop duplicated / re-imported activities sharing the same date + distance + duration. */
+function dedupeRuns(logs) {
+  const seen = new Set(), out = [];
+  for (const l of (logs || [])) {
+    const k = l.date + '|' + Math.round(+l.km * 1000) + '|' + Math.round(+l.sec);
+    if (seen.has(k)) continue;
+    seen.add(k); out.push(l);
+  }
+  return out;
+}
+/* Rolling window: keep runs dated within the last `days` days up to and including today. */
+function filterWindow(logs, days, todayS) {
+  const today = ymd(todayS), cutoff = today - (days - 1) * 86400000;
+  return (logs || []).filter(l => l.date && ymd(l.date) >= cutoff && ymd(l.date) <= today);
+}
+/* Split classified bricks (sorted easiest→hardest) into centered rows, bottom row first. */
+function buildRows(bricks, cols) {
+  const c = Math.max(1, cols | 0), rows = [];
+  for (let i = 0; i < bricks.length; i += c) rows.push(bricks.slice(i, i + c));
+  return rows;
+}
+/* Time-in-band assessment from accumulated session duration (the model stores no per-zone time). */
+function assessDistribution(classified) {
+  const t = { low: 0, moderate: 0, high: 0 }, n = { low: 0, moderate: 0, high: 0 };
+  for (const c of (classified || [])) { if (t[c.band] != null) { t[c.band] += +c.sec || 0; n[c.band]++; } }
+  const total = t.low + t.moderate + t.high, totalN = n.low + n.moderate + n.high;
+  const enough = totalN >= 3 && total >= 45 * 60;
+  const pctRaw = b => total > 0 ? t[b] / total * 100 : 0;
+  const pct = { low: Math.round(pctRaw('low')), moderate: Math.round(pctRaw('moderate')), high: Math.round(pctRaw('high')) };
+  let key, label;
+  if (!enough) { key = 'none'; label = 'Not enough data'; }
+  else if (t.low > t.moderate && t.moderate > t.high) { key = 'pyramid'; label = 'Pyramid forming'; }
+  else if (t.high > t.low && t.high > t.moderate) { key = 'top'; label = 'Top-heavy'; }
+  else if (t.moderate > t.low && t.moderate >= t.high) { key = 'middle'; label = 'Middle-heavy'; }
+  else { key = 'low'; label = 'Low-intensity dominant'; }
+  return { t, n, total, totalN, enough, key, label, pct };
+}
+/* Lighten (+) or darken (−) a hex colour for brick gradients. */
+function shade(hex, amt) {
+  let h = String(hex).replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join('');
+  const num = parseInt(h, 16); const cl = v => Math.max(0, Math.min(255, v));
+  const r = cl((num >> 16) + amt), g = cl(((num >> 8) & 0xff) + amt), b = cl((num & 0xff) + amt);
+  return '#' + (0x1000000 + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+if (typeof module !== 'undefined' && module.exports) module.exports = { TYPE_ZONE, ZONE_BAND, ZRANK, isRun, classifyLog, dedupeRuns, filterWindow, buildRows, assessDistribution, shade };
+
 /* ---------------- small components ---------------- */
 function Seg({ value, onChange, options }) {
   return html`<div class="seg">${options.map(o => html`<button class=${value === o.v ? 'on' : ''} onClick=${() => onChange(o.v)}>${o.l}</button>`)}</div>`;
@@ -571,7 +678,118 @@ function PlanView({ setView, setTab }) {
 }
 
 /* ---------------- Zones view ---------------- */
-function ZonesView({ z, unit, goalMP, cur, goal, setTab }) {
+function RunningPyramid({ logs, unit, setTab }) {
+  const [days, setDays] = useState(28);
+  const [selId, setSelId] = useState(null);
+  const [hovId, setHovId] = useState(null);
+  const [filterZone, setFilterZone] = useState(null);
+  const [showInfo, setShowInfo] = useState(false);
+  const [cols, setCols] = useState(6);
+  useEffect(() => {
+    const f = () => { const w = Math.min(window.innerWidth, 468) - 6; setCols(Math.max(5, Math.min(7, Math.floor(w / 66)))); };
+    f(); window.addEventListener('resize', f); return () => window.removeEventListener('resize', f);
+  }, []);
+  useEffect(() => { setSelId(null); setHovId(null); setFilterZone(null); }, [days]);
+
+  const dispDist = km => unit === 'mi' ? (km / MI).toFixed(2) + ' mi' : km.toFixed(1) + ' km';
+  const fmtDur = s => { s = Math.round(s); const h = Math.floor(s / 3600), m = Math.round((s % 3600) / 60); return h ? `${h}h ${pad(m)}m` : `${m}m`; };
+  const rangeLabel = days === 7 ? '7 days' : days === 28 ? '28 days' : days === 42 ? '6 weeks' : '12 weeks';
+  const dateStr = d => fmtDate(new Date(ymd(d)));
+
+  let build;
+  try {
+    const win = filterWindow(dedupeRuns(logs), days, todayStr());
+    const classified = [], unclassified = [];
+    for (const l of win) {
+      if (!isRun(l)) continue;
+      const cls = classifyLog(l);
+      if (cls) classified.push({ ...l, zone: cls.zone, band: cls.band });
+      else unclassified.push(l);
+    }
+    const bricks = classified.slice().sort((a, b) => ZRANK(a.zone) - ZRANK(b.zone) || (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+    build = { classified, unclassified, bricks, rows: buildRows(bricks, cols) };
+  } catch (e) {
+    return html`<div class="pyr-empty">The pyramid couldn't be built from the current data — your runs are safe in the Log.</div>`;
+  }
+  const { classified, unclassified, bricks, rows } = build;
+  const totDist = classified.reduce((a, l) => a + l.km, 0);
+  const totSec = classified.reduce((a, l) => a + l.sec, 0);
+  const zonesPresent = ZONE_ORDER.filter(zk => classified.some(b => b.zone === zk));
+  const assess = assessDistribution(classified);
+  const active = (hovId || selId) ? classified.find(b => b.id === (hovId || selId)) : null;
+  const labelColor = { pyramid: '#3f7a52', low: '#4f8f6a', middle: '#c0872e', top: '#b5473a', none: 'var(--muted)' }[assess.key];
+  const labelBg = { pyramid: 'var(--greensoft)', low: 'var(--greensoft)', middle: 'var(--goldsoft)', top: '#f3ddd8', none: 'var(--card2)' }[assess.key];
+  const sentence = { pyramid: 'This currently forms a descending pyramidal distribution.', low: 'Easy running is the largest share, without a clear descending step down through moderate and high.', middle: 'Moderate-intensity running is the largest share in this period.', top: 'High-intensity running is the largest share in this period.', none: "There isn't enough logged running in this period to describe a distribution yet." }[assess.key];
+
+  return html`<div class="pyr">
+    <div class="pyr-range" role="group" aria-label="Date range">
+      ${[[7, '7d'], [28, '28d'], [42, '6wk'], [84, '12wk']].map(([d, l]) => html`<button class=${'rpill' + (days === d ? ' on' : '')} aria-pressed=${days === d} onClick=${() => setDays(d)}>${l}</button>`)}
+    </div>
+    ${classified.length === 0 ? html`<div class="pyr-empty">
+        ${unclassified.length ? `No classified runs in the last ${rangeLabel}. ${unclassified.length} run${unclassified.length > 1 ? 's' : ''} couldn't be given a zone.` : `No runs logged in the last ${rangeLabel}. Log a run or connect Strava to build your pyramid.`}
+      </div>` : html`<div>
+      <div class="pyr-stats">
+        <div class="ptile"><b>${classified.length}</b><span>Sessions</span></div>
+        <div class="ptile"><b>${unit === 'mi' ? (totDist / MI).toFixed(1) : totDist.toFixed(1)} ${unit}</b><span>Shown</span></div>
+        <div class="ptile"><b>${fmtDur(totSec)}</b><span>Time</span></div>
+      </div>
+      <div class="zlegend" role="group" aria-label="Filter by zone">
+        <button class=${'zchip all' + (filterZone === null ? ' on' : '')} aria-pressed=${filterZone === null} onClick=${() => setFilterZone(null)}>All</button>
+        ${zonesPresent.map(zk => html`<button class=${'zchip' + (filterZone === zk ? ' on' : '')} aria-pressed=${filterZone === zk} onClick=${() => setFilterZone(filterZone === zk ? null : zk)}>
+          <span class="sw" style=${'background:' + ZMETA[zk].dot}></span>${ZMETA[zk].label}</button>`)}
+      </div>
+      <div class="pyr-rows">
+        ${rows.slice().reverse().map(row => html`<div class="pyr-row">
+          ${row.map(b => {
+    const c = ZMETA[b.zone].dot, dim = filterZone && filterZone !== b.zone, sel = selId === b.id;
+    return html`<button class=${'brick' + (dim ? ' dim' : '') + (sel ? ' sel' : '')}
+              style=${`background:linear-gradient(180deg, ${shade(c, 28)}, ${shade(c, -18)})`}
+              aria-label=${`${ZMETA[b.zone].label} session · ${dateStr(b.date)} · ${dispDist(b.km)} · ${fmtClock(b.sec)}`} aria-pressed=${sel}
+              onClick=${() => setSelId(sel ? null : b.id)}
+              onMouseEnter=${() => setHovId(b.id)} onMouseLeave=${() => setHovId(null)}
+              onFocus=${() => setHovId(b.id)} onBlur=${() => setHovId(null)}><span class="bc">${ZONE_ABBR[b.zone]}</span></button>`;
+  })}
+        </div>`)}
+      </div>
+      ${active ? html`<div class="pyr-detail">
+        <div class="row" style="margin-bottom:4px">
+          <span class="lbl" style="color:var(--gold)">${ZMETA[active.zone].label} · ${BAND_META[active.band].label} intensity</span>
+          <span class="lbl">${dateStr(active.date)}</span>
+        </div>
+        <div class="serif" style="font-size:21px;font-weight:600">${ZMETA[active.zone].label} · ${fmtClock(active.sec)}</div>
+        <div class="m" style="color:var(--muted);font-size:12.5px;margin-top:3px">${dispDist(active.km)} · ${paceStr(active.sec / active.km, unit)}${active.hr ? ` · ${active.hr} bpm avg` : ''}${active.src === 'strava' ? ' · Strava' : ''}</div>
+        ${active.notes ? html`<p style="margin:10px 0 0;font-size:13.5px;line-height:1.5">${active.notes}</p>` : ''}
+        <div style="margin-top:12px">
+          ${active.src === 'strava'
+      ? html`<a class="btn ghost sm" href=${'https://www.strava.com/activities/' + String(active.id).replace('strava-', '')} target="_blank" rel="noopener">Open in Strava →</a>`
+      : html`<button class="btn ghost sm" onClick=${() => setTab('log')}>Open in Log →</button>`}
+        </div>
+      </div>` : html`<p class="dim" style="font-size:12px;margin:8px 2px 2px">Tap a brick for the session. Easiest sits at the base, hardest at the top.</p>`}
+      ${unclassified.length ? html`<div class="pyr-uncl">＋ ${unclassified.length} unclassified run${unclassified.length > 1 ? 's' : ''} in this period — kept in the Log but out of the pyramid and the distribution below.</div>` : ''}
+
+      <div class="row" style="margin:20px 2px 2px">
+        <div class="lbl" style="color:var(--gold)">Training distribution</div>
+        <button class="infobtn" aria-label="What this measures" aria-expanded=${showInfo} onClick=${() => setShowInfo(v => !v)}>i</button>
+      </div>
+      ${showInfo ? html`<div class="infonote">The pyramid shows each session by its classification — one brick per run. This distribution is measured differently: from accumulated <b>time</b> in each intensity band, so a long easy run counts for more than a short one. It describes what you've logged; it isn't a target or a judgement.</div>` : html`<div style="height:8px"></div>`}
+      ${assess.enough ? html`<div>
+        <div class="dist-bar" role="img" aria-label=${`${assess.pct.low} percent low, ${assess.pct.moderate} percent moderate, ${assess.pct.high} percent high intensity`}>
+          ${['low', 'moderate', 'high'].map(bnd => assess.t[bnd] > 0 ? html`<i style=${`width:${assess.t[bnd] / assess.total * 100}%;background:${BAND_META[bnd].color}`}></i>` : '')}
+        </div>
+        <span class="distlabel" style=${`background:${labelBg};color:${labelColor}`}>${assess.label}</span>
+        <div style="margin-top:12px">
+          ${['low', 'moderate', 'high'].map(bnd => html`<div class="drow">
+            <span class="dk"><span class="sw" style=${'background:' + BAND_META[bnd].color}></span>${BAND_META[bnd].label} intensity</span>
+            <span><b>${assess.pct[bnd]}%</b> <span class="dim" style="font-size:12px">· ${fmtDur(assess.t[bnd])} · ${assess.n[bnd]} run${assess.n[bnd] === 1 ? '' : 's'}</span></span>
+          </div>`)}
+        </div>
+        <p style="margin:12px 2px 2px;font-size:13px;line-height:1.55;color:var(--muted)">Your last ${rangeLabel} contain ${assess.pct.low}% low, ${assess.pct.moderate}% moderate and ${assess.pct.high}% high-intensity running. ${sentence}</p>
+      </div>` : html`<div class="pyr-empty">Not enough training in the last ${rangeLabel} to describe a distribution yet.</div>`}
+    </div>`}
+  </div>`;
+}
+
+function ZonesView({ z, unit, goalMP, cur, goal, setTab, logs }) {
   const rows = ZONE_ORDER.map(k => {
     const meta = ZMETA[k];
     const pace = k === 'hill' ? 'Effort' : paceForZone(z, k, unit);
@@ -586,6 +804,9 @@ function ZonesView({ z, unit, goalMP, cur, goal, setTab }) {
     </div>`;
   });
   return html`<div>
+    <div class="section-t">Training Pyramid</div>
+    <p class="dim" style="margin:0 2px 12px;font-size:13.5px">Your recent sessions stacked easiest to hardest — one brick per run. A broad base of easy running with less toward the top is the classic pyramid shape.</p>
+    <${RunningPyramid} logs=${logs} unit=${unit} setTab=${setTab}/>
     <div class="section-t">Your Pace Zones</div>
     <p class="dim" style="margin:0 2px 14px;font-size:13.5px">Calculated live from your current fitness. Update it in Settings and every pace here recalculates.</p>
     ${rows}
@@ -885,7 +1106,7 @@ function App() {
     </div>
     ${tab === 'today' && html`<${TodayView} view=${view} setView=${setView} settings=${settings} z=${z} goalMP=${goalMP} unit=${unit} videos=${videos} setVideos=${setVideos} onLog=${onLog}/>`}
     ${tab === 'plan' && html`<${PlanView} setView=${setView} setTab=${setTab}/>`}
-    ${tab === 'zones' && html`<${ZonesView} z=${z} unit=${unit} goalMP=${goalMP} cur=${cur} goal=${goal} setTab=${setTab}/>`}
+    ${tab === 'zones' && html`<${ZonesView} z=${z} unit=${unit} goalMP=${goalMP} cur=${cur} goal=${goal} setTab=${setTab} logs=${logs}/>`}
     ${tab === 'log' && html`<${LogView} logs=${logs} setLogs=${setLogs} unit=${unit} prefill=${prefill} clearPrefill=${() => setPrefill(null)} toast=${toast}/>`}
     ${tab === 'settings' && html`<${SettingsView} settings=${settings} setSettings=${setSettings} z=${z} goalMP=${goalMP} exportData=${exportData} importData=${importData} resetAll=${resetAll} toast=${toast} strava=${strava} stravaBusy=${stravaBusy} onConnect=${connectStrava} onSync=${() => doSync()} onDisconnect=${disconnectStrava}/>`}
 
