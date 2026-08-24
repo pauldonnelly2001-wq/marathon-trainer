@@ -327,12 +327,12 @@ function todayIndex() {
 }
 function phaseOf(w) { return w <= 4 ? 'Base' : w <= 10 ? 'Build' : w <= 12 ? 'Peak' : w <= 15 ? 'Taper' : 'Race Week'; }
 
-const VOL = { 1: 60, 2: 63, 3: 66, 4: 70, 5: 74, 6: 77, 7: 80, 8: 64, 9: 79, 10: 82, 11: 85, 12: 82, 13: 64, 14: 52, 15: 40, 16: null };
+const VOL = { 1: 60, 2: 63, 3: 66, 4: 70, 5: 72, 6: 75, 7: 77, 8: 64, 9: 76, 10: 79, 11: 80, 12: 77, 13: 64, 14: 52, 15: 40, 16: null };
 /* Per-day prescribed distances (km). Quality intervals + Saturday marathon-pace block stay fixed;
-   easy / recovery / long-run / warm-up volume is scaled to the athlete (base 60→70, peak 85, long run → 32). */
-const REC_KM = { 1: 5, 2: 5, 3: 5, 4: 6, 5: 6, 6: 6, 7: 6, 8: 5, 9: 6, 10: 6, 11: 5, 12: 6, 13: 6, 14: 5, 15: 4, 16: 5.5 };      // Mon recovery
+   easy / recovery / long-run / warm-up volume is scaled to the athlete (base 60→70, peak 80, long run → 32). */
+const REC_KM = { 1: 5, 2: 5, 3: 5, 4: 6, 5: 6, 6: 6, 7: 6, 8: 5, 9: 5, 10: 5, 11: 5, 12: 5, 13: 6, 14: 5, 15: 4, 16: 5.5 };      // Mon recovery
 const TUE_KM = { 1: 10, 2: 10, 3: 10, 4: 10, 5: 11, 6: 11, 7: 11, 8: 11, 9: 11, 10: 10.5, 11: 10.5, 12: 10, 13: 8, 14: 7, 15: 6, 16: 7 }; // Tue threshold (intervals unchanged, warm-up trimmed)
-const AER_KM = { 1: 11, 2: 11, 3: 11, 4: 14, 5: 12, 6: 12, 7: 11, 8: 10, 9: 8, 10: 8, 11: 10.5, 12: 10, 13: 10, 14: 9, 15: 8, 16: 8 };   // Wed aerobic
+const AER_KM = { 1: 11, 2: 11, 3: 11, 4: 14, 5: 10, 6: 10, 7: 8, 8: 10, 9: 6, 10: 6, 11: 5.5, 12: 6, 13: 10, 14: 9, 15: 8, 16: 8 };   // Wed aerobic
 const THU_KM = { 1: 11, 2: 11, 3: 11, 4: 11, 5: 11, 6: 11, 7: 11, 8: 11, 9: 11, 10: 10.5, 11: 10, 12: 9, 13: 7, 14: 6, 15: 5, 16: 5 };   // Thu hills/VO₂ (intervals unchanged, warm-up trimmed)
 const THR = { 1: 'Tempo 20 min continuous @ LT2', 2: '4 × 6 min @ LT2 · 90 s jog', 3: '5 × 6 min @ LT2 · 90 s jog', 4: '2 × 12 min @ LT2 · 2 min jog', 5: '5 × 8 min @ LT2 · 2 min jog', 6: '3 × 12 min @ LT2 · 2 min jog', 7: '4 × 2 km @ LT2 · 2 min jog', 8: '5 × 6 min @ LT2 · 90 s jog', 9: '2 × 20 min @ LT2 · 3 min jog', 10: '6 × 1 mile @ LT2 · 2 min jog', 11: '3 × 2 km @ LT2 · 2:30 jog', 12: '2 × 3 km @ LT2 · 3 min jog', 13: '4 × 6 min @ LT2 · 90 s jog', 14: '3 × 6 min @ LT2 · 90 s jog', 15: '2 × 6 min @ LT2 sharpener', 16: '3 × 3 min @ LT2 + strides' };
 const HIL = { 1: '8 × 60 s hills · jog-down', 2: '10 × 60 s hills · jog-down', 3: '10 × 75 s hills · jog-down', 4: '8 × 90 s hills · jog-down', 5: '6 × 1000 m @ VO₂ · 2:30 jog', 6: '5 × 1200 m @ VO₂ · 3 min jog', 7: '8 × 600 m @ VO₂ · 90 s jog', 8: '8 × 60 s hills · jog-down', 9: '5 × 1200 m @ VO₂ · 3 min jog', 10: '6 × 1000 m @ VO₂ · 2:30 jog', 11: '5 × 1000 m @ VO₂ · 2:30 jog', 12: '4 × 1000 m @ VO₂ · 2:30 jog', 13: '6 × 400 m @ rep · full rec', 14: '5 × 300 m @ rep · full rec', 15: '4 × 200 m @ rep + strides', 16: '15 min easy + 4 strides' };
@@ -545,7 +545,7 @@ function PlanView({ setView, setTab }) {
   for (let w = 1; w <= 16; w++) weeks.push(w);
   return html`<div>
     <div class="section-t">The 16-Week Block</div>
-    <p class="dim" style="margin:0 2px 14px;font-size:13.5px">Mon 17 Aug → Sun 6 Dec 2026 · Valencia. Weekly volume flexes the easy / recovery / long-run running; the marathon-pace and interval sessions stay fixed. Base builds 60 → 70 km (~5%/wk), peaks at 85 km (wk 11) with the long run reaching 32 km (wk 12). If the low-80s weeks feel fresh you can nudge the wk 9–11 long runs up ~3–4 km toward a ~90 km peak — otherwise hold, and let the wk-8 cutback and the taper absorb the load.</p>
+    <p class="dim" style="margin:0 2px 14px;font-size:13.5px">Mon 17 Aug → Sun 6 Dec 2026 · Valencia. Weekly volume flexes the easy / recovery / long-run running; the marathon-pace and interval sessions stay fixed. Base builds 60 → 70 km (~5%/wk), peaks at 80 km (wk 11) with the long run reaching 32 km (wk 12). If the high-70s weeks feel fresh you can nudge the wk 9–11 long runs up ~2–3 km toward an ~85 km peak — otherwise hold, and let the wk-8 cutback and the taper absorb the load.</p>
     ${weeks.map(w => {
       const isOpen = open === w;
       return html`<div class=${'wk' + (w === cur ? ' cur' : '')}>
