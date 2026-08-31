@@ -179,6 +179,87 @@ textarea{min-height:64px;resize:vertical}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom));z-index:50;
   background:var(--green);color:#fff;padding:11px 18px;border-radius:999px;font-weight:650;font-size:14px;box-shadow:var(--shadow)}
 .chip{display:inline-block;font-size:11px;font-weight:600;color:var(--muted);background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:4px 10px;margin:0 6px 6px 0}
+/* ---- daily check-in ---- */
+.ci-scrim{position:fixed;inset:0;z-index:60;background:rgba(28,22,8,.42);display:flex;align-items:flex-end;justify-content:center;
+  backdrop-filter:saturate(120%) blur(2px)}
+.ci-sheet{width:100%;max-width:480px;background:var(--bg);border-radius:22px 22px 0 0;border-top:1px solid var(--line);
+  max-height:92vh;display:flex;flex-direction:column;box-shadow:0 -8px 40px rgba(30,24,8,.22)}
+.ci-grip{width:38px;height:4px;border-radius:99px;background:var(--line);margin:9px auto 2px;flex:none}
+.ci-body{padding:8px 18px calc(22px + env(safe-area-inset-bottom));overflow-y:auto}
+.ci-stack{display:flex;flex-direction:column;gap:8px}
+.ci-opt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;width:100%;
+  background:var(--card);border:1px solid var(--line);border-radius:13px;padding:13px 15px;color:var(--ink)}
+.ci-opt b{font-size:15.5px;font-weight:650}
+.ci-opt span{font-size:12.5px;color:var(--muted)}
+.ci-opt.on{border-color:var(--gold);background:var(--goldsoft)}
+.ci-row{display:flex;gap:8px}
+.ci-half,.ci-third{flex:1;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:11px 8px;
+  color:var(--ink);font-weight:600;font-size:13.5px}
+.ci-half.on,.ci-third.on{border-color:var(--gold);background:var(--goldsoft);color:var(--gold)}
+.ci-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ci-chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:13px;color:var(--ink);font-weight:600}
+.ci-chip.on{border-color:var(--gold);background:var(--goldsoft);color:var(--gold)}
+.ci-scale{display:flex;gap:4px}
+.ci-num{flex:1;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 0;font-size:13px;font-weight:650;color:var(--ink)}
+.ci-num.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.ci-num.hi.on{background:#a9432f;border-color:#a9432f;color:#fff}
+.ci-flag{display:flex;align-items:center;gap:10px;width:100%;text-align:left;margin-top:14px;
+  background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:12px 13px;color:var(--ink)}
+.ci-flag b{flex:none;width:20px;height:20px;border-radius:6px;border:1px solid var(--line);display:grid;place-items:center;font-size:12px;background:var(--bg)}
+.ci-flag span{font-size:13px;line-height:1.35}
+.ci-flag.on{border-color:#a9432f;border-style:solid;background:rgba(169,67,47,.07)}
+.ci-flag.on b{background:#a9432f;color:#fff;border-color:#a9432f}
+/* verdict */
+.ci-verdict{border-radius:15px;padding:15px 16px;margin:10px 0 14px;border:1px solid var(--line);background:var(--card)}
+.ci-verdict.green{border-left:4px solid var(--green);background:var(--greensoft)}
+.ci-verdict.amber{border-left:4px solid var(--gold2);background:var(--goldsoft)}
+.ci-verdict.red{border-left:4px solid #a9432f;background:rgba(169,67,47,.08)}
+.ci-verdict .vh{font-size:19px;font-weight:650;font-family:"Iowan Old Style",Palatino,Georgia,serif}
+.ci-verdict .vc{margin:6px 0 0;font-size:15px;font-weight:600}
+.ci-verdict .vw{margin:8px 0 0;font-size:13.5px;line-height:1.45;color:var(--muted)}
+.ci-verdict .vr{display:inline-block;margin-top:9px;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 9px}
+/* fuel */
+.ci-fuel{border:1px solid var(--line);background:var(--card);border-radius:15px;padding:15px 16px}
+.ci-fuel .fh{font-size:17px;font-weight:650;margin-top:3px}
+.ci-fuel .fw{margin:5px 0 10px;font-size:13.5px;color:var(--muted);line-height:1.45}
+.ci-target{display:flex;align-items:baseline;gap:9px;padding:11px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:8px}
+.ci-target b{font-size:24px;color:var(--gold);font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600}
+.ci-target span{font-size:12px;color:var(--muted);line-height:1.3}
+.ci-lines{display:flex;flex-direction:column}
+.ci-lines>div{display:flex;gap:11px;padding:9px 0;border-top:1px solid var(--line)}
+.ci-lines>div:first-child{border-top:0}
+.ci-lines i{flex:none;width:66px;font-style:normal;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--muted);font-weight:650;padding-top:3px}
+.ci-lines span{flex:1;font-size:13.5px;line-height:1.45}
+.ci-kg{display:flex;align-items:center;gap:10px;background:var(--bg2);border-radius:11px;padding:10px 12px;margin-bottom:10px}
+.ci-kg span{flex:1;font-size:13px;color:var(--muted)}
+.ci-kg input{width:78px;margin:0;text-align:center}
+.ci-portions{display:flex;flex-direction:column;gap:5px}
+.ci-portions div{font-size:14px;padding-left:14px;position:relative}
+.ci-portions div:before{content:"·";position:absolute;left:2px;color:var(--gold);font-weight:700}
+.ci-next{display:flex;gap:11px;background:var(--bg2);border-radius:11px;padding:11px 12px;margin-top:10px}
+.ci-next i{flex:none;width:66px;font-style:normal;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:650;padding-top:2px}
+.ci-next span{flex:1;font-size:13px;line-height:1.45}
+/* applied-adjustment banner */
+.adjbar{border-radius:15px;padding:14px 15px;margin-bottom:12px;border:1px solid var(--line);background:var(--card)}
+.adjbar.green{border-left:4px solid var(--green);background:var(--greensoft)}
+.adjbar.amber{border-left:4px solid var(--gold2);background:var(--goldsoft)}
+.adjbar.red{border-left:4px solid #a9432f;background:rgba(169,67,47,.08)}
+.adjbar .ah{font-size:12px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;color:var(--muted)}
+.adjbar .ac{margin:5px 0 0;font-size:15px;font-weight:600;line-height:1.4}
+.adjbar .aw{margin:8px 0 0;font-size:13px;color:var(--muted);line-height:1.45}
+.refs{display:flex;flex-direction:column;gap:11px}
+.refs div{display:flex;flex-direction:column;gap:2px}
+.refs b{font-size:13.5px;font-weight:650}
+.refs span{font-size:13px;color:var(--muted);line-height:1.45}
+.checkin-btn{margin-bottom:12px}
+.ci-day{display:flex;flex-direction:column}
+.ci-day>div{display:flex;align-items:baseline;gap:9px;padding:9px 0;border-top:1px solid var(--line)}
+.ci-day>div:first-child{border-top:0}
+.ci-day i{flex:none;width:82px;font-style:normal;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:650}
+.ci-day span{flex:1;font-size:13.5px;line-height:1.4}
+.ci-day b{flex:none;font-size:12.5px;color:var(--gold);font-weight:650}
 </style>
 </head>
 <body>
@@ -364,6 +445,7 @@ function todayIndex() {
   const t = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
   return Math.round((t - ymd(PLAN_START)) / 86400000);
 }
+function dateStrOfIndex(i) { const d = dateOfIndex(i); return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`; }
 function phaseOf(w) { return w <= 4 ? 'Base' : w <= 10 ? 'Build' : w <= 12 ? 'Peak' : w <= 15 ? 'Taper' : 'Race Week'; }
 
 const VOL = { 1: 60, 2: 63, 3: 66, 4: 70, 5: 72, 6: 75, 7: 77, 8: 64, 9: 76, 10: 79, 11: 80, 12: 77, 13: 64, 14: 52, 15: 40, 16: null };
@@ -626,14 +708,402 @@ function PaceCards({ session, z, unit, goalMP }) {
   </div>`);
 }
 
-function TodayView({ view, setView, settings, z, goalMP, unit, videos, setVideos, onLog }) {
+/* ============================================================
+   DAILY CHECK-IN — fuelling + body check
+   Evidence base is listed in REFS below; every threshold used in
+   this file traces to one of them. Nothing here is invented.
+   ============================================================ */
+
+const REFS = [
+  ['Thomas, Erdman & Burke (2016)', 'ACSM / AND / DC joint position stand — daily carbohydrate 3–5 g/kg (light), 5–7 (moderate), 6–10 (endurance), 8–12 (extreme); protein 1.2–2.0 g/kg.'],
+  ['Burke et al. (2011), J Sports Sci', 'Carbohydrate periodisation — intake is matched to the demand of the session, not held high every day.'],
+  ['Impey et al. (2018), Sports Med', '"Fuel for the work required" — deliberately low-carb easy sessions can enhance adaptation; quality sessions should be fuelled.'],
+  ['Jeukendrup (2014), Sports Med', 'In-run carbohydrate: no benefit under ~60 min; 30–60 g/h for 1–2 h; up to 90 g/h beyond 2.5 h using glucose:fructose blends.'],
+  ['Bussau et al. (2002), Eur J Appl Physiol', 'One day at ~10 g/kg fully loads muscle glycogen in trained runners — the old depletion phase is unnecessary.'],
+  ['Silbernagel et al. (2007), Am J Sports Med', 'Pain-monitoring model — pain up to 5/10 during activity is acceptable provided it settles by the next morning and does not worsen week to week.'],
+  ['Saw, Main & Gastin (2016), Br J Sports Med', 'Self-reported wellness responds to training load more sensitively than objective measures like HRV.'],
+  ['Warden et al. (2014) / Bone stress consensus', 'Focal bony tenderness, night pain or pain on hopping warrants imaging before further loading.']
+];
+
+/* ---------- duration estimate (conservative: easy pace for mixed sessions) ---------- */
+const EST_ZONE = { recovery: 'recovery', aerobic: 'easy', long: 'long', marathon: 'easy', threshold: 'easy', hills: 'easy' };
+const EST_FALLBACK = { recovery: 360, aerobic: 342, long: 342, marathon: 330, threshold: 330, hills: 336 };
+function estMin(s, z) {
+  if (!s || !s.km) return 0;
+  const zk = EST_ZONE[s.type], r = zk && z && z[zk];
+  const spk = (r && r.length === 2) ? (r[0] + r[1]) / 2 : (EST_FALLBACK[s.type] || 342);
+  return Math.round(s.km * spk / 60);
+}
+
+/* ---------- daily carbohydrate target ---------- */
+function choTier(s, m, daysToRace) {
+  if (s.race) return { key: 'race', g: [1, 2], perMeal: true, head: 'Race morning', why: 'The loading was done over the previous 36–48 h. This morning is a top-up, not a rescue — familiar food only, nothing new.' };
+  if (daysToRace != null && daysToRace <= 2 && daysToRace >= 0) return { key: 'load', g: [10, 12], head: 'Carbohydrate load', why: 'The guideline range is 10–12 g/kg for 36–48 h before an event over 90 min, and one day at 10 g/kg is enough to fill the tank — the old depletion phase is unnecessary. This will feel like more food than seems sensible. Gut tolerance, not appetite, is usually the limiting factor, so lean on low-fibre and liquid carbohydrate.' };
+  if (s.type === 'rest') return { key: 'rest', g: [3, 5], head: 'Nothing special needed', why: 'No session to fuel and none tomorrow that depends on today. Eating high-carb today buys you nothing.' };
+  if (s.type === 'recovery') return { key: 'low', g: [3, 5], head: 'Nothing special needed', why: 'A short recovery run costs very little glycogen. Normal eating covers it.' };
+  if (s.type === 'aerobic') return m >= 75
+    ? { key: 'mod', g: [5, 7], head: 'Moderate', why: 'Over 75 min of aerobic running draws meaningfully on glycogen. Normal eating at the top of this range covers it.' }
+    : { key: 'mod', g: [5, 7], head: 'Nothing special needed', why: 'Under 75 min easy. Eat as you normally would — there is nothing to prepare for and nothing to recover from.' };
+  if (s.type === 'threshold' || s.type === 'hills') return { key: 'quality', g: [6, 8], head: 'Fuel it properly', why: 'Quality work is glycogen-dependent and pace suffers if you under-fuel it. This is the wrong session to train low.' };
+  if (s.type === 'marathon') return { key: 'quality', g: [6, 8], head: 'Fuel it properly', why: 'The marathon-pace block is a race rehearsal — fuel it the way you intend to fuel Valencia.' };
+  if (s.type === 'long') return m >= 120
+    ? { key: 'high', g: [7, 9], head: 'High', why: 'Two hours plus — the biggest glycogen cost of your week, and the run whose quality most depends on the day before it.' }
+    : { key: 'quality', g: [6, 8], head: 'Fuel it properly', why: 'Long run under two hours. Solid demand, but not the extreme end.' };
+  return { key: 'mod', g: [5, 7], head: 'Moderate', why: '' };
+}
+
+/* ---------- during-session carbohydrate ---------- */
+function inRunPlan(s, m) {
+  if (!s.km) return { line: null };
+  if (s.race) return { line: '60–90 g/h, starting by 30 min', note: 'Glucose:fructose blend. Do not try anything you have not used in training.' };
+  if (m < 60) return { line: 'None', note: 'Under an hour. Carbohydrate during the run has no measurable benefit at this duration — water only.' };
+  if (m < 90) {
+    if (s.type === 'long' || s.type === 'marathon') return { line: '30–60 g/h', note: 'Start at 30 min. Treat it as practice for race day.' };
+    return { line: 'Optional', note: 'Only worth it if you are going in fasted or the session feels heavy. Otherwise water.' };
+  }
+  return { line: '60–90 g/h, starting by 30 min', note: 'Above 2 h you need glucose:fructose to absorb this much. This is gut training as much as fuelling — use race products.' };
+}
+
+/* ---------- pre and post ---------- */
+function prePost(s, m) {
+  const out = {};
+  if (s.type === 'rest') { out.pre = null; out.post = null; return out; }
+  if (m >= 75 || s.type === 'threshold' || s.type === 'hills' || s.type === 'marathon' || s.race) {
+    out.pre = '1–4 g/kg in the 1–4 h before. Low fibre, low fat, familiar.';
+  } else {
+    out.pre = 'Nothing required. Fasted is fine at this duration if you prefer.';
+  }
+  out.post = (m >= 60 || s.type === 'threshold' || s.type === 'hills')
+    ? '20–40 g protein within a couple of hours, with carbohydrate alongside it.'
+    : 'Normal next meal is enough.';
+  return out;
+}
+
+/* ---------- portion translation ---------- */
+const SLOTS = [
+  ['Breakfast', .27, [['60 g porridge oats', 40], ['2 slices toast + jam', 45], ['Bagel', 50], ['Large banana', 27], ['250 ml orange juice', 22]]],
+  ['Lunch', .25, [['Large jacket potato', 50], ['Bagel', 50], ['2 slices bread', 30], ['Large banana', 27], ['Pot of rice pudding', 30]]],
+  ['Dinner', .30, [['100 g dry pasta or rice', 75], ['Large jacket potato', 50], ['Bread roll', 25], ['Naan or pitta', 45]]],
+  ['Around the run', .18, [['Slice of malt loaf', 30], ['500 ml sports drink', 30], ['Flapjack', 35], ['Energy gel', 22], ['Large banana', 27]]]
+];
+/* Fill each slot to its share of the daily target, allowing at most two of any one item
+   so the result reads like a day someone would actually eat. */
+function sampleDay(grams) {
+  if (!grams || grams <= 0) return [];
+  return SLOTS.map(([slot, share, foods]) => {
+    let target = grams * share, got = 0; const picked = [];
+    for (const [name, g] of foods) {
+      if (got >= target - 8) break;
+      let n = 0;
+      while (n < 2 && got + g <= target + 10) { got += g; n++; }
+      if (n) picked.push((n > 1 ? n + ' × ' : '') + name);
+    }
+    return { slot, items: picked.length ? picked.join(', ') : '—', g: Math.round(got) };
+  }).filter(x => x.items !== '—');
+}
+
+/* ---------- next key session lookahead ---------- */
+const KEY_TYPES = ['long', 'marathon', 'threshold', 'hills'];
+function nextKeySession(fromIdx) {
+  for (let i = fromIdx + 1; i <= Math.min(111, fromIdx + 4); i++) {
+    const w = Math.floor(i / 7) + 1, dow = ((i % 7) + 7) % 7;
+    const s = buildDay(w, dow);
+    if (s.race || KEY_TYPES.indexOf(s.type) >= 0) return { s, idx: i, days: i - fromIdx };
+  }
+  return null;
+}
+
+/* ---------- body check: Silbernagel pain-monitoring model ---------- */
+function assessBody(inp, s) {
+  const f = inp.fresh, n = inp.niggle;
+  if (n && n.on) {
+    if (n.redflag) return {
+      level: 'stop', tone: 'red', head: 'Do not run on this',
+      change: 'No running today. This needs assessing before it is loaded again.',
+      why: 'Focal bone tenderness, night pain or pain on hopping is the presentation of a bone stress injury, and running through it is how a stress reaction becomes a fracture.',
+      ref: 'Bone stress injury consensus'
+    };
+    const bad = n.pain >= 6 || n.behave === 'worse' || n.morning === 'no' || n.trend === 'worse';
+    if (bad) {
+      const reasons = [];
+      if (n.pain >= 6) reasons.push('pain above 5/10');
+      if (n.behave === 'worse') reasons.push('it worsens as you run');
+      if (n.morning === 'no') reasons.push('it had not settled by this morning');
+      if (n.trend === 'worse') reasons.push('it is worse than last week');
+      return {
+        level: 'down', tone: 'red', head: 'Downgrade today',
+        change: DOWNGRADE[s.type] || 'Easy 30 min or cross-train.',
+        why: 'The pain-monitoring model allows loading up to 5/10 only while it settles overnight and does not worsen week to week. You have breached that on: ' + reasons.join(', ') + '. Reassess in 24–48 h; two consecutive breaches means it needs looking at properly.',
+        ref: 'Silbernagel 2007'
+      };
+    }
+    if (n.pain >= 3) return {
+      level: 'modify', tone: 'amber', head: 'Run it, but change the load',
+      change: MODIFY[s.type] || 'Keep the session, drop about 20% of the volume.',
+      why: 'Pain of 3–5/10 that eases with a warm-up and settles overnight is within acceptable limits — it does not require rest, but it does mean removing the part of the session that provokes it. Check it again tomorrow morning.',
+      ref: 'Silbernagel 2007'
+    };
+    return {
+      level: 'go', tone: 'green', head: 'Run as written',
+      change: 'No change. Session stands.',
+      why: 'Pain under 3/10 that warms up and settles overnight is background noise, not injury. Log it so the week-to-week trend is visible.',
+      ref: 'Silbernagel 2007'
+    };
+  }
+  if (f === 'wrecked') return {
+    level: 'down', tone: 'red', head: 'Downgrade today',
+    change: DOWNGRADE[s.type] || 'Easy 30 min or rest.',
+    why: 'Self-reported wellness tracks accumulated load more sensitively than HRV. One genuinely wrecked day is a signal worth acting on, and a quality session run in this state gives you the cost without the adaptation.',
+    ref: 'Saw 2016'
+  };
+  if (f === 'flat') {
+    const q = ['threshold', 'hills', 'marathon'].indexOf(s.type) >= 0;
+    return {
+      level: q ? 'modify' : 'go', tone: q ? 'amber' : 'green',
+      head: q ? 'Judge it off the first rep' : 'Run as written',
+      change: q ? 'Start the session as written. If the first rep is more than about 5 s/km off target at the right effort, convert the rest to easy aerobic and move the session to Saturday.' : 'No change. Easy days are meant to feel unremarkable.',
+      why: q ? 'A single flat day is a poor reason to cancel quality work — flatness often clears in the warm-up. Two flat days in a row before a quality session is a different matter and should be treated as accumulated fatigue.' : 'Flat on an easy day is expected and is not a reason to change anything.',
+      ref: 'Saw 2016'
+    };
+  }
+  if (f === 'fresh') return {
+    level: 'go', tone: 'green', head: 'Run as written',
+    change: 'No change. Fresh means you may sit at the faster end of the prescribed range — it does not mean adding distance or reps.',
+    why: 'There is good evidence for reducing load when the signals are poor, and none for adding load when they are good. Unplanned upgrades on good days are the commonest way a build ends early.',
+    ref: 'Saw 2016'
+  };
+  return { level: 'go', tone: 'green', head: 'Run as written', change: 'No change. Session stands.', why: 'Nothing flagged.', ref: '' };
+}
+
+const MODIFY = {
+  threshold: 'Keep the reps, but run them on flat ground and drop the final rep. Full easy warm-up.',
+  hills: 'Swap the hills for the same duration at threshold effort on the flat — removes the eccentric and impact load without losing the stimulus.',
+  marathon: 'Keep the marathon-pace block, cut the easy volume either side of it by about a third.',
+  long: 'Cap it at three-quarters of the distance and run it as loops so you can stop early without a long walk home.',
+  aerobic: 'Keep it easy, cut about 20% of the distance.',
+  recovery: 'Cut to 20–25 min, or walk it.',
+  rest: 'It is a rest day. Nothing to change.'
+};
+const DOWNGRADE = {
+  threshold: 'Replace with 30–40 min easy at recovery pace, or bike/pool instead.',
+  hills: 'Replace with 30–40 min easy on the flat, or bike/pool instead.',
+  marathon: 'Replace with 30–40 min easy. Keep the marathon-pace work for when you can do it properly.',
+  long: 'Halve the distance and run it easy, or cross-train for the same duration.',
+  aerobic: 'Easy 20–30 min, or take it off.',
+  recovery: 'Take it off, or walk.',
+  rest: 'It is already a rest day.'
+};
+
+/* If the body check has changed the session, the day's fuel demand changes with it.
+   Returns the session the fuel target should actually be built from. */
+function effectiveSession(s, level) {
+  if (!level || level === 'go' || level === 'modify') return s;
+  if (level === 'stop') return { ...s, type: 'rest', km: 0, title: s.title, volume: '—', adjusted: 'not running' };
+  const km = Math.round((s.km || 0) * (s.type === 'long' ? 0.5 : 0.6) * 10) / 10;
+  return { ...s, type: km ? 'aerobic' : 'rest', km, zone: 'easy', adjusted: 'downgraded' };
+}
+
+/* ---------- fuel bundle for a day ---------- */
+function fuelFor(s0, z, kg, idx, level) {
+  const s = effectiveSession(s0, level);
+  const m = estMin(s, z);
+  const raceIdx = 111;
+  const dtr = (idx != null && idx <= raceIdx) ? raceIdx - idx : null;
+  const tier = choTier(s, m, dtr != null && dtr <= 2 && dtr > 0 ? dtr : null);
+  const g = kg ? [Math.round(tier.g[0] * kg / 5) * 5, Math.round(tier.g[1] * kg / 5) * 5] : null;
+  return { m, tier, g, adjusted: s.adjusted || null, perMeal: !!tier.perMeal, inrun: inRunPlan(s, m), pp: prePost(s, m), day: (g && !tier.perMeal && tier.head !== 'Nothing special needed') ? sampleDay((g[0] + g[1]) / 2) : [] };
+}
+
+/* ---------- check-in sheet ---------- */
+function CheckInSheet({ s, z, kg, idx, onSave, onSkip, setKg }) {
+  const [step, setStep] = useState(1);
+  const [fresh, setFresh] = useState(null);
+  const [on, setOn] = useState(null);
+  const [site, setSite] = useState('');
+  const [pain, setPain] = useState(null);
+  const [behave, setBehave] = useState(null);
+  const [morning, setMorning] = useState(null);
+  const [trend, setTrend] = useState(null);
+  const [redflag, setRedflag] = useState(false);
+  const niggle = on ? { on: true, site, pain: pain == null ? 0 : pain, behave, morning, trend, redflag } : { on: false };
+  const ready = on === false || (on === true && pain != null && behave && morning && trend);
+  const verdict = ready ? assessBody({ fresh, niggle }, s) : null;
+  const fuel = fuelFor(s, z, kg, idx, verdict && verdict.level);
+  const nxt = nextKeySession(idx);
+  return html`<div class="ci-scrim">
+    <div class="ci-sheet">
+      <div class="ci-grip"></div>
+      <div class="ci-body">
+        ${step === 1 && html`<div>
+          <div class="lbl">Check in · ${s.day}</div>
+          <h2 class="title serif" style="font-size:24px;margin:4px 0 4px">How do the legs feel?</h2>
+          <p class="dim" style="margin:0 0 14px;font-size:14px">Before you think about the session.</p>
+          <div class="ci-stack">
+            ${[['fresh', 'Fresh', 'Bouncy, keen to run'], ['normal', 'Normal', 'Nothing notable either way'], ['flat', 'Flat', 'Heavy legs, low drive'], ['wrecked', 'Wrecked', 'Genuinely depleted']].map(([k, t, d]) =>
+    html`<button class=${'ci-opt' + (fresh === k ? ' on' : '')} onClick=${() => { setFresh(k); setStep(2); }}>
+                <b>${t}</b><span>${d}</span></button>`)}
+          </div>
+          <button class="btn ghost sm" style="margin-top:12px" onClick=${onSkip}>Skip today</button>
+        </div>`}
+
+        ${step === 2 && html`<div>
+          <div class="lbl">Check in · step 2</div>
+          <h2 class="title serif" style="font-size:24px;margin:4px 0 12px">Any niggle?</h2>
+          <div class="ci-row">
+            <button class=${'ci-half' + (on === false ? ' on' : '')} onClick=${() => { setOn(false); setStep(3); }}>Nothing</button>
+            <button class=${'ci-half' + (on === true ? ' on' : '')} onClick=${() => setOn(true)}>Something</button>
+          </div>
+          ${on === true && html`<div style="margin-top:16px">
+            <div class="lbl" style="margin-bottom:6px">Where</div>
+            <div class="ci-chips">
+              ${['Achilles', 'Calf', 'Knee', 'Shin', 'Hamstring', 'Hip', 'Foot', 'Other'].map(x =>
+      html`<button class=${'ci-chip' + (site === x ? ' on' : '')} onClick=${() => setSite(x)}>${x}</button>`)}
+            </div>
+            <div class="lbl" style="margin:14px 0 6px">Worst pain during activity · 0–10</div>
+            <div class="ci-scale">
+              ${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(v =>
+        html`<button class=${'ci-num' + (pain === v ? ' on' : '') + (v > 5 ? ' hi' : '')} onClick=${() => setPain(v)}>${v}</button>`)}
+            </div>
+            <div class="lbl" style="margin:14px 0 6px">Through a run it…</div>
+            <div class="ci-row">
+              ${[['eases', 'Eases off'], ['same', 'Stays same'], ['worse', 'Gets worse']].map(([k, t]) =>
+          html`<button class=${'ci-third' + (behave === k ? ' on' : '')} onClick=${() => setBehave(k)}>${t}</button>`)}
+            </div>
+            <div class="lbl" style="margin:14px 0 6px">Settled by this morning?</div>
+            <div class="ci-row">
+              ${[['yes', 'Yes'], ['no', 'No']].map(([k, t]) =>
+            html`<button class=${'ci-half' + (morning === k ? ' on' : '')} onClick=${() => setMorning(k)}>${t}</button>`)}
+            </div>
+            <div class="lbl" style="margin:14px 0 6px">Versus last week</div>
+            <div class="ci-row">
+              ${[['better', 'Better'], ['same', 'Same'], ['worse', 'Worse']].map(([k, t]) =>
+              html`<button class=${'ci-third' + (trend === k ? ' on' : '')} onClick=${() => setTrend(k)}>${t}</button>`)}
+            </div>
+            <button class=${'ci-flag' + (redflag ? ' on' : '')} onClick=${() => setRedflag(!redflag)}>
+              <b>${redflag ? '✓' : ''}</b>
+              <span>Pinpoint tenderness on bone, night pain, or pain hopping on it</span>
+            </button>
+            <button class="btn" style="margin-top:14px" disabled=${!ready} onClick=${() => setStep(3)}>See the verdict</button>
+          </div>`}
+        </div>`}
+
+        ${step === 3 && verdict && html`<div>
+          <div class="lbl">Check in · verdict</div>
+          <div class=${'ci-verdict ' + verdict.tone}>
+            <div class="vh">${verdict.head}</div>
+            <p class="vc">${verdict.change}</p>
+            <p class="vw">${verdict.why}</p>
+            ${verdict.ref && html`<span class="vr">${verdict.ref}</span>`}
+          </div>
+
+          <div class="ci-fuel">
+            <div class="lbl" style="color:var(--gold)">Fuel · ${fuel.adjusted === 'not running' ? 'no run today' : fuel.adjusted === 'downgraded' ? 'reduced session' : s.title}</div>
+            <div class="fh">${fuel.tier.head}</div>
+            <p class="fw">${fuel.tier.why}</p>
+            ${!kg && html`<div class="ci-kg">
+              <span>Set your weight for gram targets</span>
+              <input type="number" inputmode="decimal" placeholder="kg" onChange=${e => setKg(Number(e.target.value) || null)}/>
+            </div>`}
+            ${kg && html`<div class="ci-target"><b>${fuel.g[0]}–${fuel.g[1]} g</b><span>${fuel.perMeal ? 'carbohydrate in the 3–4 h before the start' : 'carbohydrate across today'} · ${fuel.tier.g[0]}–${fuel.tier.g[1]} g/kg</span></div>`}
+            <div class="ci-lines">
+              ${fuel.inrun.line && html`<div><i>During</i><span>${fuel.inrun.line}${fuel.inrun.note ? ' — ' + fuel.inrun.note : ''}</span></div>`}
+              ${fuel.pp.pre && html`<div><i>Before</i><span>${fuel.pp.pre}</span></div>`}
+              ${fuel.pp.post && html`<div><i>After</i><span>${fuel.pp.post}</span></div>`}
+            </div>
+            ${nxt && html`<div class="ci-next">
+              <i>Next key session</i>
+              <span><b>${nxt.days === 1 ? 'Tomorrow' : 'In ' + nxt.days + ' days'}</b> · ${nxt.s.title}, ${nxt.s.volume}. ${nextAdvice(nxt, z, kg)}</span>
+            </div>`}
+          </div>
+
+          <div class="ci-row" style="margin-top:14px">
+            <button class="btn ghost" onClick=${onSkip}>Dismiss</button>
+            <button class="btn" onClick=${() => onSave({ fresh, niggle, verdict, accepted: true })}>Apply to today</button>
+          </div>
+          <button class="btn ghost sm" style="margin-top:8px" onClick=${() => onSave({ fresh, niggle, verdict, accepted: false })}>Log it, keep session as written</button>
+        </div>`}
+      </div>
+    </div>
+  </div>`;
+}
+
+function nextAdvice(nxt, z, kg) {
+  const m = estMin(nxt.s, z);
+  if (nxt.s.race) return 'Load 10–12 g/kg across the 36–48 h before, then a familiar high-carb breakfast 3 h out.';
+  if (nxt.days > 1) return 'Nothing to do today — carbohydrate loaded more than 24 h out is not retained usefully.';
+  if (m >= 120) return 'Tonight is the meal that matters: get a large carbohydrate dinner in' + (kg ? ' (~' + Math.round(2 * kg / 5) * 5 + '–' + Math.round(3 * kg / 5) * 5 + ' g in the evening)' : '') + ', then a familiar breakfast 2–3 h before.';
+  if (['threshold', 'hills', 'marathon'].indexOf(nxt.s.type) >= 0) return 'Eat normally today and get a proper carbohydrate meal in the 1–4 h before it. Do not go into it fasted.';
+  return 'No special preparation needed today.';
+}
+
+/* ---------- fuel card on the Today screen ---------- */
+function FuelCard({ s, z, kg, idx, setKg, open, setOpen, level }) {
+  const fuel = fuelFor(s, z, kg, idx, level);
+  const nxt = nextKeySession(idx);
+  return html`<div class="card">
+    <div class="row" style="margin-bottom:8px">
+      <div class="lbl" style="color:var(--gold)">Fuelling${fuel.adjusted ? ' · adjusted' : ''}</div>
+      <span class=${'badge' + (fuel.tier.key === 'quality' || fuel.tier.key === 'high' || fuel.tier.key === 'load' ? ' strong' : '')}>${fuel.tier.head}</span>
+    </div>
+    <p style="margin:0 0 10px">${fuel.tier.why}</p>
+    ${!kg && html`<div class="ci-kg">
+      <span>Set your weight for gram targets</span>
+      <input type="number" inputmode="decimal" placeholder="kg" onChange=${e => setKg(Number(e.target.value) || null)}/>
+    </div>`}
+    ${kg && html`<div class="ci-target"><b>${fuel.g[0]}–${fuel.g[1]} g</b><span>${fuel.perMeal ? 'carbohydrate in the 3–4 h before the start' : 'carbohydrate across today'} · ${fuel.tier.g[0]}–${fuel.tier.g[1]} g/kg</span></div>`}
+    <div class="ci-lines">
+      ${fuel.inrun.line && html`<div><i>During</i><span>${fuel.inrun.line}${fuel.inrun.note ? ' — ' + fuel.inrun.note : ''}</span></div>`}
+      ${fuel.pp.pre && html`<div><i>Before</i><span>${fuel.pp.pre}</span></div>`}
+      ${fuel.pp.post && html`<div><i>After</i><span>${fuel.pp.post}</span></div>`}
+      ${s.km ? html`<div><i>Est. time</i><span>~${fuel.m} min at prescribed effort</span></div>` : null}
+    </div>
+    ${kg && fuel.day.length > 0 && html`<${Accordion} title=${'What ' + Math.round((fuel.g[0] + fuel.g[1]) / 2) + ' g looks like'} open=${open} setOpen=${setOpen}>
+      <div class="ci-day">${fuel.day.map(d => html`<div><i>${d.slot}</i><span>${d.items}</span><b>${d.g} g</b></div>`)}</div>
+      <p class="dim" style="font-size:13px;margin:9px 0 0">One way to get there, not a prescription — swap like for like on carbohydrate content.</p>
+    <//>`}
+    ${nxt && html`<div class="ci-next" style="margin-top:12px">
+      <i>Next key session</i>
+      <span><b>${nxt.days === 1 ? 'Tomorrow' : 'In ' + nxt.days + ' days'}</b> · ${nxt.s.title}, ${nxt.s.volume}. ${nextAdvice(nxt, z, kg)}</span>
+    </div>`}
+  </div>`;
+}
+
+/* ---------- banner shown once an adjustment is applied ---------- */
+function AdjustBanner({ entry, onUndo, onRedo }) {
+  const v = entry.verdict;
+  return html`<div class=${'adjbar ' + v.tone}>
+    <div class="row" style="align-items:flex-start">
+      <div style="flex:1">
+        <div class="ah">${v.head}</div>
+        <p class="ac">${v.change}</p>
+      </div>
+    </div>
+    <p class="aw">${v.why}</p>
+    <div class="ci-row" style="margin-top:10px">
+      <button class="btn ghost sm" onClick=${onUndo}>Revert to plan</button>
+      <button class="btn ghost sm" onClick=${onRedo}>Check in again</button>
+    </div>
+  </div>`;
+}
+
+function EvidenceCard({ open, setOpen }) {
+  return html`<${Accordion} title="What this guidance is based on" open=${open} setOpen=${setOpen}>
+    <div class="refs">
+      ${REFS.map(([a, b]) => html`<div><b>${a}</b><span>${b}</span></div>`)}
+    </div>
+  <//>`;
+}
+
+function TodayView({ view, setView, settings, z, goalMP, unit, videos, setVideos, onLog, entry, onCheckIn, onUndo, kg, setKg }) {
   const [oea, setOea] = useState(false);
   const [vidIx, setVidIx] = useState(null);
+  const [fuelOpen, setFuelOpen] = useState(false);
+  const [refOpen, setRefOpen] = useState(false);
   const w = Math.floor(view / 7) + 1, dow = ((view % 7) + 7) % 7;
   const s = buildDay(w, dow);
   const dt = dateOfIndex(view);
   const isToday = view === todayIndex();
-  useEffect(() => { setOea(false); setVidIx(null); }, [view]);
+  useEffect(() => { setOea(false); setVidIx(null); setFuelOpen(false); setRefOpen(false); }, [view]);
   const custom = (videos[s.type] && videos[s.type].trim()) || '';
   const baseList = CURATED_VIDEOS[s.type] || [];
   const vids = custom ? [custom, ...baseList.filter(u => u !== custom)] : baseList.slice();
@@ -655,6 +1125,10 @@ function TodayView({ view, setView, settings, z, goalMP, unit, videos, setVideos
     </div>
     ${!isToday && html`<button class="btn ghost sm" style="margin:2px 0 12px" onClick=${() => setView(Math.min(111, Math.max(0, todayIndex())))}>← Jump to today</button>`}
 
+    ${isToday && entry && entry.accepted && html`<${AdjustBanner} entry=${entry} onUndo=${onUndo} onRedo=${onCheckIn}/>`}
+    ${isToday && !(entry && entry.accepted) && html`<button class="btn ghost checkin-btn" onClick=${onCheckIn}>
+      ${entry ? 'Check in again' : 'Daily check-in · fuel + body'}</button>`}
+
     <div class=${'card sess' + (s.type === 'rest' ? '' : '')}>
       <div class="row" style="margin-bottom:10px">
         <span class="lbl">Week ${w} · ${s.day}</span>
@@ -674,6 +1148,8 @@ function TodayView({ view, setView, settings, z, goalMP, unit, videos, setVideos
       <div class="lbl" style="color:var(--gold);margin-bottom:6px">Training Prescription</div>
       <p style="margin:0">${s.spec}</p>
     </div>
+
+    ${html`<${FuelCard} s=${s} z=${z} kg=${kg} idx=${view} setKg=${setKg} open=${fuelOpen} setOpen=${setFuelOpen} level=${isToday && entry && entry.accepted ? entry.verdict.level : null}/>`}
 
     <div class="card">
       <div class="lbl" style="color:var(--gold);margin-bottom:6px">Session Tip</div>
@@ -701,6 +1177,8 @@ function TodayView({ view, setView, settings, z, goalMP, unit, videos, setVideos
       <input style="margin-top:8px" placeholder="Add your own link (★)…" value=${custom}
         onChange=${e => { setVideos({ ...videos, [s.type]: e.target.value.trim() }); setVidIx(null); }}/>
     </div>
+
+    ${html`<${EvidenceCard} open=${refOpen} setOpen=${setRefOpen}/>`}
 
     ${s.type !== 'rest' && html`<button class="btn" style="margin-top:4px" onClick=${() => onLog(s, view)}>${s.race ? '🏁 Log race result' : '+  Log this run'}</button>`}
     <div class="sr-gap"></div>
@@ -1130,7 +1608,7 @@ function downloadICS() {
 }
 
 /* ---------------- App root ---------------- */
-const DEF_SETTINGS = { unit: 'km', theme: 'system', curDist: 'full', curTime: '3:26:00', goalTime: '3:10:00' };
+const DEF_SETTINGS = { unit: 'km', theme: 'system', curDist: 'full', curTime: '3:26:00', goalTime: '3:10:00', kg: null };
 const DEF_VIDEOS = { recovery: '', threshold: '', aerobic: '', hills: '', marathon: '', long: '', rest: '' };
 const YT = id => 'https://www.youtube.com/watch?v=' + id;
 const CURATED_VIDEOS = {
@@ -1155,6 +1633,9 @@ function App() {
 
   // Strava
   const [strava, setStrava] = usePersistent('mtp:strava', null);
+  const [checkins, setCheckins] = usePersistent('mtp:checkin', {}, true);
+  const [ciOpen, setCiOpen] = useState(false);
+  const [ciAuto, setCiAuto] = useState(false);
   const [stravaBusy, setStravaBusy] = useState(false);
   async function doSync(rec0) {
     let rec = rec0 || strava;
@@ -1228,16 +1709,41 @@ function App() {
     setPrefill({ date: dateStrOfIndex(idx), type: session.type === 'recovery' ? 'recovery' : session.type, dist: session.km || '' });
     setTab('log');
   }
+  const todayKey = dateStrOfIndex(Math.min(111, Math.max(0, todayIndex())));
+  const todayEntry = checkins[todayKey] || null;
+  useEffect(() => {
+    if (ciAuto) return;
+    const t = setTimeout(() => {
+      setCiAuto(true);
+      const i = todayIndex();
+      if (i < 0 || i > 111) return;
+      if (!checkins[todayKey]) setCiOpen(true);
+    }, 450);
+    return () => clearTimeout(t);
+  }, [checkins, todayKey]);
+  function saveCheckIn(data) {
+    setCheckins({ ...checkins, [todayKey]: { ...data, ts: new Date().toISOString() } });
+    setCiOpen(false);
+    toast(data.accepted ? 'Session adjusted' : 'Check-in logged');
+  }
+  function undoAdjust() {
+    const e = checkins[todayKey];
+    if (!e) return;
+    setCheckins({ ...checkins, [todayKey]: { ...e, accepted: false } });
+    toast('Back to the plan as written');
+  }
+  function setKg(v) { setSettings({ ...settings, kg: v }); }
+
   function exportData() {
-    const blob = new Blob([JSON.stringify({ app: 'marathon-trainer', version: 1, exported: new Date().toISOString(), settings, videos, logs }, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify({ app: 'marathon-trainer', version: 1, exported: new Date().toISOString(), settings, videos, logs, checkins }, null, 2)], { type: 'application/json' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'marathon-trainer-backup.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); toast('Backup downloaded');
   }
   function importData(file) {
     const r = new FileReader();
-    r.onload = () => { try { const d = JSON.parse(r.result); if (d.settings) setSettings({ ...DEF_SETTINGS, ...d.settings }); if (d.videos) setVideos({ ...DEF_VIDEOS, ...d.videos }); if (Array.isArray(d.logs)) setLogs(d.logs); toast('Backup imported ✓'); } catch (e) { toast('Could not read that file'); } };
+    r.onload = () => { try { const d = JSON.parse(r.result); if (d.settings) setSettings({ ...DEF_SETTINGS, ...d.settings }); if (d.videos) setVideos({ ...DEF_VIDEOS, ...d.videos }); if (Array.isArray(d.logs)) setLogs(d.logs); if (d.checkins && typeof d.checkins === 'object') setCheckins(d.checkins); toast('Backup imported ✓'); } catch (e) { toast('Could not read that file'); } };
     r.readAsText(file);
   }
-  function resetAll() { setSettings(DEF_SETTINGS); setVideos(DEF_VIDEOS); setLogs([]); toast('Reset done'); }
+  function resetAll() { setSettings(DEF_SETTINGS); setVideos(DEF_VIDEOS); setLogs([]); setCheckins({}); toast('Reset done'); }
 
   const unit = settings.unit;
   const cur = z._cur, goal = parseTime(settings.goalTime) || (3 * 3600 + 10 * 60);
@@ -1246,11 +1752,14 @@ function App() {
       <div class="mark"><div class="logo serif">26</div><div><div class="htxt">Valencia Marathon</div><div class="hsub">Sub-3:10 · 16-week block</div></div></div>
       <div class="count"><b>${Math.max(0, Math.round((ymd(RACE_DATE) - ymd(todayStr())) / 86400000))}</b><span>days to go</span></div>
     </div>
-    ${tab === 'today' && html`<${TodayView} view=${view} setView=${setView} settings=${settings} z=${z} goalMP=${goalMP} unit=${unit} videos=${videos} setVideos=${setVideos} onLog=${onLog}/>`}
+    ${tab === 'today' && html`<${TodayView} view=${view} setView=${setView} settings=${settings} z=${z} goalMP=${goalMP} unit=${unit} videos=${videos} setVideos=${setVideos} onLog=${onLog} entry=${todayEntry} onCheckIn=${() => setCiOpen(true)} onUndo=${undoAdjust} kg=${settings.kg} setKg=${setKg}/>`}
     ${tab === 'plan' && html`<${PlanView} setView=${setView} setTab=${setTab}/>`}
     ${tab === 'zones' && html`<${ZonesView} z=${z} unit=${unit} goalMP=${goalMP} cur=${cur} goal=${goal} setTab=${setTab} logs=${logs}/>`}
     ${tab === 'log' && html`<${LogView} logs=${logs} setLogs=${setLogs} unit=${unit} prefill=${prefill} clearPrefill=${() => setPrefill(null)} toast=${toast}/>`}
     ${tab === 'settings' && html`<${SettingsView} settings=${settings} setSettings=${setSettings} z=${z} goalMP=${goalMP} exportData=${exportData} importData=${importData} resetAll=${resetAll} toast=${toast} strava=${strava} stravaBusy=${stravaBusy} onConnect=${connectStrava} onSync=${() => doSync()} onDisconnect=${disconnectStrava}/>`}
+
+    ${ciOpen && (() => { const i = Math.min(111, Math.max(0, todayIndex())); const cs = buildDay(Math.floor(i / 7) + 1, ((i % 7) + 7) % 7);
+      return html`<${CheckInSheet} s=${cs} z=${z} kg=${settings.kg} idx=${i} setKg=${setKg} onSave=${saveCheckIn} onSkip=${() => { setCiOpen(false); }}/>`; })()}
 
     ${toastMsg && html`<div class="toast">${toastMsg}</div>`}
     <div class="tabbar">
@@ -1259,7 +1768,6 @@ function App() {
     </div>
   </div>`;
 }
-function dateStrOfIndex(i) { const d = dateOfIndex(i); return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`; }
 
 render(html`<${App}/>`, document.getElementById('root'));
 </script>
