@@ -1,0 +1,1894 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#0F2A33"/>
+<meta name="apple-mobile-web-app-title" content="3.09"/>
+<meta name="application-name" content="3.09"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<link rel="apple-touch-icon" href="apple-touch-icon.png"/>
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"/>
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png"/>
+<link rel="manifest" href="manifest.webmanifest"/>
+<title>3.09 — Valencia 2026</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --display:"Didot","Didot LT STD","Bodoni 72","Bodoni Moda","Libre Bodoni","Playfair Display",Georgia,serif;
+  --text:"Avenir Next","Avenir","Nunito Sans","Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --r-sheet:22px;--r-ctl:12px;
+}
+[data-theme="dark"]{
+  --bg:#0F2A33;--raise:#15343F;--raise2:#1B3E4A;--line:#2A5160;--ink:#EFE9DD;--muted:#9DB5B8;--faint:#6F8F95;
+  --citrus:#F3AE45;--on-citrus:#1B1405;--sea:#86CDB5;--rose:#EE8F7D;--scrim:rgba(4,14,18,.62);
+}
+[data-theme="light"]{
+  --bg:#EDF1F0;--raise:#FFFFFF;--raise2:#F4F7F6;--line:#D3DDDB;--ink:#0F2A33;--muted:#4E6B73;--faint:#7F979C;
+  --citrus:#B8700C;--on-citrus:#FFFFFF;--sea:#237C62;--rose:#B94E3C;--scrim:rgba(15,42,51,.35);
+}
+html,body{margin:0;padding:0;background:var(--bg)}
+body{color:var(--ink);font-family:var(--text);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--citrus);outline-offset:2px;border-radius:6px}
+.app{max-width:460px;margin:0 auto;min-height:100vh;padding:calc(env(safe-area-inset-top,0px) + 18px) 22px calc(env(safe-area-inset-bottom,0px) + 104px)}
+.num{font-family:var(--display);font-weight:400;font-variant-numeric:lining-nums;letter-spacing:-.01em}
+.muted{color:var(--muted)} .faint{color:var(--faint)}
+.small{font-size:13.5px} .xs{font-size:12.5px}
+.row{display:flex;align-items:center;gap:12px}
+.between{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.stack>*+*{margin-top:10px}
+.gap{height:34px}
+.rule{height:1px;background:var(--line);margin:30px 0}
+
+/* top line */
+.topline{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;color:var(--muted);margin-bottom:26px}
+.topline b{color:var(--ink);font-weight:600}
+
+/* today hero */
+.hero .date{font-size:15px;color:var(--muted)}
+.hero h1{font-family:var(--display);font-weight:400;font-size:40px;line-height:1.04;margin:6px 0 0;letter-spacing:-.01em}
+.hero .km{display:flex;align-items:baseline;gap:8px;margin:14px 0 2px}
+.hero .km .n{font-family:var(--display);font-size:92px;line-height:.9;letter-spacing:-.03em}
+.hero .km .u{font-size:18px;color:var(--muted)}
+.hero .line{font-size:17px;line-height:1.45;margin:14px 0 0;max-width:34em}
+.hero .wu{font-size:14px;color:var(--muted);margin-top:4px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chip{display:inline-flex;align-items:baseline;gap:7px;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:14px;background:transparent}
+.chip i{font-style:normal;color:var(--muted);font-size:13px}
+.chip b{font-weight:600;font-variant-numeric:tabular-nums}
+.addon{display:flex;align-items:center;gap:12px;margin-top:18px;padding:12px 14px;border-radius:var(--r-ctl);background:var(--raise);border:0;width:100%;text-align:left}
+.addon .badge{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--citrus);color:var(--citrus);font-weight:700;font-size:14px;flex:none}
+.addon .t{font-weight:600;font-size:15px} .addon .s{font-size:13px;color:var(--muted)}
+.addon.done .badge{background:var(--sea);border-color:var(--sea);color:var(--bg)}
+.done-line{display:flex;align-items:center;gap:10px;margin-top:16px;color:var(--sea);font-weight:600;font-size:15px}
+.done-line .dot{width:10px;height:10px;border-radius:50%;background:var(--sea)}
+.actions{display:flex;gap:10px;margin-top:22px}
+.btn{border:0;border-radius:999px;padding:13px 20px;font-weight:600;font-size:15px;background:var(--citrus);color:var(--on-citrus)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.quiet{background:var(--raise);color:var(--ink)}
+.btn.sm{padding:9px 14px;font-size:14px}
+.btn.block{width:100%}
+.btn:disabled{opacity:.45}
+.linkbtn{background:0;border:0;padding:0;color:var(--citrus);font-weight:600;font-size:14.5px}
+
+/* countdowns */
+.counts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.count{background:0;border:0;padding:0;text-align:left;color:inherit}
+.count .n{font-family:var(--display);font-size:44px;line-height:1;height:46px;display:flex;align-items:flex-end}
+.count .l{font-size:14px;margin-top:6px}
+.count .s{font-size:12.5px;color:var(--muted)}
+.count.past .n{color:var(--muted)}
+.count .n.sm{font-size:26px;line-height:1.1}
+.count.past .s{color:var(--citrus)}
+.sec-t{font-size:14px;color:var(--muted);margin:0 0 12px}
+
+/* prediction */
+.pred .big{font-family:var(--display);font-size:52px;line-height:1;letter-spacing:-.02em}
+.pred .vs{display:flex;gap:18px;margin-top:10px;font-size:14.5px;color:var(--muted)}
+.pred .vs b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.gapbar{position:relative;height:6px;border-radius:3px;background:var(--raise2);margin-top:14px;overflow:hidden}
+.gapbar span{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--citrus)}
+
+/* week strip on today */
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:end;height:74px;margin-top:10px}
+.wk .c{display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;background:0;border:0;padding:0}
+.wk .bar{width:100%;max-width:26px;border-radius:5px;background:var(--raise2);position:relative;overflow:hidden;min-height:4px}
+.wk .bar span{position:absolute;left:0;right:0;bottom:0;background:var(--sea)}
+.wk .c.today .bar{outline:1.5px solid var(--citrus);outline-offset:2px}
+.wk .d{font-size:12px;color:var(--muted)}
+.wk .c.today .d{color:var(--citrus);font-weight:700}
+
+/* check-in row */
+.ci-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:var(--r-ctl);background:var(--raise);margin-top:26px;border:0;width:100%;text-align:left}
+.ci-row .t{font-weight:600} .ci-row .s{font-size:13px;color:var(--muted)}
+.tone{width:10px;height:10px;border-radius:50%;flex:none}
+.tone.green{background:var(--sea)} .tone.amber{background:var(--citrus)} .tone.red{background:var(--rose)}
+.adj{margin-top:18px;padding:14px 16px;border-radius:var(--r-ctl);border:1px solid var(--line)}
+.adj .h{display:flex;align-items:center;gap:10px;font-weight:600}
+.adj p{margin:6px 0 0;font-size:14.5px}
+
+/* on track */
+.rows .ci-row{margin-top:26px}
+.rows>*+*{margin-top:10px!important}
+.kz-done{display:flex;align-items:center;gap:10px;margin-top:26px;font-size:14px;color:var(--muted);background:0;border:0;padding:4px 0;text-align:left;width:100%}
+.status{font-size:12.5px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.status.green{color:var(--sea)} .status.amber{color:var(--citrus)} .status.red{color:var(--rose)}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.trio .k{display:block;font-size:12.5px;color:var(--muted)}
+.trio .p{display:block;font-family:var(--display);font-size:32px;line-height:1.1;margin-top:4px;color:var(--muted)}
+.trio .now .p{color:var(--ink);font-size:38px}
+.trio .s{display:block;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:2px}
+.track-line{font-size:15px;margin:14px 0 0;line-height:1.5}
+.track-line b{font-weight:600}
+ol.plan{margin:6px 0 0;padding-left:20px}
+ol.plan li{margin:0 0 14px;font-size:14.5px;line-height:1.5}
+ol.plan li::marker{color:var(--citrus);font-weight:700}
+ol.plan li b{display:block;font-weight:600;margin-bottom:2px}
+
+/* plan */
+.page-t{font-family:var(--display);font-weight:400;font-size:38px;line-height:1.05;margin:0}
+.page-s{font-size:14.5px;color:var(--muted);margin:6px 0 22px}
+.weeks{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 12px;margin:0 -22px 8px;padding-left:22px;padding-right:22px;scrollbar-width:none}
+.weeks::-webkit-scrollbar{display:none}
+.wkbtn{flex:none;width:44px;height:52px;border-radius:12px;border:1px solid var(--line);background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.wkbtn .n{font-family:var(--display);font-size:22px;line-height:1}
+.wkbtn .p{font-size:9.5px;color:var(--muted)}
+.wkbtn.cur{border-color:var(--citrus)}
+.wkbtn.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.wkbtn.on .p{color:var(--bg);opacity:.7}
+.wkhead{display:flex;justify-content:space-between;align-items:flex-end;margin:14px 0 6px}
+.wkhead h2{font-family:var(--display);font-weight:400;font-size:30px;margin:0;line-height:1}
+.wkstats{display:flex;gap:18px;font-size:13.5px;color:var(--muted);margin-bottom:10px}
+.wkstats b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.days{border-top:1px solid var(--line)}
+.day{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:start;padding:14px 0;border:0;border-bottom:1px solid var(--line);background:0;width:100%;text-align:left}
+.day .dw{font-size:13px;color:var(--muted);line-height:1.2}
+.day .dw .dn{display:block;font-family:var(--display);font-size:22px;color:var(--ink);margin-top:2px}
+.day.today .dw,.day.today .dw .dn{color:var(--citrus)}
+.day .ti{font-weight:600;font-size:15.5px;line-height:1.3}
+.day .ln{font-size:13.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+.day .tags{display:flex;gap:6px;align-items:center;margin-top:7px;flex-wrap:wrap}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)}
+.tag:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--faint)}
+.tag.KEY:before,.tag.VO2:before,.tag.RACE:before{background:var(--citrus)}
+.tag.STEADY:before{background:#C9B37A} .tag.LONG:before{background:#7FA7D6} .tag.EASY:before,.tag.HILLS:before{background:var(--sea)}
+.sbadge{font-size:11.5px;font-weight:700;border:1px solid var(--citrus);color:var(--citrus);border-radius:999px;padding:1px 7px}
+.day .kmr{text-align:right;font-variant-numeric:tabular-nums}
+.day .kmr .p{font-family:var(--display);font-size:24px;line-height:1}
+.day .kmr .a{font-size:12.5px;color:var(--sea);margin-top:4px;font-weight:600}
+.day .kmr .u{font-size:12px;color:var(--muted)}
+.note{font-size:13.5px;color:var(--muted);border-left:2px solid var(--citrus);padding-left:10px;margin:10px 0}
+
+/* sheets */
+.scrim{position:fixed;inset:0;background:var(--scrim);z-index:40;display:flex;align-items:flex-end;justify-content:center;animation:fade .18s ease}
+.sheet{width:100%;max-width:460px;max-height:92vh;background:var(--bg);border-radius:var(--r-sheet) var(--r-sheet) 0 0;display:flex;flex-direction:column;animation:rise .24s cubic-bezier(.2,.8,.2,1);border-top:1px solid var(--line)}
+.sheet .grip{width:40px;height:4px;border-radius:2px;background:var(--line);margin:10px auto 0;flex:none}
+.sheet .top{display:flex;justify-content:space-between;align-items:center;padding:10px 22px 0;flex:none}
+.sheet .body{overflow-y:auto;padding:6px 22px calc(env(safe-area-inset-bottom,0px) + 28px);-webkit-overflow-scrolling:touch}
+.x{background:var(--raise);border:0;width:34px;height:34px;border-radius:50%;font-size:18px;line-height:1;color:var(--muted)}
+@keyframes rise{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.scrim,.sheet{animation:none}}
+.sh-t{font-family:var(--display);font-weight:400;font-size:32px;line-height:1.05;margin:4px 0 0}
+.sh-km{font-family:var(--display);font-size:56px;line-height:1;margin:12px 0 4px}
+.sh-km small{font-family:var(--text);font-size:16px;color:var(--muted);margin-left:6px}
+.blk{margin-top:26px}
+.blk h3{font-size:14px;font-weight:600;color:var(--muted);margin:0 0 10px}
+.lines{margin:0;padding:0;list-style:none}
+.lines li{padding:9px 0;border-bottom:1px solid var(--line);font-size:15px}
+.lines li:last-child{border-bottom:0}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:15px}
+.kv dt{color:var(--muted)} .kv dd{margin:0;font-variant-numeric:tabular-nums;font-weight:600}
+.oea{display:grid;gap:10px;font-size:14.5px}
+.oea div span{display:block;font-size:12.5px;color:var(--muted)}
+.ex{margin:0;padding:0;list-style:none}
+.ex li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.ex li span:last-child{color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+details.more{border-top:1px solid var(--line);margin-top:26px}
+details.more summary{list-style:none;display:flex;justify-content:space-between;align-items:center;padding:14px 0;font-weight:600;cursor:pointer}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary:after{content:"+";color:var(--muted);font-weight:400;font-size:20px}
+details.more[open] summary:after{content:"–"}
+details.more>div{padding-bottom:14px}
+
+/* forms */
+.field{display:block;margin-top:14px}
+.field>span{display:block;font-size:13.5px;color:var(--muted);margin-bottom:6px}
+.inp,select.inp,textarea.inp{width:100%;background:var(--raise);border:1px solid var(--line);border-radius:var(--r-ctl);padding:12px 14px;font-size:16px;color:var(--ink);-webkit-appearance:none;appearance:none}
+textarea.inp{min-height:84px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg{display:flex;background:var(--raise);border-radius:var(--r-ctl);padding:4px;gap:4px}
+.seg button{flex:1;border:0;background:transparent;color:var(--muted);border-radius:9px;padding:9px 6px;font-weight:600;font-size:14px}
+.seg button.on{background:var(--bg);color:var(--ink)}
+.hint{font-size:13px;color:var(--muted);margin:8px 0 0}
+
+/* progress */
+.ptable{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.ptable th{font-weight:400;font-size:13px;color:var(--muted);text-align:right;padding:0 0 8px}
+.ptable th:first-child{text-align:left}
+.ptable td{padding:12px 0;border-top:1px solid var(--line);text-align:right;font-size:15px}
+.ptable td:first-child{text-align:left;color:var(--muted)}
+.ptable td.now{font-family:var(--display);font-size:24px;color:var(--ink)}
+.ptable tr.m td.now{font-size:30px}
+.chart{width:100%;display:block;overflow:visible}
+.legend{display:flex;gap:16px;font-size:12.5px;color:var(--muted);margin-top:8px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.act{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.act .m{font-size:12.5px;color:var(--muted)}
+.del{background:0;border:0;color:var(--faint);font-size:18px;width:30px;height:30px}
+
+/* settings */
+.set-g{margin-top:30px}
+.set-g>h3{font-size:14px;font-weight:600;color:var(--muted);margin:0 0 4px}
+.setrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:15px}
+
+/* check-in */
+.ci-q{font-family:var(--display);font-weight:400;font-size:30px;line-height:1.1;margin:6px 0 16px}
+.opts{display:grid;gap:8px}
+.opt{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-radius:var(--r-ctl);background:var(--raise);border:1px solid transparent;text-align:left;width:100%}
+.opt b{font-weight:600} .opt span{font-size:13.5px;color:var(--muted)}
+.opt.on{border-color:var(--citrus)}
+.pick{display:flex;flex-wrap:wrap;gap:6px}
+.pick button{border:1px solid var(--line);background:transparent;border-radius:999px;padding:8px 13px;font-size:14px}
+.pick button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.scale{display:grid;grid-template-columns:repeat(11,1fr);gap:4px}
+.scale button{border:1px solid var(--line);background:transparent;border-radius:8px;padding:9px 0;font-size:13px;font-weight:600}
+.scale button.on{background:var(--ink);color:var(--bg)}
+.scale button.hi.on{background:var(--rose);border-color:var(--rose);color:#fff}
+.flag{display:flex;gap:10px;align-items:flex-start;text-align:left;background:transparent;border:1px solid var(--line);border-radius:var(--r-ctl);padding:12px 14px;margin-top:14px;width:100%;font-size:14px}
+.flag b{flex:none;width:20px;height:20px;border-radius:5px;border:1px solid var(--muted);display:grid;place-items:center;font-size:13px}
+.flag.on{border-color:var(--rose)} .flag.on b{background:var(--rose);border-color:var(--rose);color:#fff}
+.verdict{border-radius:var(--r-ctl);padding:16px;background:var(--raise);border-left:3px solid var(--sea)}
+.verdict.amber{border-left-color:var(--citrus)} .verdict.red{border-left-color:var(--rose)}
+.verdict .h{font-family:var(--display);font-size:24px;line-height:1.1}
+.verdict p{margin:8px 0 0;font-size:14.5px}
+.verdict .ref{display:block;font-size:12px;color:var(--muted);margin-top:8px}
+.fuel .g{font-family:var(--display);font-size:34px;line-height:1;margin:6px 0 2px}
+.fl{display:grid;grid-template-columns:78px 1fr;gap:8px 12px;font-size:14px;margin-top:12px}
+.fl i{font-style:normal;color:var(--muted)}
+.refs div{padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.refs b{display:block;font-weight:600}
+
+/* tab bar + toast */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--bg);border-top:1px solid var(--line);display:flex;justify-content:center;padding:8px 0 calc(env(safe-area-inset-bottom,0px) + 8px)}
+.tabbar .in{display:flex;width:100%;max-width:460px}
+.tab{flex:1;background:0;border:0;color:var(--faint);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px;font-weight:600;padding:4px 0}
+.tab svg{width:23px;height:23px}
+.tab.on{color:var(--ink)}
+.tab.on svg{color:var(--citrus)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 84px);z-index:60;background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:999px;font-weight:600;font-size:14px;max-width:88vw;text-align:center}
+.empty{padding:18px;border:1px dashed var(--line);border-radius:var(--r-ctl);color:var(--muted);font-size:14.5px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>!function(n,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports):"function"==typeof define&&define.amd?define(["exports"],t):t((n||self).preact={})}(this,function(n){var t,i,e,r,f,o,u,c,s,a,h,l,p,y,v,d,w="http://www.w3.org/2000/svg",_="http://www.w3.org/1999/xhtml",g=null,m=void 0,b={},k=[],x=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i,M=Array.isArray;function S(n,t){for(var i in t)n[i]=t[i];return n}function T(n){n&&n.parentNode&&n.parentNode.removeChild(n)}function $(n,i,e){var r,f,o,u={};for(o in i)"key"==o?r=i[o]:"ref"==o?f=i[o]:u[o]=i[o];if(arguments.length>2&&(u.children=arguments.length>3?t.call(arguments,2):e),"function"==typeof n&&n.defaultProps!=g)for(o in n.defaultProps)u[o]===m&&(u[o]=n.defaultProps[o]);return C(n,u,r,f,g)}function C(n,t,r,f,o){var u={type:n,props:t,key:r,ref:f,__k:g,__:g,__b:0,__e:g,__c:g,constructor:m,__v:o==g?++e:o,__i:-1,__u:0};return o==g&&i.vnode!=g&&i.vnode(u),u}function I(n){return n.children}function P(n,t){this.props=n,this.context=t}function j(n,t){if(t==g)return n.__?j(n.__,n.__i+1):g;for(var i;t<n.__k.length;t++)if((i=n.__k[t])!=g&&i.__e!=g)return i.__e;return"function"==typeof n.type?j(n):g}function A(n){if(n.__P&&n.__d){var t=n.__v,e=t.__e,r=[],f=[],o=S({},t);o.__v=t.__v+1,i.vnode&&i.vnode(o),E(n.__P,o,t,n.__n,n.__P.namespaceURI,32&t.__u?[e]:g,r,e==g?j(t):e,!!(32&t.__u),f),o.__v=t.__v,o.__.__k[o.__i]=o,J(r,o,f),t.__e=t.__=null,o.__e!=e&&H(o)}}function H(n){if((n=n.__)!=g&&n.__c!=g)return n.__e=n.__c.base=g,n.__k.some(function(t){if(t!=g&&t.__e!=g)return n.__e=n.__c.base=t.__e}),H(n)}function L(n){(!n.__d&&(n.__d=!0)&&f.push(n)&&!F.__r++||o!=i.debounceRendering)&&((o=i.debounceRendering)||u)(F)}function F(){try{for(var n,t=1;f.length;)f.length>t&&f.sort(c),n=f.shift(),t=f.length,A(n)}finally{f.length=F.__r=0}}function O(n,t,i,e,r,f,o,u,c,s,a){var h,l,p,y,v,d,w=e&&e.__k||k,_=t.length;for(c=z(i,t,w,c,_),h=0;h<_;h++)(p=i.__k[h])!=g&&(l=-1!=p.__i&&w[p.__i]||b,p.__i=h,d=E(n,p,l,r,f,o,u,c,s,a),y=p.__e,p.ref&&l.ref!=p.ref&&(l.ref&&R(l.ref,g,p),a.push(p.ref,p.__c||y,p)),v==g&&y!=g&&(v=y),4&p.__u?(c=N(p,c,n),l.__e&&(l.__e=g)):"function"==typeof p.type&&d!==m?c=d:y&&(c=y.nextSibling),p.__u&=-7);return i.__e=v,c}function z(n,t,i,e,r){var f,o,u,c,s,a=i.length,h=a,l=0;for(n.__k=new Array(r),f=0;f<r;f++)(o=t[f])!=g&&"boolean"!=typeof o&&"function"!=typeof o?("string"==typeof o||"number"==typeof o||"bigint"==typeof o||o.constructor==String?o=n.__k[f]=C(g,o,g,g,g):M(o)?o=n.__k[f]=C(I,{children:o},g,g,g):o.constructor===m&&o.__b>0?o=n.__k[f]=C(o.type,o.props,o.key,o.ref?o.ref:g,o.__v):n.__k[f]=o,c=f+l,o.__=n,o.__b=n.__b+1,s=o.__i=V(o,i,c,h),u=g,-1!=s&&(h--,(u=i[s])&&(u.__u|=2)),u==g||u.__v==g?(-1==s&&(r>a?l--:r<a&&l++),"function"!=typeof o.type&&(o.__u|=4)):s!=c&&(s==c-1?l--:s==c+1?l++:(s>c?l--:l++,o.__u|=4))):n.__k[f]=g;if(h)for(f=0;f<a;f++)(u=i[f])!=g&&0==(2&u.__u)&&(u.__e==e&&(e=j(u)),U(u,u));return e}function N(n,t,i){var e,r;if("function"==typeof n.type){for(e=n.__k,r=0;e&&r<e.length;r++)e[r]&&(e[r].__=n,t=N(e[r],t,i));return t}n.__e!=t&&(t&&n.type&&!t.parentNode&&(t=j(n)),t=i.insertBefore(n.__e,t||g));do{t=t&&t.nextSibling}while(t!=g&&8==t.nodeType);return t}function V(n,t,i,e){var r,f,o,u=n.key,c=n.type,s=t[i],a=s!=g&&0==(2&s.__u);if(s===g&&null==u||a&&u==s.key&&c==s.type)return i;if(e>(a?1:0))for(r=i-1,f=i+1;r>=0||f<t.length;)if((s=t[o=r>=0?r--:f++])!=g&&0==(2&s.__u)&&u==s.key&&c==s.type)return o;return-1}function q(n,t,i){"-"==t[0]?n.setProperty(t,i==g?"":i):n[t]=i==g?"":"number"!=typeof i||x.test(t)?i:i+"px"}function B(n,t,i,e,r){var f,o;n:if("style"==t)if("string"==typeof i)n.style.cssText=i;else{if("string"==typeof e&&(n.style.cssText=e=""),e)for(t in e)i&&t in i||q(n.style,t,"");if(i)for(t in i)e&&i[t]==e[t]||q(n.style,t,i[t])}else if("o"==t[0]&&"n"==t[1])f=t!=(t=t.replace(l,"$1")),o=t.toLowerCase(),t=o in n||"onFocusOut"==t||"onFocusIn"==t?o.slice(2):t.slice(2),n.l||(n.l={}),n.l[t+f]=i,i?e?i[h]=e[h]:(i[h]=p,n.addEventListener(t,f?v:y,f)):n.removeEventListener(t,f?v:y,f);else{if(r==w)t=t.replace(/xlink(H|:h)/,"h").replace(/sName$/,"s");else if("width"!=t&&"height"!=t&&"href"!=t&&"list"!=t&&"form"!=t&&"tabIndex"!=t&&"download"!=t&&"rowSpan"!=t&&"colSpan"!=t&&"role"!=t&&"popover"!=t&&t in n)try{n[t]=i==g?"":i;break n}catch(n){}"function"==typeof i||(i==g||!1===i&&"-"!=t[4]?n.removeAttribute(t):n.setAttribute(t,"popover"==t&&1==i?"":i))}}function D(n){return function(t){if(this.l){var e=this.l[t.type+n];if(t[a]==g)t[a]=p++;else if(t[a]<e[h])return;return e(i.event?i.event(t):t)}}}function E(n,t,e,r,f,o,u,c,s,a){var h,l,p,y,v,d,w,_,b,x,$,C,A,H,L,F,z=t.type;if(t.constructor!==m)return g;128&e.__u&&(s=!!(32&e.__u),o=[c=t.__e=e.__e]),(h=i.__b)&&h(t);n:if("function"==typeof z){l=u.length;try{if(b=t.props,x=z.prototype&&z.prototype.render,$=(h=z.contextType)&&r[h.__c],C=h?$?$.props.value:h.__:r,e.__c?_=(p=t.__c=e.__c).__=p.__E:(x?t.__c=p=new z(b,C):(t.__c=p=new P(b,C),p.constructor=z,p.render=W),$&&$.sub(p),p.state||(p.state={}),p.__n=r,y=p.__d=!0,p.__h=[],p._sb=[]),x&&p.__s==g&&(p.__s=p.state),x&&z.getDerivedStateFromProps!=g&&(p.__s==p.state&&(p.__s=S({},p.__s)),S(p.__s,z.getDerivedStateFromProps(b,p.__s))),v=p.props,d=p.state,p.__v=t,y)x&&z.getDerivedStateFromProps==g&&p.componentWillMount!=g&&p.componentWillMount(),x&&p.componentDidMount!=g&&p.__h.push(p.componentDidMount);else{if(x&&z.getDerivedStateFromProps==g&&b!==v&&p.componentWillReceiveProps!=g&&p.componentWillReceiveProps(b,C),t.__v==e.__v||!p.__e&&p.shouldComponentUpdate!=g&&!1===p.shouldComponentUpdate(b,p.__s,C)){t.__v!=e.__v&&(p.props=b,p.state=p.__s,p.__d=!1),t.__e=e.__e,t.__k=e.__k,t.__k.some(function(n){n&&(n.__=t)}),k.push.apply(p.__h,p._sb),p._sb=[],p.__h.length&&u.push(p),c=j(e);break n}p.componentWillUpdate!=g&&p.componentWillUpdate(b,p.__s,C),x&&p.componentDidUpdate!=g&&p.__h.push(function(){p.componentDidUpdate(v,d,w)})}if(p.context=C,p.props=b,p.__P=n,p.__e=!1,A=i.__r,H=0,x)p.state=p.__s,p.__d=!1,A&&A(t),h=p.render(p.props,p.state,p.context),k.push.apply(p.__h,p._sb),p._sb=[];else do{p.__d=!1,A&&A(t),h=p.render(p.props,p.state,p.context),p.state=p.__s}while(p.__d&&++H<25);p.state=p.__s,p.getChildContext!=g&&(r=S(S({},r),p.getChildContext())),x&&!y&&p.getSnapshotBeforeUpdate!=g&&(w=p.getSnapshotBeforeUpdate(v,d)),L=h!=g&&h.type===I&&h.key==g?K(h.props.children):h,c=O(n,M(L)?L:[L],t,e,r,f,o,u,c,s,a),p.base=t.__e,t.__u&=-161,p.__h.length&&u.push(p),_&&(p.__E=p.__=g)}catch(n){if(u.length=l,t.__v=g,s||o!=g){if(n.then){for(t.__u|=s?160:128;c&&8==c.nodeType&&c.nextSibling;)c=c.nextSibling;o!=g&&(o[o.indexOf(c)]=g),t.__e=c}else if(o!=g)for(F=o.length;F--;)T(o[F])}else t.__e=e.__e;t.__k==g&&(t.__k=e.__k||[]),n.then||G(t),i.__e(n,t,e)}}else o==g&&t.__v==e.__v?(t.__k=e.__k,t.__e=e.__e):c=t.__e=Q(e.__e,t,e,r,f,o,u,s,a);return(h=i.diffed)&&h(t),128&t.__u?void 0:c}function G(n){n&&(n.__c&&(n.__c.__e=!0),n.__k&&n.__k.some(G))}function J(n,t,e){for(var r=0;r<e.length;r++)R(e[r],e[++r],e[++r]);i.__c&&i.__c(t,n),n.some(function(t){try{n=t.__h,t.__h=[],n.some(function(n){n.call(t)})}catch(n){i.__e(n,t.__v)}})}function K(n){return"object"!=typeof n||n==g||n.__b>0?n:M(n)?n.map(K):n.constructor!==m?null:S({},n)}function Q(n,e,r,f,o,u,c,s,a){var h,l,p,y,v,d,k,x=r.props||b,S=e.props,$=e.type;if("svg"==$?o=w:"math"==$?o="http://www.w3.org/1998/Math/MathML":o||(o=_),u!=g)for(h=0;h<u.length;h++)if((v=u[h])&&"setAttribute"in v==!!$&&($?v.localName==$:3==v.nodeType)){n=v,u[h]=g;break}if(n==g){if($==g)return document.createTextNode(S);n=document.createElementNS(o,$,S.is&&S),s&&(i.__m&&i.__m(e,u),s=!1),u=g}if($==g)x===S||s&&n.data==S||(n.data=S);else{if(u="textarea"==$&&S.defaultValue!=g?g:u&&t.call(n.childNodes),!s&&u!=g)for(x={},h=0;h<n.attributes.length;h++)x[(v=n.attributes[h]).name]=v.value;for(h in x)v=x[h],"dangerouslySetInnerHTML"==h?p=v:"children"==h||h in S||"value"==h&&"defaultValue"in S||"checked"==h&&"defaultChecked"in S||B(n,h,g,v,o);for(h in S)v=S[h],"children"==h?y=v:"dangerouslySetInnerHTML"==h?l=v:"value"==h?d=v:"checked"==h?k=v:s&&"function"!=typeof v||x[h]===v||B(n,h,v,x[h],o);if(l)s||p&&(l.__html==p.__html||l.__html==n.innerHTML)||(n.innerHTML=l.__html),e.__k=[];else if(p&&(n.innerHTML=""),O("template"==e.type?n.content:n,M(y)?y:[y],e,r,f,"foreignObject"==$?_:o,u,c,u?u[0]:r.__k&&j(r,0),s,a),u!=g)for(h=u.length;h--;)T(u[h]);s&&"textarea"!=$||(h="value","progress"==$&&d==g?n.removeAttribute("value"):d!=m&&(d!==n[h]||"progress"==$&&!d||"option"==$&&d!=x[h])&&B(n,h,d,x[h],o),h="checked",k!=m&&k!=n[h]&&B(n,h,k,x[h],o))}return n}function R(n,t,e){try{if("function"==typeof n){var r="function"==typeof n.__u;r&&n.__u(),r&&t==g||(n.__u=n(t))}else n.current=t}catch(n){i.__e(n,e)}}function U(n,t,e){var r,f;if(i.unmount&&i.unmount(n),(r=n.ref)&&(r.current&&r.current!=n.__e||R(r,g,t)),(r=n.__c)!=g){if(r.componentWillUnmount)try{r.componentWillUnmount()}catch(n){i.__e(n,t)}r.base=r.__P=r.__n=g}if(r=n.__k)for(f=0;f<r.length;f++)r[f]&&U(r[f],t,e||"function"!=typeof n.type);e||T(n.__e),n.__c=n.__=n.__e=m}function W(n,t,i){return this.constructor(n,i)}function X(n,e,r){var f,o,u,c;e==document&&(e=document.documentElement),i.__&&i.__(n,e),o=(f="function"==typeof r)?g:r&&r.__k||e.__k,u=[],c=[],E(e,n=(!f&&r||e).__k=$(I,g,[n]),o||b,b,e.namespaceURI,!f&&r?[r]:o?g:e.firstChild?t.call(e.childNodes):g,u,!f&&r?r:o?o.__e:e.firstChild,f,c),J(u,n,c),n.props.children=g}t=k.slice,i={__e:function(n,t,i,e){for(var r,f,o;t=t.__;)if((r=t.__c)&&!r.__)try{if((f=r.constructor)&&f.getDerivedStateFromError!=g&&(r.setState(f.getDerivedStateFromError(n)),o=r.__d),r.componentDidCatch!=g&&(r.componentDidCatch(n,e||{}),o=r.__d),o)return r.__E=r}catch(t){n=t}throw n}},e=0,r=function(n){return n!=g&&n.constructor===m},P.prototype.setState=function(n,t){var i;i=this.__s!=g&&this.__s!=this.state?this.__s:this.__s=S({},this.state),"function"==typeof n&&(n=n(S({},i),this.props)),n&&S(i,n),n!=g&&this.__v&&(t&&this._sb.push(t),L(this))},P.prototype.forceUpdate=function(n){this.__v&&(this.__e=!0,n&&this.__h.push(n),L(this))},P.prototype.render=I,f=[],u="function"==typeof Promise?Promise.prototype.then.bind(Promise.resolve()):setTimeout,c=function(n,t){return n.__v.__b-t.__v.__b},F.__r=0,s=Math.random().toString(8),a="__d"+s,h="__a"+s,l=/(PointerCapture)$|Capture$/i,p=0,y=D(!1),v=D(!0),d=0,n.Component=P,n.Fragment=I,n.cloneElement=function(n,i,e){var r,f,o,u,c=S({},n.props);for(o in n.type&&n.type.defaultProps&&(u=n.type.defaultProps),i)"key"==o?r=i[o]:"ref"==o?f=i[o]:c[o]=i[o]===m&&u!=m?u[o]:i[o];return arguments.length>2&&(c.children=arguments.length>3?t.call(arguments,2):e),C(n.type,c,r||n.key,f||n.ref,g)},n.createContext=function(n){function t(n){var i,e;return this.getChildContext||(i=new Set,(e={})[t.__c]=this,this.getChildContext=function(){return e},this.componentWillUnmount=function(){i=g},this.shouldComponentUpdate=function(n){this.props.value!=n.value&&i.forEach(function(n){n.__e=!0,L(n)})},this.sub=function(n){i.add(n);var t=n.componentWillUnmount;n.componentWillUnmount=function(){i&&i.delete(n),t&&t.call(n)}}),n.children}return t.__c="__cC"+d++,t.__=n,t.Provider=t.__l=(t.Consumer=function(n,t){return n.children(t)}).contextType=t,t},n.createElement=$,n.createRef=function(){return{current:g}},n.h=$,n.hydrate=function n(t,i){X(t,i,n)},n.isValidElement=r,n.options=i,n.render=X,n.toChildArray=function n(t,i){return i=i||[],t==g||"boolean"==typeof t||(M(t)?t.some(function(t){n(t,i)}):i.push(t)),i}});
+//# sourceMappingURL=preact.umd.js.map
+</script>
+<script>!function(n,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports,require("preact")):"function"==typeof define&&define.amd?define(["exports","preact"],t):t((n||self).preactHooks={},n.preact)}(this,function(n,t){var u,i,r,o,f=0,c=[],e=t.options,a=e.__b,v=e.__r,l=e.diffed,d=e.__c,p=e.unmount,s=e.__;function y(n,t){e.__h&&e.__h(i,n,f||t),f=0;var u=i.__H||(i.__H={__:[],__h:[]});return n>=u.__.length&&u.__.push({}),u.__[n]}function h(n){return f=1,m(j,n)}function m(n,t,r){var o=y(u++,2);if(o.t=n,!o.__c&&(o.__=[r?r(t):j(void 0,t),function(n){var t=o.__N?o.__N[0]:o.__[0],u=o.t(t,n);t!==u&&(o.__N=[u,o.__[1]],o.__c.setState({}))}],o.__c=i,!i.__f)){var f=function(n,t,u){if(!o.__c.__H)return!0;var i=!1,r=o.__c.props!==n;if(o.__c.__H.__.some(function(n){if(n.__N){i=!0;var t=n.__[0];n.__=n.__N,n.__N=void 0,t!==n.__[0]&&(r=!0)}}),c){var f=c.call(this,n,t,u);return i?f||r:f}return!i||r};i.__f=!0;var c=i.shouldComponentUpdate,e=i.componentWillUpdate;i.componentWillUpdate=function(n,t,u){if(this.__e){var i=c;c=void 0,f(n,t,u),c=i}e&&e.call(this,n,t,u)},i.shouldComponentUpdate=f}return o.__N||o.__}function T(n,t){var r=y(u++,4);!e.__s&&g(r.__H,t)&&(r.__=n,r.u=t,i.__h.push(r))}function _(n,t){var i=y(u++,7);return g(i.__H,t)&&(i.__=n(),i.__H=t,i.__h=n),i.__}function b(){for(var n;n=c.shift();){var t=n.__H;if(n.__P&&t)try{t.__h.some(A),t.__h.some(F),t.__h=[]}catch(u){t.__h=[],e.__e(u,n.__v)}}}e.__b=function(n){i=null,a&&a(n)},e.__=function(n,t){n&&t.__k&&t.__k.__m&&(n.__m=t.__k.__m),s&&s(n,t)},e.__r=function(n){v&&v(n),u=0;var t=(i=n.__c).__H;t&&(r===i?(t.__h=[],i.__h=[],t.__.some(function(n){n.__N&&(n.__=n.__N),n.u=n.__N=void 0})):(t.__h.some(A),t.__h.some(F),t.__h=[],u=0)),r=i},e.diffed=function(n){l&&l(n);var t=n.__c;t&&t.__H&&(t.__H.__h.length&&(1!==c.push(t)&&o===e.requestAnimationFrame||((o=e.requestAnimationFrame)||x)(b)),t.__H.__.some(function(n){n.u&&(n.__H=n.u,n.u=void 0)})),r=i=null},e.__c=function(n,t){t.some(function(n){try{n.__h.some(A),n.__h=n.__h.filter(function(n){return!n.__||F(n)})}catch(u){t.some(function(n){n.__h&&(n.__h=[])}),t=[],e.__e(u,n.__v)}}),d&&d(n,t)},e.unmount=function(n){p&&p(n);var t,u=n.__c;u&&u.__H&&(u.__H.__.some(function(n){try{A(n)}catch(n){t=n}}),u.__H=void 0,t&&e.__e(t,u.__v))};var q="function"==typeof requestAnimationFrame;function x(n){var t,u=function(){clearTimeout(i),q&&cancelAnimationFrame(t),setTimeout(n)},i=setTimeout(u,35);q&&(t=requestAnimationFrame(u))}function A(n){var t=i,u=n.__c;"function"==typeof u&&(n.__c=void 0,u()),i=t}function F(n){var t=i;n.__c=n.__(),i=t}function g(n,t){return!n||n.length!==t.length||t.some(function(t,u){return t!==n[u]})}function j(n,t){return"function"==typeof t?t(n):t}n.useCallback=function(n,t){return f=8,_(function(){return n},t)},n.useContext=function(n){var t=i.context[n.__c],r=y(u++,9);return r.c=n,t?(null==r.__&&(r.__=!0,t.sub(i)),t.props.value):n.__},n.useDebugValue=function(n,t){e.useDebugValue&&e.useDebugValue(t?t(n):n)},n.useEffect=function(n,t){var r=y(u++,3);!e.__s&&g(r.__H,t)&&(r.__=n,r.u=t,i.__H.__h.push(r))},n.useErrorBoundary=function(n){var t=y(u++,10),r=h();return t.__=n,i.componentDidCatch||(i.componentDidCatch=function(n,u){t.__&&t.__(n,u),r[1](n)}),[r[0],function(){r[1](void 0)}]},n.useId=function(){var n=y(u++,11);if(!n.__){for(var t=i.__v;null!==t&&!t.__m&&null!==t.__;)t=t.__;var r=t.__m||(t.__m=[0,0]);n.__="P"+r[0]+"-"+r[1]++}return n.__},n.useImperativeHandle=function(n,t,u){f=6,T(function(){if("function"==typeof n){var u=n(t());return function(){n(null),u&&"function"==typeof u&&u()}}if(n)return n.current=t(),function(){return n.current=null}},null==u?u:u.concat(n))},n.useLayoutEffect=T,n.useMemo=_,n.useReducer=m,n.useRef=function(n){return f=5,_(function(){return{current:n}},[])},n.useState=h});
+//# sourceMappingURL=hooks.umd.js.map
+</script>
+<script>!function(n,e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define(e):n.htm=e()}(this,function(){var n=function(e,t,u,s){var r;t[0]=0;for(var p=1;p<t.length;p++){var h=t[p++],o=t[p]?(t[0]|=h?1:2,u[t[p++]]):t[++p];3===h?s[0]=o:4===h?s[1]=Object.assign(s[1]||{},o):5===h?(s[1]=s[1]||{})[t[++p]]=o:6===h?s[1][t[++p]]+=o+"":h?(r=e.apply(o,n(e,o,u,["",null])),s.push(r),o[0]?t[0]|=2:(t[p-2]=0,t[p]=r)):s.push(o)}return s},e=new Map;return function(t){var u=e.get(this);return u||(u=new Map,e.set(this,u)),(u=n(this,u.get(t)||(u.set(t,u=function(n){for(var e,t,u=1,s="",r="",p=[0],h=function(n){1===u&&(n||(s=s.replace(/^\s*\n\s*|\s*\n\s*$/g,"")))?p.push(0,n,s):3===u&&(n||s)?(p.push(3,n,s),u=2):2===u&&"..."===s&&n?p.push(4,n,0):2===u&&s&&!n?p.push(5,0,!0,s):u>=5&&((s||!n&&5===u)&&(p.push(u,0,s,t),u=6),n&&(p.push(u,n,0,t),u=6)),s=""},o=0;o<n.length;o++){o&&(1===u&&h(),h(o));for(var f=0;f<n[o].length;f++)e=n[o][f],1===u?"<"===e?(h(),p=[p],u=3):s+=e:4===u?"--"===s&&">"===e?(u=1,s=""):s=e+s[0]:r?e===r?r="":s+=e:'"'===e||"'"===e?r=e:">"===e?(h(),u=1):u&&("="===e?(u=5,t=s,s=""):"/"===e&&(u<5||">"===n[o][f+1])?(h(),3===u&&(p=p[0]),u=p,(p=p[0]).push(2,0,u),u=0):" "===e||"\t"===e||"\n"===e||"\r"===e?(h(),u=2):s+=e),3===u&&"!--"===s&&(u=4,p=p[0])}return h(),p}(t)),u),arguments,[])).length>1?u:u[0]}});
+</script>
+<script>
+/* ============================================================
+   3.09 — core logic (pure functions, no DOM). Plan, paces,
+   Kaizen re-fit, predictions, load, strength, fuelling rules.
+   ============================================================ */
+const MAR = 42.195, HM = 21.0975, MI = 1.609344;
+const pad = n => String(n).padStart(2, '0');
+
+/* ---------- time + pace ---------- */
+function parseTime(str) { // "h:mm:ss" | "mm:ss" | "mm" -> seconds
+  if (str == null || str === '') return null;
+  const p = String(str).trim().split(':').map(Number);
+  if (!p.length || p.some(n => isNaN(n))) return null;
+  if (p.length === 3) return p[0] * 3600 + p[1] * 60 + p[2];
+  if (p.length === 2) return p[0] * 60 + p[1];
+  if (p.length === 1) return p[0] * 60;
+  return null;
+}
+function fmtClock(s) { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), r = s % 60; return h ? `${h}:${pad(m)}:${pad(r)}` : `${m}:${pad(r)}`; }
+function fmtPace(s) { s = Math.round(s); return `${Math.floor(s / 60)}:${pad(s % 60)}`; }
+function paceRange(r) { if (!r) return ''; return Math.round(r[0]) === Math.round(r[1]) ? fmtPace(r[0]) : `${fmtPace(r[0])}–${fmtPace(r[1])}`; }
+function fmtKm(x) { const r = Math.round(x * 10) / 10; return (Number.isInteger(r) ? String(r) : r.toFixed(1)) + ' km'; }
+function fmtMin(m) { m = Math.round(m); const h = Math.floor(m / 60), mm = m % 60; return h ? `${h} h${mm ? ' ' + pad(mm) : ''}` : `${mm} min`; }
+
+/* ---------- dates (all plan maths in UTC days) ---------- */
+const PLAN_START = '2026-08-17';           // Monday, week 1
+const RACE_DATE = '2026-12-06';            // Sunday, week 16
+const LAST_IDX = 111;
+const DOW = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const DOW_FULL = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MON_FULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+function ymd(s) { const [y, m, d] = s.split('-').map(Number); return Date.UTC(y, m - 1, d); }
+function dstr(t) { const d = new Date(t); return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`; }
+function dateOfIdx(i) { return dstr(ymd(PLAN_START) + i * 86400000); }
+function idxOfDate(s) { return Math.round((ymd(s) - ymd(PLAN_START)) / 86400000); }
+function todayStr() { const n = (typeof window !== 'undefined' && window.__TODAY__) ? new Date(window.__TODAY__) : new Date(); return `${n.getFullYear()}-${pad(n.getMonth() + 1)}-${pad(n.getDate())}`; }
+function daysBetween(a, b) { return Math.round((ymd(b) - ymd(a)) / 86400000); }
+function weekOfDate(s) { return Math.floor(idxOfDate(s) / 7) + 1; }
+function fmtDay(s) { const d = new Date(ymd(s)); return `${DOW[(d.getUTCDay() + 6) % 7]} ${d.getUTCDate()} ${MON[d.getUTCMonth()]}`; }
+function fmtLong(s) { const d = new Date(ymd(s)); return `${DOW_FULL[(d.getUTCDay() + 6) % 7]} ${d.getUTCDate()} ${MON_FULL[d.getUTCMonth()]}`; }
+function fmtShort(s) { const d = new Date(ymd(s)); return `${d.getUTCDate()} ${MON[d.getUTCMonth()]}`; }
+function phaseOf(w) { return w <= 6 ? 'Base' : w <= 10 ? 'Build' : w <= 13 ? 'Peak' : w <= 15 ? 'Taper' : 'Race week'; }
+
+const RACES = [
+  { key: 'half', name: 'Half marathon', short: 'Half', date: '2026-10-04', km: HM, ref: true },
+  { key: 'parkrun', name: 'Parkrun', short: 'Parkrun', date: '2026-10-17', km: 5, ref: true },
+  { key: 'valencia', name: 'Valencia Marathon', short: 'Valencia', date: RACE_DATE, km: MAR, ref: false }
+];
+
+/* ---------- Daniels / VDOT ---------- */
+function vo2At(v) { return -4.6 + 0.182258 * v + 0.000104 * v * v; }            // v in m/min
+function velAt(vo2) { const a = 0.000104, b = 0.182258, c = -4.6 - vo2; return (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a); }
+function pctMax(tmin) { return 0.8 + 0.1894393 * Math.exp(-0.012778 * tmin) + 0.2989558 * Math.exp(-0.1932605 * tmin); }
+function vdotFrom(km, sec) { const t = sec / 60, v = km * 1000 / t; return vo2At(v) / pctMax(t); }
+function timeFor(km, vdot) {
+  let lo = km * 2 * 60, hi = km * 15 * 60;
+  for (let i = 0; i < 60; i++) { const mid = (lo + hi) / 2; if (vdotFrom(km, mid) > vdot) lo = mid; else hi = mid; }
+  return (lo + hi) / 2;
+}
+function tPaceOf(vdot) { return 60000 / velAt(0.88 * vdot); }                       // Daniels threshold, s/km
+
+/* ---------- legacy weeks 1–6 (exactly as the previous app prescribed them) ---------- */
+const LEGACY = [[1,0,'recovery','Recovery + strides',5,'Easy recovery run + 5 × 100 m strides.','recovery'],[1,1,'lthr','Threshold',10,'Warm up with drills + strides. Tempo 20 min continuous at LT2. Warm down easy.','threshold'],[1,2,'easy','Aerobic endurance',11,'Easy aerobic running, relaxed and steady throughout.','easy'],[1,3,'lhills','Hill strength',11,'Warm up well. 8 × 60 s hills, jog down. Finish easy.','hill'],[1,4,'rest','Rest',0,'Full rest or gentle mobility.',null],[1,5,'lmp','Marathon rhythm',9,'Progression: 9 km, easy to steady, with 4 km at marathon pace to finish.','marathon'],[1,6,'llong','Long run',14,'Easy long run, aerobic throughout, fuel from ~30 min.','long'],
+[2,0,'recovery','Recovery + strides',5,'Easy recovery run + 5 × 100 m strides.','recovery'],[2,1,'lthr','Threshold',10,'Warm up with drills + strides. 4 × 6 min at LT2, 90 s jog. Warm down easy.','threshold'],[2,2,'easy','Aerobic endurance',11,'Easy aerobic running, relaxed and steady throughout.','easy'],[2,3,'lhills','Hill strength',11,'Warm up well. 10 × 60 s hills, jog down. Finish easy.','hill'],[2,4,'rest','Rest',0,'Full rest or gentle mobility.',null],[2,5,'lmp','Marathon rhythm',10,'Progression: 10 km, easy to steady, with 5 km at marathon pace to finish.','marathon'],[2,6,'llong','Long run',16,'Easy long run, aerobic throughout, fuel from ~30 min.','long'],
+[3,0,'recovery','Recovery + strides',5,'Easy recovery run + 5 × 100 m strides.','recovery'],[3,1,'lthr','Threshold',10,'Warm up with drills + strides. 5 × 6 min at LT2, 90 s jog. Warm down easy.','threshold'],[3,2,'easy','Aerobic endurance',11,'Easy aerobic running, relaxed and steady throughout.','easy'],[3,3,'lhills','Hill strength',11,'Warm up well. 10 × 75 s hills, jog down. Finish easy.','hill'],[3,4,'rest','Rest',0,'Full rest or gentle mobility.',null],[3,5,'lmp','Marathon rhythm',11,'Progression: 11 km, easy to steady, with 6 km at marathon pace to finish.','marathon'],[3,6,'llong','Long run',18,'Easy long run, aerobic throughout, fuel from ~30 min.','long'],
+[4,0,'recovery','Recovery + strides',6,'Easy recovery run + 5 × 100 m strides.','recovery'],[4,1,'lthr','Threshold',10,'Warm up with drills + strides. 2 × 12 min at LT2, 2 min jog. Warm down easy.','threshold'],[4,2,'easy','Aerobic endurance',14,'Easy aerobic running, relaxed and steady throughout.','easy'],[4,3,'lhills','Hill strength',11,'Warm up well. 8 × 90 s hills, jog down. Finish easy.','hill'],[4,4,'rest','Rest',0,'Full rest or gentle mobility.',null],[4,5,'lmp','Marathon rhythm',9,'Progression: 9 km, easy to steady, with 4 km at marathon pace to finish.','marathon'],[4,6,'llong','Long run',20,'Easy long run, aerobic throughout, fuel from ~30 min.','long'],
+[5,0,'recovery','Recovery + strides',6,'Easy recovery run + 6 × 100 m strides.','recovery'],[5,1,'lthr','Threshold',11,'Warm up with drills + strides. 5 × 8 min at LT2, 2 min jog. Warm down easy.','threshold'],[5,2,'easy','Aerobic endurance',10,'Easy aerobic running, relaxed and steady throughout.','easy'],[5,3,'lhills','VO₂ intervals',11,'Warm up well. 6 × 1000 m at VO₂, 2:30 jog. Finish easy.','vo2'],[5,4,'rest','Rest',0,'Full rest or gentle mobility.',null],[5,5,'lmp','Marathon rhythm',12,'Progression: 12 km, easy to steady, with 8 km at marathon pace to finish.','marathon'],[5,6,'llong','Long run',22,'Easy long run, aerobic throughout, fuel from ~30 min.','long'],
+[6,0,'recovery','Recovery + strides',6,'Easy recovery run + 6 × 100 m strides.','recovery'],[6,1,'lthr','Threshold',11,'Warm up with drills + strides. 3 × 12 min at LT2, 2 min jog. Warm down easy.','threshold'],[6,2,'easy','Aerobic endurance',10,'Easy aerobic running, relaxed and steady throughout.','easy'],[6,3,'lhills','VO₂ intervals',11,'Warm up well. 5 × 1200 m at VO₂, 3 min jog. Finish easy.','vo2'],[6,4,'rest','Rest',0,'Full rest or gentle mobility.',null],[6,5,'lmp','Marathon rhythm',13,'Progression: 13 km, easy to steady, with 10 km at marathon pace to finish.','marathon'],[6,6,'llong','Long run',24,'Long run with the final 8 km at marathon pace. Fuel from ~30 min.','long']];
+const LEGACY_TARGET = { 1: 60, 2: 63, 3: 66, 4: 70, 5: 72, 6: 75 };
+const LEGACY_TAG = { recovery: 'EASY', lthr: 'KEY', easy: 'EASY', lhills: 'KEY', rest: 'REST', lmp: 'KEY', llong: 'LONG' };
+
+/* ---------- part constructors (sessions are built from parts so they can be re-fitted) ---------- */
+const E = (km, min, max) => ({ t: 'easy', zone: 'easy', km, min, max });
+const R = (km, min, max) => ({ t: 'easy', zone: 'recovery', km, min, max });
+const HILLS = n => ({ t: 'hills', n });
+const WU = (km = 2) => ({ t: 'wu', km });
+const CD = (km = 1) => ({ t: 'cd', km });
+const REPS = (n, d, rec, nMax) => ({ t: 'reps', n, d, rec, nMax });
+const STEADY = (km, kmMax) => ({ t: 'block', km, kmMax });
+const ALT = (sets, on, off, setsMax) => ({ t: 'alt', sets, on, off, setsMax });
+const ALTMIN = (min, on, off, minMax) => ({ t: 'altmin', min, on, off, minMax });
+const ALTFREE = (km, kmMax) => ({ t: 'altfree', km, kmMax });
+const TIMED = (min, minMax) => ({ t: 'timed', min, minMax });
+const LONGLT2 = (km, first, lt2, kmMax, firstMax, lt2Max) => ({ t: 'longlt2', km, first, lt2, kmMax, firstMax, lt2Max });
+const VO2 = (opener, n, d, jog, openerMax, nMax) => ({ t: 'vo2', opener, n, d, jog, openerMax, nMax });
+const MIXED = (sets, setsMax) => ({ t: 'mixed', sets, setsMax });
+const RACE = (km, name, key) => ({ t: 'race', km, name, key });
+const SHAKE = km => ({ t: 'shake', km });
+const XT = (lo, hi, runKm) => ({ t: 'xtrain', lo, hi, runKm });
+const REST = () => ({ t: 'rest' });
+const TBC = () => ({ t: 'tbc' });
+
+/* Scullion's paces as published on 262iq.com (verified against your screenshots), s/km. */
+const SP = {
+  7: { lt2: [257, 269], float: 287, steady: [288, 313], vo2: [217, 228] },
+  8: { lt2: [256, 268], float: 286, steady: [287, 312], vo2: [216, 227] },
+  9: { lt2: [255, 267], float: 285, steady: [287, 312], vo2: [215, 226], mp: 263 },
+  10: { lt2: [254, 266], float: 284, steady: [286, 311], vo2: [215, 226] },
+  11: { lt2: [254, 266], float: 284, steady: [286, 311], vo2: [214, 225] },
+  12: { lt2: [253, 265], float: 283, steady: [286, 311], vo2: [213, 224], fast: [214, 225] },
+  13: { lt2: [252, 264], float: 282, steady: [285, 310], vo2: [212, 223] },
+  14: { lt2: [252, 264], float: 282, steady: [285, 310], vo2: [213, 224] },
+  15: { lt2: [251, 263], float: 281, steady: [284, 309], vo2: [211, 222] }
+};
+const SP_EASY = [315, 360], SP_REC = [345, 390];
+
+/* The agreed plan: Scullion's sessions, easy runs + cool-downs trimmed first, then sessions
+   shortened evenly so the ten weeks average Kaizen's 67.9 km. `sc` is Scullion's original. */
+const D = (type, tag, title, parts, extra) => Object.assign({ type, tag, title, parts }, extra || {});
+const REST_DAY = (o, e, a, sc) => D('rest', 'REST', 'Rest', [REST()], { sc: sc || 'Rest or easy recovery only', o, e, a });
+const PLAN = {
+  7: [
+    D('hills', 'HILLS', 'Hills + recovery', [R(3, 3, 10), HILLS(8), R(3, 3, 6)], { sc: '16 km: recovery running with hill strides', note: 'This Monday’s hill reps weren’t in your screenshots, so 8 × 100 m is assumed, as in week 8.' }),
+    D('easy', 'EASY', 'Easy aerobic run', [E(9, 8, 19)], { sc: 'Easy 16–19 km', o: 'Build medium-long aerobic volume.', e: 'Easy and relaxed.', a: 'Letting medium-long become steady.' }),
+    D('lt2', 'KEY', 'LT2 mile reps', [WU(), REPS(5, MI, '75 s', 8), CD()], { sc: '8 × 1 mile at LT2, 75 s recovery', note: 'Cut from 8 reps to 5 so you arrive fresh for Sunday’s half.', o: 'Accumulate controlled LT2 volume.', e: 'Lock into rhythm early.', a: 'Trying to run each mile faster.' }),
+    D('easy', 'EASY', 'Easy run', [E(8, 6, 10)], { sc: 'Steady 13–16 km with 10 km steady', note: 'Steady run swapped for easy running. The half is on Sunday.' }),
+    REST_DAY('Absorb training.', 'No pace stress.', 'Making recovery productive in the wrong way.'),
+    D('shake', 'EASY', 'Shakeout', [SHAKE(5)], { sc: 'Alternating tempo 13 km: 1 mile LT2 / 1 mile float', note: 'The half replaces this week’s alternating tempo.' }),
+    D('race', 'RACE', 'Half marathon', [WU(), RACE(HM, 'Half marathon', 'half'), CD()], { sc: 'Long run 2 h easy', note: 'Race it. The half replaces the 2-hour long run, and your result resets your training paces.' })
+  ],
+  8: [
+    D('recovery', 'EASY', 'Rest or recovery', [R(6, 0, 6)], { sc: 'Hills + recovery 16 km, 8 × 100 m hills', note: 'The day after the half: rest, or 6 km very easy. No hills.' }),
+    D('easy', 'EASY', 'Easy run', [E(8, 6, 10)], { sc: '3 km LT2, then 15 × 400 m, 200 m jog', note: 'VO₂ session dropped, two days after the half.' }),
+    D('xtrain', 'EASY', 'Cross-training', [XT(60, 70, 13)], { sc: 'Easy 13 km, or 60–70 min easy cross-training', o: 'Recover from faster work.', e: 'Conversational and relaxed.', a: 'Progressing because legs feel good.' }),
+    D('steady', 'STEADY', 'Steady endurance', [WU(), STEADY(7, 8), CD()], { sc: '16 km with 8 km steady', o: 'Build controlled aerobic pressure.', e: 'Purposeful but calm.', a: 'Making it hidden LT2.' }),
+    D('alt', 'KEY', 'Alternating threshold', [WU(), ALT(6, 2, 1, 7), CD()], { sc: '21 km continuous: 2 km LT2 / 1 km float', o: 'Recover while still running steady.', e: 'Float is active running, not jogging.', a: 'Racing the 2km blocks.' }),
+    D('xtrain', 'EASY', 'Cross-training', [XT(60, 90, 13)], { sc: 'Easy 13 km, or 60–90 min easy cross-training', o: 'Freshen legs before Sunday.', e: 'Very relaxed.', a: 'Adding pace before Sunday.' }),
+    D('longlt2', 'KEY', 'Long run with LT2 block', [LONGLT2(22, 7, 5, 26, 8, 6.5)], { sc: '26 km: 8 km easy, 6–7 km LT2, finish easy', o: 'Progress sustained LT2 volume inside a longer run.', e: 'LT2 smooth, repeatable and controlled.', a: 'Running the block like a race.' })
+  ],
+  9: [
+    D('hills', 'HILLS', 'Hills + recovery', [R(3, 3, 10), HILLS(8), R(3, 3, 6)], { sc: '16 km: 10 km recovery, 8 × 100 m hills, 6 km recovery', o: 'Maintain power and mechanics.', e: 'Smooth, controlled, powerful.', a: 'Trying to prove fitness.' }),
+    D('easy', 'EASY', 'Easy aerobic run', [E(8, 8, 19)], { sc: 'Easy 16–19 km', o: 'Maintain aerobic volume.', e: 'Mostly easy.', a: 'Running medium-long too hard.' }),
+    D('lt2', 'KEY', 'LT2 threshold', [WU(), REPS(6, 2, '90 s', 7), CD()], { sc: '7 × 2 km at LT2, 90 s recovery', o: 'Accumulate strong LT2 volume.', e: 'Smooth early, strong late.', a: 'Trying to hit goal-fitness LT2 too soon.' }),
+    D('steady', 'STEADY', 'Steady run', [WU(), STEADY(8, 10), CD()], { sc: '13–16 km with 10 km steady', o: 'Build aerobic strength.', e: 'Start relaxed and build into steady.', a: 'Confusing steady with threshold.' }),
+    REST_DAY('Absorb threshold load.', 'Easy only.', 'Banking extra fitness.'),
+    D('parkrun', 'RACE', 'Parkrun', [WU(), RACE(5, 'Parkrun 5 km', 'parkrun'), CD()], { sc: 'Progression 80 min, last 5–6 km toward marathon rhythm', note: 'Parkrun replaces the 80-minute progression. Race it: your time updates your paces.' }),
+    D('long', 'LONG', 'Long run', [TIMED(110, 135)], { sc: 'Long run 2 h 15 easy', o: 'Extend endurance.', e: 'Relaxed throughout.', a: 'Racing back-to-back long runs.' })
+  ],
+  10: [
+    D('hills', 'HILLS', 'Hills + recovery', [R(3, 3, 10), HILLS(8), R(3, 3, 6)], { sc: '16 km: 10 km recovery, 8 × 100 m hills, 6 km recovery', o: 'Keep mechanics sharp.', e: 'Relaxed run, controlled hills.', a: 'Forcing easy pace.' }),
+    D('vo2', 'VO2', 'VO₂ max intervals', [WU(), VO2(2.5, 8, 0.6, 0.2, 3, 10), CD()], { sc: '3 km LT2, then 10 × 600 m, 200 m jog', o: 'Improve ceiling while maintaining threshold rhythm.', e: 'Fast but technically clean 600s.', a: 'Breaking form for pace.' }),
+    D('xtrain', 'EASY', 'Cross-training', [XT(60, 70, 13)], { sc: 'Easy 13 km, or 60–70 min easy cross-training', o: 'Recover from Tuesday.', e: 'Conversational pace.', a: 'Progressing too much.' }),
+    D('steady', 'STEADY', 'Steady endurance', [WU(), STEADY(7, 8), CD()], { sc: '16 km with 8 km steady', o: 'Maintain steady aerobic pressure.', e: 'Purposeful, never forced.', a: 'Making it LT2.' }),
+    D('alt', 'KEY', 'Alternating threshold', [WU(), ALT(4, 3, 1, 5), CD()], { sc: '20 km: 5 × (3 km LT2 + 1 km float)', o: 'Build strength with longer LT2 sections.', e: '3km sections strong but repeatable.', a: 'Too aggressive early.' }),
+    D('xtrain', 'EASY', 'Cross-training', [XT(60, 90, 13)], { sc: 'Easy 13 km, or 60–90 min easy cross-training', o: 'Recover before long-run LT2.', e: 'Very easy.', a: 'Pushing before Sunday.' }),
+    D('longlt2', 'KEY', 'Long run with LT2 block', [LONGLT2(24, 7, 6.5, 29, 8, 8)], { sc: '29 km with an 8 km LT2 block, fuel early', o: 'Hold LT2 under meaningful long-run fatigue.', e: 'Ease into the block; firm and controlled.', a: 'Starting block too hard and fading.' })
+  ],
+  11: [
+    D('hills', 'HILLS', 'Hills + recovery', [R(3, 3, 10), HILLS(6), R(3, 3, 6)], { sc: '16 km: 10 km recovery, 6 × 100 m hills, 6 km recovery', o: 'Maintain power with low fatigue.', e: 'Good form and rhythm.', a: 'Making it a hard workout.' }),
+    D('easy', 'EASY', 'Easy aerobic run', [E(8, 8, 19)], { sc: 'Easy 19 km', o: 'Build medium-long aerobic volume.', e: 'Easy and controlled.', a: 'Hidden steady run.' }),
+    D('lt2', 'KEY', 'LT2 threshold', [WU(), REPS(5, 2, '90 s', 7), CD()], { sc: '7 × 2 km at LT2, 90 s recovery', o: 'Maintain high-quality LT2 volume.', e: 'Smooth and controlled.', a: 'Trying to beat last week.' }),
+    D('steady', 'STEADY', 'Steady run', [WU(), STEADY(7, 10), CD()], { sc: '13–16 km with 10 km steady', o: 'Support marathon strength.', e: 'Start relaxed and build gradually.', a: 'Overcooking steady.' }),
+    REST_DAY('Freshen up for Saturday.', 'No pressure.', 'Adding extra quality.', 'Rest or very easy recovery only'),
+    D('altfree', 'KEY', 'Alternating tempo', [WU(), ALTFREE(14, 19), CD()], { sc: '19 km continuous, moving between LT2 and float', o: 'Big aerobic strength and pace control.', e: 'LT2 controlled, float honest.', a: 'Turning it into a race.' }),
+    D('long', 'LONG', 'Long run', [TIMED(110, 150)], { sc: 'Long run 2 h 30 easy', o: 'Build endurance after Saturday.', e: 'Easy from the start.', a: 'Making every long run specific.' })
+  ],
+  12: [
+    D('hills', 'HILLS', 'Hills + recovery', [R(3, 3, 10), HILLS(8), R(3, 3, 6)], { sc: '16 km: 10 km recovery, 8 × 100 m hills, 6 km recovery', o: 'Keep mechanics sharp.', e: 'Relaxed run, clean hill form.', a: 'Smashing hill reps.' }),
+    D('mixed', 'KEY', 'Mixed intervals', [WU(), MIXED(3, 4), CD()], { sc: '4 × (1 mile LT2, 90 s, then 4 × 400 m faster, 75 s)', o: 'Anchor mixed pace work with LT2 while keeping leg speed.', e: 'Controlled mile; relaxed 400s.', a: 'Letting early work ruin final set.' }),
+    D('xtrain', 'EASY', 'Cross-training', [XT(60, 70, 13)], { sc: 'Easy 13 km, or 60–70 min easy cross-training', o: 'Recover from Tuesday.', e: 'Very easy.', a: 'Progressing because you feel good.' }),
+    D('steady', 'STEADY', 'Steady endurance', [WU(), STEADY(8, 10), CD()], { sc: '16 km with 10 km steady', o: 'Build aerobic pressure ahead of peak long run.', e: 'Purposeful but controlled.', a: 'Making it threshold.' }),
+    D('alt', 'KEY', 'Alternating threshold', [WU(), ALT(6, 2, 1, 7), CD()], { sc: '21 km continuous: 2 km LT2 / 1 km float', o: 'Keep marathon strength high.', e: 'Smooth changes over forced splits.', a: 'Pushing threshold too hard.' }),
+    D('xtrain', 'EASY', 'Cross-training', [XT(60, 90, 13)], { sc: 'Easy 13 km, or 60–90 min easy cross-training', o: 'Recover before peak session.', e: 'Very relaxed.', a: 'Adding pace before Sunday.' }),
+    D('longlt2', 'KEY', 'Peak long run with LT2 block', [LONGLT2(26, 6, 8, 32, 8, 10)], { sc: '32 km: 8 km easy, 10 km LT2, finish easy', o: 'Peak sustained LT2 under long-run fatigue.', e: 'Strong, rhythmic and sustainable.', a: 'Turning LT2 into race simulation.' })
+  ],
+  13: [
+    D('hills', 'HILLS', 'Hills + recovery', [R(3, 3, 10), HILLS(6), R(3, 3, 6)], { sc: '16 km: 10 km recovery, 6 × 100 m hills, 6 km recovery', o: 'Keep mechanics sharp.', e: 'Controlled, rhythmic hills.', a: 'Turning Monday hard.' }),
+    D('easy', 'EASY', 'Easy aerobic run', [E(8, 8, 19)], { sc: 'Easy 19 km', o: 'Maintain aerobic volume.', e: 'Controlled easy running.', a: 'Going too hard before Wednesday.' }),
+    D('lt2', 'KEY', 'LT2 threshold', [WU(), REPS(5, 2, '90 s', 7), CD()], { sc: '7 × 2 km at LT2, 90 s recovery', o: 'Maintain high LT2 volume.', e: 'Smooth and repeatable.', a: 'Chasing splits.' }),
+    D('steady', 'STEADY', 'Steady run', [WU(), STEADY(7, 10), CD()], { sc: '13–16 km with 10 km steady', o: 'Support aerobic strength.', e: 'Controlled pressure only.', a: 'Drifting into threshold.' }),
+    REST_DAY('Freshen up for big tempo.', 'Very easy only.', 'Adding extra volume too hard.'),
+    D('alt', 'KEY', 'Big alternating tempo', [WU(), ALT(4, 4, 1, 5), CD()], { sc: '25 km continuous: 4 km LT2 / 1 km float', o: 'One of the biggest aerobic strength sessions.', e: '4km blocks controlled; float honest.', a: 'Treating 4km blocks as races.' }),
+    D('long', 'LONG', 'Long run', [TIMED(105, 150)], { sc: 'Long run 2 h 30 easy', o: 'Support bigger marathon work without added intensity.', e: 'Easy and fuelled.', a: 'Racing after Saturday.' })
+  ],
+  14: [
+    D('hills', 'HILLS', 'Hills + recovery', [R(4, 3, 10), HILLS(8), R(3, 3, 6)], { sc: '16 km: 10 km recovery, 8 × 100 m hills, 6 km recovery', o: 'Maintain mechanics while consolidating.', e: 'Controlled hills, easy running easy.', a: 'Forcing Monday.' }),
+    D('vo2', 'VO2', 'VO₂ max intervals', [WU(), VO2(3, 13, 0.4, 0.2, 3, 15), CD()], { sc: '3 km LT2, then 15 × 400 m, 200 m jog', o: 'Keep ceiling high without too much fatigue.', e: 'Smooth 3km, relaxed sharp 400s.', a: 'Racing the workout.' }),
+    D('xtrain', 'EASY', 'Cross-training', [XT(60, 70, 13)], { sc: 'Easy 13 km, or 60–70 min easy cross-training', o: 'Recover and maintain volume.', e: 'Easy only.', a: 'Progressing too much.' }),
+    D('steady', 'STEADY', 'Steady endurance', [WU(), STEADY(7, 8), CD()], { sc: '16 km with 8 km steady', o: 'Maintain aerobic strength.', e: 'Controlled and rhythmic.', a: 'Turning it into threshold.' }),
+    D('altmin', 'KEY', 'Controlled alternating', [WU(), ALTMIN(55, 8, 8, 60), CD()], { sc: '60 min continuous: 8 min LT2 / 8 min float', o: 'Maintain threshold rhythm while reducing load.', e: 'Smooth transitions; finish like you could do more.', a: 'Trying to repeat peak weeks.' }),
+    D('xtrain', 'EASY', 'Cross-training', [XT(60, 90, 13)], { sc: 'Easy 13 km, or 60–90 min easy cross-training', o: 'Recover before final substantial LT2 long run.', e: 'Very relaxed.', a: 'Forcing anything after Friday.' }),
+    D('longlt2', 'KEY', 'Long run with LT2 block', [LONGLT2(26, 7, 7, 29, 8, 8)], { sc: '29 km with 8 km LT2', o: 'Consolidate peak LT2 work without chasing Week 8 volume.', e: 'Controlled, smooth and fuelled.', a: 'Trying to make it harder than Week 8.' })
+  ],
+  15: [
+    D('hills', 'HILLS', 'Hills + recovery', [R(3, 3, 8), HILLS(6), R(2.5, 2.5, 5)], { sc: '13 km: 8 km recovery, 6 × 100 m hills, 5 km recovery', o: 'Stay sharp while reducing load.', e: 'Controlled hills, no strain.', a: 'Proving fitness in taper.' }),
+    D('easy', 'EASY', 'Easy aerobic run', [E(10, 8, 16)], { sc: 'Easy 16 km', o: 'Maintain rhythm as taper begins.', e: 'Easy and controlled.', a: 'Testing the legs.' }),
+    D('lt2', 'KEY', 'LT2 threshold', [WU(), REPS(4, 2, '90 s', 5), CD()], { sc: '5 × 2 km at LT2, 90 s recovery', o: 'Keep threshold rhythm without digging a hole.', e: 'Controlled and confident.', a: 'Best session of the block attempt.' }),
+    D('steady', 'STEADY', 'Steady run', [WU(), STEADY(7, 9), CD()], { sc: '13–16 km with 8–10 km steady', o: 'Maintain aerobic feel while freshening.', e: 'Controlled and smooth.', a: 'Taper nerves pushing pace.' }),
+    REST_DAY('Freshen the legs.', 'No pressure.', 'Adding work from anxiety.'),
+    D('alt', 'KEY', 'Short alternating tempo', [WU(), ALT(3, 2, 1, 4), CD()], { sc: '12 km: 4 × (2 km LT2 + 1 km float)', o: 'Sharpen rhythm without major fatigue.', e: 'Controlled LT2, honest float.', a: 'Recreating peak-week load.' }),
+    D('long', 'LONG', 'Long run', [TIMED(80, 90)], { sc: 'Long run 90 min easy, practise drinks', o: 'Freshen up while maintaining long-run rhythm.', e: 'Controlled and relaxed.', a: 'Squeezing in one more big session.' })
+  ],
+  16: [0, 1, 2, 3, 4, 5].map(() => D('tbc', 'TBC', 'Race week', [TBC()], { note: 'Scullion’s week 16 hasn’t been added yet. Send the screenshots and this fills in.' }))
+    .concat([D('race', 'RACE', 'Valencia Marathon', [RACE(MAR, 'Valencia Marathon', 'valencia')], { note: 'Even pace, fuel early, race the second half.' })])
+};
+const LOCKED_WEEKS = { 7: true, 16: true };
+const W16_PLACEHOLDER_KM = 41;              // pre-race volume assumed for the 10-week average
+
+/* ---------- part maths ---------- */
+const EASY_MIN_PER_KM = 5.625;              // mid of Scullion's easy range, for timed runs
+const ALT_MIN_PER_KM = 4.5;
+function partKm(p) {
+  switch (p.t) {
+    case 'easy': case 'wu': case 'cd': case 'shake': case 'block': case 'altfree': case 'longlt2': case 'race': return p.km;
+    case 'hills': return p.n * 0.1;
+    case 'reps': return p.n * p.d;
+    case 'alt': return p.sets * (p.on + p.off);
+    case 'altmin': return p.min / ALT_MIN_PER_KM;
+    case 'timed': return p.min / EASY_MIN_PER_KM;
+    case 'vo2': return p.opener + p.n * p.d + (p.n - 1) * p.jog;
+    case 'mixed': return p.sets * (MI + 1.6);
+    default: return 0;
+  }
+}
+function partsKm(parts) { return parts.reduce((s, p) => s + partKm(p), 0); }
+const SCALABLE = { reps: 1, block: 1, alt: 1, altmin: 1, altfree: 1, timed: 1, longlt2: 1, vo2: 1, mixed: 1 };
+const r05 = x => Math.round(x * 2) / 2, r5 = x => Math.round(x / 5) * 5, clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+function scalePart(p, f) {
+  const q = { ...p };
+  switch (p.t) {
+    case 'reps': q.n = clamp(Math.round(p.n * f), 2, p.nMax); break;
+    case 'block': q.km = clamp(r05(p.km * f), 3, p.kmMax); break;
+    case 'alt': q.sets = clamp(Math.round(p.sets * f), 2, p.setsMax); break;
+    case 'altmin': q.min = clamp(r5(p.min * f), 30, p.minMax); break;
+    case 'altfree': q.km = clamp(Math.round(p.km * f), 8, p.kmMax); break;
+    case 'timed': q.min = clamp(r5(p.min * f), 60, p.minMax); break;
+    case 'longlt2': q.km = clamp(Math.round(p.km * f), 16, p.kmMax); q.lt2 = clamp(r05(p.lt2 * f), 3, p.lt2Max); q.first = clamp(Math.round(p.first * f), 4, p.firstMax); break;
+    case 'vo2': q.n = clamp(Math.round(p.n * f), 4, p.nMax); q.opener = clamp(r05(p.opener * f), 1.5, p.openerMax); break;
+    case 'mixed': q.sets = clamp(Math.round(p.sets * f), 2, p.setsMax); break;
+  }
+  return q;
+}
+function maxPart(p) {
+  switch (p.t) {
+    case 'reps': return { ...p, n: p.nMax }; case 'block': return { ...p, km: p.kmMax }; case 'alt': return { ...p, sets: p.setsMax };
+    case 'altmin': return { ...p, min: p.minMax }; case 'altfree': return { ...p, km: p.kmMax }; case 'timed': return { ...p, min: p.minMax };
+    case 'longlt2': return { ...p, km: p.kmMax, lt2: p.lt2Max, first: p.firstMax }; case 'vo2': return { ...p, n: p.nMax, opener: p.openerMax };
+    case 'mixed': return { ...p, sets: p.setsMax }; default: return p;
+  }
+}
+
+/* Re-fit one week to a km target, keeping the agreed order:
+   cutting — easy runs first (down to their floors), then every session evenly;
+   adding  — sessions back toward Scullion's originals first, then easy runs. */
+function refitWeek(days, target) {
+  const cur = days.reduce((s, d) => s + partsKm(d.parts), 0);
+  if (!target || Math.abs(target - cur) < 1) return { days, changed: false };
+  const out = days.map(d => ({ ...d, parts: d.parts.map(p => ({ ...p })) }));
+  const all = () => out.flatMap(d => d.parts);
+  const total = () => out.reduce((s, d) => s + partsKm(d.parts), 0);
+  let delta = target - cur;
+  if (delta < 0) {
+    const flex = all().filter(p => p.t === 'easy' && p.km > p.min);
+    const room = flex.reduce((s, p) => s + (p.km - p.min), 0);
+    if (room > 0) { const take = Math.min(room, -delta); flex.forEach(p => { p.km = Math.max(p.min, r05(p.km - take * (p.km - p.min) / room)); }); }
+    delta = target - total();
+    if (delta < -0.5) {
+      const S = all().filter(p => SCALABLE[p.t]).reduce((s, p) => s + partKm(p), 0);
+      if (S > 0) { const f = Math.max(0.5, (S + delta) / S); out.forEach(d => { d.parts = d.parts.map(p => SCALABLE[p.t] ? scalePart(p, f) : p); }); }
+    }
+  } else {
+    const sc = all().filter(p => SCALABLE[p.t]);
+    const S = sc.reduce((s, p) => s + partKm(p), 0), Smax = sc.reduce((s, p) => s + partKm(maxPart(p)), 0);
+    if (S > 0 && Smax > S) { const f = Math.min(Smax / S, (S + delta) / S); out.forEach(d => { d.parts = d.parts.map(p => SCALABLE[p.t] ? scalePart(p, f) : p); }); }
+    delta = target - total();
+    if (delta > 0.5) {
+      const flex = all().filter(p => p.t === 'easy' && p.max > p.km);
+      const room = flex.reduce((s, p) => s + (p.max - p.km), 0);
+      if (room > 0) { const give = Math.min(room, delta); flex.forEach(p => { p.km = Math.min(p.max, r05(p.km + give * (p.max - p.km) / room)); }); }
+    }
+  }
+  return { days: out, changed: true };
+}
+
+/* Agreed weekly totals and the Kaizen curve they form. */
+const AGREED_KM = {};
+for (let w = 7; w <= 15; w++) AGREED_KM[w] = PLAN[w].reduce((s, d) => s + partsKm(d.parts), 0);
+AGREED_KM[16] = W16_PLACEHOLDER_KM;
+const DEFAULT_KAIZEN_AVG = 67.9;
+/* Target for a week: a weekly Kaizen figure if you entered one for that week; otherwise the agreed
+   total rescaled so weeks 7–16 average Kaizen's simulator figure (race weeks 7 and 16 are fixed). */
+function weekTarget(w, kz) {
+  if (w <= 6) return LEGACY_TARGET[w];
+  const weekly = kz && kz.weekly && kz.weekly[w];
+  if (weekly && !LOCKED_WEEKS[w]) return +weekly;
+  const avg = (kz && +kz.avg) || DEFAULT_KAIZEN_AVG;
+  if (LOCKED_WEEKS[w]) return AGREED_KM[w];
+  let mid = 0; for (let k = 8; k <= 15; k++) mid += AGREED_KM[k];
+  const f = (avg * 10 - AGREED_KM[7] - AGREED_KM[16]) / mid;
+  return AGREED_KM[w] * f;
+}
+
+/* ---------- build the whole plan ---------- */
+function buildPlan(kz) {
+  const days = [];
+  for (let w = 1; w <= 16; w++) {
+    let wk;
+    if (w <= 6) {
+      wk = LEGACY.filter(r => r[0] === w).map(r => ({ legacy: true, type: r[2], tag: LEGACY_TAG[r[2]], title: r[3], km: r[4], spec: r[5], lzone: r[6], parts: [] }));
+    } else {
+      const base = PLAN[w].map(d => ({ ...d }));
+      const tgt = weekTarget(w, kz);
+      const res = LOCKED_WEEKS[w] ? { days: base, changed: false } : refitWeek(base, tgt);
+      wk = res.days.map(d => ({ ...d, refit: res.changed }));
+    }
+    wk.forEach((d, dow) => {
+      const idx = (w - 1) * 7 + dow;
+      days.push({ ...d, w, dow, idx, date: dateOfIdx(idx), km: d.legacy ? d.km : Math.round(partsKm(d.parts) * 10) / 10 });
+    });
+  }
+  return days;
+}
+function weekDays(plan, w) { return plan.filter(d => d.w === w); }
+function weekPlanned(plan, w) { return Math.round(weekDays(plan, w).reduce((s, d) => s + (d.km || 0), 0)); }
+
+/* ---------- paces ---------- */
+/* Session paces follow your current fitness: Kaizen's latest 10 km and half predictions (or a race
+   result if that's newer). Scullion's ranges keep their shape and are shifted by the gap between your
+   threshold and his goal-fitness threshold. Never faster than his paces. */
+function kaizenVdot(e) {
+  if (!e) return null;
+  const v = [];
+  for (const [key, km] of [['k10', 10], ['hm', HM]]) { const t = parseTime(e[key]); if (t) v.push(vdotFrom(km, t)); }
+  if (!v.length) for (const [key, km] of [['k5', 5], ['m', MAR]]) { const t = parseTime(e[key]); if (t) v.push(vdotFrom(km, t)); }
+  return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
+}
+function refInfo(settings, kz, today) {
+  const t = today || todayStr(), cands = [];
+  const k = latestKaizen(kz);
+  if (k && k.date <= t) { const v = kaizenVdot(k); if (v) cands.push({ vdot: v, date: k.date, src: 'kaizen', label: `Kaizen’s predictions from ${fmtShort(k.date)}` }); }
+  for (const r of RACES) {
+    if (!r.ref) continue;
+    const sec = settings.results && parseTime(settings.results[r.key]);
+    if (sec && r.date <= t) cands.push({ vdot: vdotFrom(r.km, sec), date: r.date, src: 'race', label: `your ${r.short.toLowerCase()} result` });
+  }
+  cands.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : (a.src === 'race' ? 1 : -1)));
+  let ref = cands[cands.length - 1];
+  if (!ref) {
+    const dist = { '5k': 5, '10k': 10, hm: HM, full: MAR }[settings.curDist] || MAR;
+    ref = { vdot: vdotFrom(dist, parseTime(settings.curTime) || (3 * 3600 + 26 * 60)), date: PLAN_START, src: 'manual', label: 'your fitness setting' };
+  }
+  return { ...ref, T: tPaceOf(ref.vdot) };
+}
+function paceOffset(w, ref, mode) {
+  if (mode === 'scullion' || w < 7) return 0;
+  return Math.max(0, ref.T - SP[clamp(w, 7, 15)].lt2[0]);
+}
+function zonesForWeek(w, ref, mode) {
+  const sp = SP[clamp(w, 7, 15)], o = paceOffset(w, ref, mode);
+  const add = r => [r[0] + o, r[1] + o];
+  const oe = Math.max(0, o - (SP[7].lt2[0] - sp.lt2[0]));   // easy paces don't tighten week to week
+  const addE = r => [r[0] + oe, r[1] + oe];
+  return { easy: addE(SP_EASY), recovery: addE(SP_REC), steady: add(sp.steady), lt2: add(sp.lt2), float: [sp.float + o, sp.float + o], vo2: add(sp.vo2), fast: add(sp.fast || sp.vo2), offset: o };
+}
+/* Previous app's zone model, still used for weeks 1–6. */
+function legacyZones(ref) {
+  const MP = timeFor(MAR, ref.vdot) / MAR, rg = (mp, d) => mp * Math.pow(d / MAR, 0.06);
+  return { recovery: [MP + 75, MP + 120], easy: [MP + 45, MP + 90], long: [MP + 50, MP + 80], steady: [MP + 20, MP + 40], marathon: [MP, MP], threshold: [rg(MP, 15), rg(MP, HM) + 6], vo2: [rg(MP, 3), rg(MP, 5)] };
+}
+
+/* ---------- session text ---------- */
+function repDist(d) { return Math.abs(d - MI) < 0.01 ? '1 mile' : d < 1 ? Math.round(d * 1000) + ' m' : fmtKm(d); }
+function partText(p) {
+  switch (p.t) {
+    case 'easy': return (p.zone === 'recovery' ? 'Recovery ' : 'Easy ') + fmtKm(p.km);
+    case 'wu': return 'Warm-up ' + fmtKm(p.km);
+    case 'cd': return 'Cool-down ' + fmtKm(p.km);
+    case 'hills': return `${p.n} × 100 m hills at 90%, walk back down`;
+    case 'reps': return `${p.n} × ${repDist(p.d)} at LT2, ${p.rec} recovery`;
+    case 'block': return `${fmtKm(p.km)} steady`;
+    case 'alt': return `${p.sets} × (${p.on} km LT2 + ${p.off} km float), continuous`;
+    case 'altmin': return `${p.min} min continuous: ${p.on} min LT2, ${p.off} min float`;
+    case 'altfree': return `${fmtKm(p.km)} continuous, moving between LT2 and float`;
+    case 'timed': return `${fmtMin(p.min)} easy, practise fuelling`;
+    case 'longlt2': return `${fmtKm(p.km)}: ${fmtKm(p.first)} easy, ${fmtKm(p.lt2)} at LT2, then easy to finish`;
+    case 'vo2': return `${fmtKm(p.opener)} at LT2, then ${p.n} × ${repDist(p.d)} fast, ${Math.round(p.jog * 1000)} m jog`;
+    case 'mixed': return `${p.sets} × (1 mile LT2, 90 s rest, then 4 × 400 m faster, 75 s rest)`;
+    case 'race': return p.name;
+    case 'shake': return `${fmtKm(p.km)} shakeout with 4 strides`;
+    case 'xtrain': return `${p.lo}–${p.hi} min easy cross-training, or ${p.runKm} km easy`;
+    case 'rest': return 'Rest, or easy recovery only';
+    case 'tbc': return 'Details to come';
+    default: return '';
+  }
+}
+function mainLine(d) {
+  if (d.legacy) return d.spec;
+  if ((d.type === 'race' || d.type === 'parkrun') && d.note) return d.note;
+  const main = d.parts.filter(p => p.t !== 'wu' && p.t !== 'cd');
+  if (d.type === 'hills') {
+    const rec = d.parts.filter(p => p.t === 'easy'), h = d.parts.find(p => p.t === 'hills');
+    if (h && rec.length === 2) return `${fmtKm(rec[0].km)} recovery, ${h.n} × 100 m hills at 90% with a walk back down, then ${fmtKm(rec[1].km)} recovery`;
+  }
+  return main.map(partText).join(', ');
+}
+function wuLine(d) {
+  const wu = d.parts.find(p => p.t === 'wu'), cd = d.parts.find(p => p.t === 'cd');
+  if (!wu && !cd) return '';
+  return [wu && `${fmtKm(wu.km)} warm-up`, cd && `${fmtKm(cd.km)} cool-down`].filter(Boolean).join(' and ');
+}
+/* Paces a day needs, as [label, range|text]. */
+function dayPaces(d, z, lz, extras) {
+  const out = [], seen = {};
+  const push = (k, label, r) => { if (!seen[k]) { seen[k] = 1; out.push([label, r]); } };
+  if (d.legacy) {
+    const m = { recovery: ['Recovery', 'recovery'], easy: ['Easy', 'easy'], threshold: ['Threshold', 'threshold'], hill: ['Hills', null], vo2: ['VO₂', 'vo2'], marathon: ['Marathon pace', 'marathon'], long: ['Long run', 'long'] }[d.lzone];
+    if (m) push(d.lzone, m[0], m[1] ? paceRange(lz[m[1]]) : 'By effort');
+    if (d.type === 'lmp' || (d.type === 'llong' && /marathon/.test(d.spec))) push('mp', 'Marathon pace', paceRange(lz.marathon));
+    return out;
+  }
+  for (const p of d.parts) {
+    if (p.t === 'easy') push(p.zone, p.zone === 'recovery' ? 'Recovery' : 'Easy', paceRange(z[p.zone]));
+    if (p.t === 'shake' || p.t === 'timed') push('easy', 'Easy', paceRange(z.easy));
+    if (p.t === 'hills') push('hills', 'Hills', 'By effort');
+    if (p.t === 'block') push('steady', 'Steady', paceRange(z.steady));
+    if (p.t === 'reps') push('lt2', 'LT2', paceRange(z.lt2));
+    if (p.t === 'alt' || p.t === 'altmin' || p.t === 'altfree') { push('lt2', 'LT2', paceRange(z.lt2)); push('float', 'Float', paceRange(z.float)); }
+    if (p.t === 'longlt2') { push('easy', 'Easy', paceRange(z.easy)); push('lt2', 'LT2', paceRange(z.lt2)); }
+    if (p.t === 'vo2') { push('lt2', 'LT2', paceRange(z.lt2)); push('vo2', 'Reps', paceRange(z.vo2)); }
+    if (p.t === 'mixed') { push('lt2', 'LT2', paceRange(z.lt2)); push('fast', '400s', paceRange(z.fast)); }
+    if (p.t === 'race' && extras && extras.racePace) push('race', 'Race pace', extras.racePace);
+  }
+  return out;
+}
+
+/* ---------- strength (from your coach's guidance) ---------- */
+const STRENGTH = {
+  A: { name: 'Strength A', min: 40, blurb: 'Lower-body strength and gentle plyometrics.', items: [
+    ['Bike warm-up', '5–10 min easy'], ['Pogo hops', '2 × 20'], ['Low box jumps, step down', '3 × 5'], ['A-skips', '2 × 20 m'],
+    ['Rear-foot-elevated split squat', '3 × {r} each leg'], ['Romanian deadlift', '3 × {r}'], ['Straight-knee calf raise, slow lower', '3 × 12'],
+    ['Dead bug', '2 × 10'], ['Side plank', '2 × 30 s each side'], ['Stretch, plus any rehab', '5 min']] },
+  B: { name: 'Strength B', min: 35, blurb: 'The other half of the lower body, upper body and core.', items: [
+    ['Bike warm-up', '5–10 min easy'], ['Step-ups', '3 × {r} each leg'], ['Single-leg Romanian deadlift', '3 × {r} each leg'], ['Bent-knee calf raise', '3 × 15'],
+    ['Band lateral walk', '2 × 12 steps each way'], ['Press-ups', '3 × 10'], ['Band row', '3 × 12'], ['Band pull-apart', '2 × 15'],
+    ['Bird dog', '2 × 10 each side'], ['Plank', '2 × 40 s'], ['Copenhagen plank, short lever', '2 × 20 s each side'], ['Stretch, plus any rehab', '5 min']] },
+  L: { name: 'Light strength', min: 20, blurb: 'Maintenance only. No plyometrics, nothing to failure.', items: [
+    ['Bike warm-up', '5 min easy'], ['Bodyweight split squat', '2 × 8 each leg'], ['Calf raise', '2 × 12'], ['Glute bridge', '2 × 12'],
+    ['Band row', '2 × 12'], ['Dead bug', '2 × 10'], ['Side plank', '2 × 20 s each side']] }
+};
+const STRENGTH_DAYS = { 7: { 0: 'L' }, 8: { 1: 'B' }, 9: { 0: 'A', 3: 'B' }, 10: { 1: 'A', 2: 'B' }, 11: { 0: 'A', 3: 'B' }, 12: { 1: 'A', 2: 'B' }, 13: { 0: 'A', 3: 'B' }, 14: { 1: 'A', 2: 'B' }, 15: { 0: 'L' }, 16: { 0: 'L' } };
+function strengthFor(w, dow) { const s = STRENGTH_DAYS[w]; return s && s[dow] ? s[dow] : null; }
+function strengthLoad(w) {
+  if (w <= 10) return { r: '8', note: 'Moderate weight, stop with two reps in reserve.' };
+  if (w <= 13) return { r: '6', note: 'Heavier weight for 6, still two reps in reserve.' };
+  return { r: '6', note: 'Drop a set from each exercise and keep the weight.' };
+}
+
+/* ---------- activity helpers ---------- */
+function kindOf(l) { return l.kind || 'run'; }
+function isRunLog(l) { return kindOf(l) === 'run' && +l.km > 0 && +l.sec > 0 && !!l.date; }
+function logsOn(logs, date) { return (logs || []).filter(l => l.date === date); }
+function runKmOn(logs, date) { return logsOn(logs, date).filter(isRunLog).reduce((s, l) => s + (+l.km), 0); }
+function weekDoneKm(logs, w) {
+  const a = dateOfIdx((w - 1) * 7), b = dateOfIdx((w - 1) * 7 + 6);
+  return (logs || []).filter(l => isRunLog(l) && l.date >= a && l.date <= b).reduce((s, l) => s + (+l.km), 0);
+}
+
+/* ---------- load (distance × pace intensity + climbing + cross-training) ---------- */
+const LOAD_REF_PACE = 301;                  // Kaizen's 5:01/km average
+function logLoad(l) {
+  if (isRunLog(l)) return (+l.km) * (LOAD_REF_PACE / (l.sec / l.km)) + (+l.elev || 0) / 100;
+  if (kindOf(l) === 'xtrain') return (+l.sec || 0) / 60 * 0.1;
+  return 0;
+}
+function weekLoad(logs, w) {
+  const a = dateOfIdx((w - 1) * 7), b = dateOfIdx((w - 1) * 7 + 6);
+  return (logs || []).filter(l => l.date >= a && l.date <= b).reduce((s, l) => s + logLoad(l), 0);
+}
+function weekLoadTarget(target) { return target + 2.8 + 6; } // + Kaizen's 280 m climbing and 60 min cross-training
+
+/* ---------- predictions ---------- */
+/* Each run with heart rate gives a fitness estimate (pace → oxygen cost, heart-rate reserve → effort).
+   The trend in those estimates is applied to your latest anchor: a race result, or Kaizen's numbers. */
+function runVO2(l, s) {
+  if (!isRunLog(l) || !l.hr || !s.maxHr || !s.restHr) return null;
+  if (l.sec < 1200 || l.km < 3) return null;
+  const hrr = (l.hr - s.restHr) / (s.maxHr - s.restHr);
+  if (hrr < 0.45 || hrr > 1) return null;
+  const v = (l.km * 1000 + (+l.elev || 0) * 6) / (l.sec / 60);
+  return 3.5 + (vo2At(v) - 3.5) / hrr;
+}
+function fitnessOn(date, logs, s) {
+  const t = ymd(date); let sw = 0, sv = 0, n = 0;
+  for (const l of (logs || [])) {
+    const e = runVO2(l, s); if (!e) continue;
+    const age = (t - ymd(l.date)) / 86400000; if (age < 0 || age > 42) continue;
+    const w = (l.sec / 3600) * Math.exp(-age / 21); sw += w; sv += w * e; n++;
+  }
+  return n >= 3 ? sv / sw : null;
+}
+const PRED_DISTS = [['k5', '5 km', 5], ['k10', '10 km', 10], ['hm', 'Half', HM], ['m', 'Marathon', MAR]];
+function anchorOf(kz, results) {
+  const cands = [];
+  for (const e of ((kz && kz.entries) || [])) if (e && e.date && (e.m || e.hm || e.k10 || e.k5)) cands.push({ kind: 'kaizen', date: e.date, e });
+  for (const r of RACES) { const t = results && parseTime(results[r.key]); if (t && r.key !== 'valencia') cands.push({ kind: 'race', date: r.date, race: r, sec: t }); }
+  cands.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : (a.kind === 'race' ? 1 : -1)));
+  return cands.length ? cands[cands.length - 1] : null;
+}
+function latestKaizen(kz) { const es = ((kz && kz.entries) || []).filter(e => e && (e.m || e.hm || e.k10 || e.k5)); return es.length ? es.slice().sort((a, b) => (a.date < b.date ? -1 : 1))[es.length - 1] : null; }
+function anchorVdots(anchor, kz) {
+  const out = {};
+  const k = latestKaizen(kz);
+  const kv = {}; if (k) for (const [key, , km] of PRED_DISTS) { const t = parseTime(k[key]); if (t) kv[key] = vdotFrom(km, t); }
+  if (anchor.kind === 'kaizen') {
+    const own = {}; for (const [key, , km] of PRED_DISTS) { const t = parseTime(anchor.e[key]); if (t) own[key] = vdotFrom(km, t); }
+    const vals = Object.values(own), mean = vals.reduce((a, b) => a + b, 0) / vals.length;
+    for (const [key] of PRED_DISTS) out[key] = own[key] != null ? own[key] : mean;
+  } else {
+    const rk = anchor.race.key === 'half' ? 'hm' : 'k5';
+    const base = vdotFrom(anchor.race.km, anchor.sec);
+    for (const [key] of PRED_DISTS) out[key] = base + ((kv[key] != null && kv[rk] != null) ? kv[key] - kv[rk] : 0);
+  }
+  return out;
+}
+function predictions(date, logs, s, kz, results) {
+  const anchor = anchorOf(kz, results);
+  if (!anchor) return null;
+  const av = anchorVdots(anchor, kz);
+  const fNow = fitnessOn(date, logs, s), fA = fitnessOn(anchor.date, logs, s);
+  let ratio = 1, live = false;
+  if (fNow && fA && date >= anchor.date) { ratio = clamp(fNow / fA, 0.9, 1.1); live = true; }
+  const times = {};
+  for (const [key, , km] of PRED_DISTS) times[key] = timeFor(km, av[key] * ratio);
+  return { times, anchor, ratio, live, fitness: fNow };
+}
+
+/* ---------- on track for the goal? ---------- */
+function fmtPace1(sec) { const t = Math.floor(sec * 10 + 1e-6) / 10, m = Math.floor(t / 60), r = t - m * 60; return `${m}:${r < 10 ? '0' : ''}${r.toFixed(1)}`; }
+function slopePerDay(pts) { // least squares, pts = [[day, value]]
+  const n = pts.length, mx = pts.reduce((a, p) => a + p[0], 0) / n, my = pts.reduce((a, p) => a + p[1], 0) / n;
+  let num = 0, den = 0; for (const [x, y] of pts) { num += (x - mx) * (y - my); den += (x - mx) * (x - mx); }
+  return den ? num / den : 0;
+}
+/* Compares Kaizen's marathon prediction with the goal: pace per km now, at the start of the block and
+   at goal; the rate you're improving (recent Kaizen entries, or since the start) against the rate needed. */
+function onTrackInfo(kz, settings, today) {
+  const t = today || todayStr();
+  const goal = parseTime(settings.goalTime) || 11340, goalPace = goal / MAR;
+  const entries = ((kz && kz.entries) || []).filter(e => e && e.date <= t && parseTime(e.m)).slice().sort((a, b) => (a.date < b.date ? -1 : 1));
+  if (!entries.length) return null;
+  const cur = entries[entries.length - 1], curSec = parseTime(cur.m), curPace = curSec / MAR;
+  const startSec = parseTime(settings.startPred);
+  const base = startSec ? { date: PLAN_START, sec: startSec, src: 'start' } : (entries.length > 1 ? { date: entries[0].date, sec: parseTime(entries[0].m), src: 'first' } : null);
+  const weeksLeft = Math.max(0.1, daysBetween(cur.date, RACE_DATE) / 7);
+  const gapPerKm = curPace - goalPace;
+  const need = Math.max(0, gapPerKm / weeksLeft);
+  let rate = null, rateSrc = null, rateFrom = null;
+  const recent = entries.filter(e => daysBetween(e.date, cur.date) <= 28);
+  if (recent.length >= 3 && daysBetween(recent[0].date, cur.date) >= 10) {
+    rate = -slopePerDay(recent.map(e => [daysBetween(PLAN_START, e.date), parseTime(e.m) / MAR])) * 7; rateSrc = 'recent'; rateFrom = recent[0].date;
+  } else if (base && daysBetween(base.date, cur.date) >= 7) {
+    rate = (base.sec / MAR - curPace) / (daysBetween(base.date, cur.date) / 7); rateSrc = base.src; rateFrom = base.date;
+  }
+  const projSec = rate != null ? (curPace - rate * weeksLeft) * MAR : null;
+  let status;
+  if (curPace <= goalPace) status = 'at';
+  else if (projSec == null) status = 'unknown';
+  else if (projSec <= goal) status = 'on';
+  else if (projSec <= goal + 120) status = 'close';
+  else status = 'behind';
+  return { goal, goalPace, cur, curSec, curPace, base, startSec, startPace: base ? base.sec / MAR : null, weeksLeft, gapPerKm, gapSec: curSec - goal,
+    need, rate, rateSrc, rateFrom, projSec, status, gainedPerKm: base ? base.sec / MAR - curPace : null };
+}
+function upcomingKey(plan, fromDate, days) {
+  const i0 = idxOfDate(fromDate), out = [];
+  for (let i = Math.max(0, i0); i <= Math.min(LAST_IDX, i0 + days - 1); i++) { const d = plan[i]; if (d && ['KEY', 'VO2', 'RACE'].includes(d.tag)) out.push(d); }
+  return out;
+}
+
+/* ---------- fuelling + body check (evidence base listed in REFS; ported from the previous app) ---------- */
+const REFS = [
+  ['Thomas, Erdman & Burke (2016)', 'ACSM / AND / DC position stand: daily carbohydrate 3–5 g/kg light, 5–7 moderate, 6–10 endurance; 7–12 g/kg in the 24 h before events under 90 min; 10–12 g/kg for 36–48 h before longer events.'],
+  ['Burke et al. (2011), J Sports Sci', 'Carbohydrate periodisation: intake is matched to the demand of the session, not held high every day.'],
+  ['Impey et al. (2018), Sports Med', '“Fuel for the work required”: easy sessions can be done lower-carb; quality sessions should be fuelled.'],
+  ['Jeukendrup (2014), Sports Med', 'In-run carbohydrate: no benefit under ~60 min; 30–60 g/h for 1–2 h; up to 90 g/h beyond 2.5 h using glucose:fructose.'],
+  ['Bussau et al. (2002), Eur J Appl Physiol', 'One day at ~10 g/kg fully loads muscle glycogen in trained runners.'],
+  ['Silbernagel et al. (2007), Am J Sports Med', 'Pain-monitoring model: pain up to 5/10 during activity is acceptable if it settles by the next morning and doesn’t worsen week to week.'],
+  ['Saw, Main & Gastin (2016), Br J Sports Med', 'Self-reported wellness responds to training load more sensitively than objective measures like HRV.'],
+  ['Bone stress injury consensus (Warden et al. 2014)', 'Focal bony tenderness, night pain or pain on hopping warrants assessment before further loading.']
+];
+function catOf(type) {
+  return ({ rest: 'rest', tbc: 'rest', recovery: 'recovery', shake: 'recovery', hills: 'hillsday', easy: 'aerobic', xtrain: 'xtrain',
+    lt2: 'threshold', alt: 'threshold', altfree: 'threshold', altmin: 'threshold', mixed: 'threshold', vo2: 'vo2', steady: 'steady',
+    long: 'long', longlt2: 'longlt2', race: 'race', parkrun: 'parkrun', lthr: 'threshold', lhills: 'vo2', lmp: 'steady', llong: 'long' })[type] || 'aerobic';
+}
+const QUALITY = { threshold: 1, vo2: 1, steady: 1, longlt2: 1, parkrun: 1, race: 1 };
+function estMin(d, z) {
+  if (!d || !d.km) return 0;
+  const mid = r => (r[0] + r[1]) / 2, E = z && z.easy ? mid(z.easy) : 342;
+  if (!d.parts || !d.parts.length || !z || !z.lt2) return Math.round(d.km * E / 60);
+  const L = mid(z.lt2), F = z.float[0], S = mid(z.steady), V = mid(z.vo2), X = mid(z.fast), Rc = mid(z.recovery);
+  const recS = r => { const m = /(\d+)\s*s/.exec(r || ''); return m ? +m[1] : 0; };
+  let sec = 0;
+  for (const p of d.parts) {
+    switch (p.t) {
+      case 'easy': sec += p.km * (p.zone === 'recovery' ? Rc : E); break;
+      case 'wu': case 'cd': case 'shake': sec += p.km * E; break;
+      case 'hills': sec += p.n * 60; break;
+      case 'reps': sec += p.n * p.d * L + (p.n - 1) * recS(p.rec); break;
+      case 'block': sec += p.km * S; break;
+      case 'alt': sec += p.sets * (p.on * L + p.off * F); break;
+      case 'altmin': sec += p.min * 60; break;
+      case 'altfree': sec += p.km * (L + F) / 2; break;
+      case 'timed': sec += p.min * 60; break;
+      case 'longlt2': sec += (p.km - p.lt2) * E + p.lt2 * L; break;
+      case 'vo2': sec += p.opener * L + p.n * p.d * V + (p.n - 1) * p.jog * Rc; break;
+      case 'mixed': sec += p.sets * (MI * L + 1.6 * X + 90 + 3 * 75); break;
+      case 'race': sec += p.km * (p.key === 'valencia' ? 269 : p.key === 'half' ? L * 1.04 : V + 12); break;
+    }
+  }
+  return Math.round(sec / 60);
+}
+function choTier(cat, m, ctx) {
+  if (cat === 'race' && ctx.raceKey === 'valencia') return { key: 'race', g: [1, 3], perMeal: true, head: 'Race morning', why: 'The loading was done over the previous 36–48 h. This morning is a top-up: familiar food only, nothing new.' };
+  if (cat === 'race') return { key: 'race', g: [1, 3], perMeal: true, head: 'Race morning', why: 'Yesterday’s eating did the work. This morning is a top-up with familiar food, 2–3 h before the start.' };
+  if (ctx.loadFor === 'valencia') return { key: 'load', g: [10, 12], head: 'Carbohydrate load', why: 'For an event over 90 min the range is 10–12 g/kg for 36–48 h. One day at 10 g/kg fills the tank; no depletion phase needed. Gut tolerance is usually the limit, not appetite.' };
+  if (ctx.loadFor === 'half') return { key: 'load', g: [7, 10], head: 'Fuel up for the half', why: 'For a race around 90 minutes, 7–12 g/kg across the 24 h before tops up glycogen fully. One day is enough.' };
+  if (cat === 'rest') return { key: 'rest', g: [3, 5], head: 'Nothing special needed', why: 'No session to fuel and none tomorrow that depends on today.' };
+  if (cat === 'recovery' || cat === 'hillsday') return { key: 'low', g: [3, 5], head: 'Nothing special needed', why: 'A short easy run costs very little glycogen. Normal eating covers it.' };
+  if (cat === 'xtrain') return { key: 'low', g: [3, 5], head: 'Nothing special needed', why: 'Easy cross-training draws little on glycogen.' };
+  if (cat === 'aerobic') return m >= 75 ? { key: 'mod', g: [5, 7], head: 'Moderate', why: 'Over 75 min of aerobic running draws meaningfully on glycogen. Normal eating at the top of this range covers it.' } : { key: 'mod', g: [5, 7], head: 'Nothing special needed', why: 'Under 75 min easy. Eat as you normally would.' };
+  if (cat === 'parkrun') return { key: 'quality', g: [6, 8], head: 'Fuel it properly', why: 'It’s a race effort. Arrive fuelled: a normal carbohydrate breakfast 2–3 h before.' };
+  if (cat === 'threshold' || cat === 'vo2' || cat === 'steady') return { key: 'quality', g: [6, 8], head: 'Fuel it properly', why: 'Quality work is glycogen-dependent and pace suffers if you under-fuel it. This is the wrong session to train low.' };
+  if (cat === 'long' || cat === 'longlt2') return m >= 120 ? { key: 'high', g: [7, 9], head: 'High', why: 'Two hours plus: the biggest glycogen cost of your week, and the run whose quality most depends on the day before.' } : { key: 'quality', g: [6, 8], head: 'Fuel it properly', why: 'Long run under two hours. Solid demand, but not the extreme end.' };
+  return { key: 'mod', g: [5, 7], head: 'Moderate', why: '' };
+}
+function inRunPlan(cat, m, raceKey) {
+  if (cat === 'rest' || !m) return { line: null };
+  if (cat === 'race' && raceKey === 'valencia') return { line: '60–90 g/h, starting by 30 min', note: 'Glucose:fructose. Nothing you haven’t used in training.' };
+  if (cat === 'race') return { line: '30–60 g/h', note: 'A gel around 30–40 min and another around 60–70 min. Only what you’ve tried before.' };
+  if (m < 60) return { line: 'None', note: 'Under an hour, carbohydrate during the run has no measurable benefit. Water only.' };
+  if (m < 90) return (cat === 'long' || cat === 'longlt2' || cat === 'steady') ? { line: '30–60 g/h', note: 'Start at 30 min. Treat it as race practice.' } : { line: 'Optional', note: 'Only worth it if you’re going in fasted or it feels heavy. Otherwise water.' };
+  if (m < 150) return { line: '30–60 g/h, starting by 30 min', note: 'Use the gels or drink you’ll race with. This is gut training as much as fuel.' };
+  return { line: '60–90 g/h, starting by 30 min', note: 'Beyond about 2.5 h you need glucose:fructose to absorb this much. Use race products.' };
+}
+function prePost(cat, m) {
+  if (cat === 'rest') return { pre: null, post: null };
+  return {
+    pre: (m >= 75 || QUALITY[cat]) ? '1–4 g/kg in the 1–4 h before. Low fibre, low fat, familiar.' : 'Nothing required. Fasted is fine at this length if you prefer.',
+    post: (m >= 60 || QUALITY[cat]) ? '20–40 g protein within a couple of hours, with carbohydrate alongside.' : 'Your normal next meal is enough.'
+  };
+}
+const SLOTS = [
+  ['Breakfast', .27, [['60 g porridge oats', 40], ['2 slices toast + jam', 45], ['Bagel', 50], ['Large banana', 27], ['250 ml orange juice', 22]]],
+  ['Lunch', .25, [['Large jacket potato', 50], ['Bagel', 50], ['2 slices bread', 30], ['Large banana', 27], ['Pot of rice pudding', 30]]],
+  ['Dinner', .30, [['100 g dry pasta or rice', 75], ['Large jacket potato', 50], ['Bread roll', 25], ['Naan or pitta', 45]]],
+  ['Around the run', .18, [['Slice of malt loaf', 30], ['500 ml sports drink', 30], ['Flapjack', 35], ['Energy gel', 22], ['Large banana', 27]]]
+];
+function sampleDay(grams) {
+  if (!grams || grams <= 0) return [];
+  return SLOTS.map(([slot, share, foods]) => {
+    const target = grams * share; let got = 0; const picked = [];
+    for (const [name, g] of foods) { if (got >= target - 8) break; let n = 0; while (n < 2 && got + g <= target + 10) { got += g; n++; } if (n) picked.push((n > 1 ? n + ' × ' : '') + name); }
+    return { slot, items: picked.length ? picked.join(', ') : '—', g: Math.round(got) };
+  }).filter(x => x.items !== '—');
+}
+const MODIFY = {
+  threshold: 'Keep the session, drop the final rep or block, and run it on flat ground. Full easy warm-up.',
+  vo2: 'Run the LT2 opener, then swap the fast reps for relaxed strides on the flat.',
+  steady: 'Cut the steady block by about a third and keep it at the easy end of steady.',
+  long: 'Cap it at three-quarters of the time and run loops so you can stop early.',
+  longlt2: 'Keep the easy running, halve the LT2 block, and run loops so you can stop early.',
+  hillsday: 'Skip the hills and keep the recovery running.',
+  aerobic: 'Keep it easy, cut about 20% of the distance.',
+  recovery: 'Cut to 20–25 min, or walk it.',
+  xtrain: 'Keep it very easy, or shorten it.',
+  parkrun: 'Run it as a steady tempo, not a race.',
+  race: 'Start 5–10 s/km slower than planned and reassess at halfway.',
+  rest: 'It’s a rest day. Nothing to change.'
+};
+const DOWNGRADE = {
+  threshold: 'Replace with 30–40 min easy at recovery pace, or bike or pool instead.',
+  vo2: 'Replace with 30–40 min easy on the flat, or bike or pool instead.',
+  steady: 'Replace with 30–40 min easy.',
+  long: 'Halve it and run it easy, or cross-train for the same time.',
+  longlt2: 'Drop the LT2 block and run half the distance easy, or cross-train.',
+  hillsday: 'Take it off, or walk.',
+  aerobic: 'Easy 20–30 min, or take it off.',
+  recovery: 'Take it off, or walk.',
+  xtrain: 'Take it off.',
+  parkrun: 'Jog it easy, or skip it.',
+  race: 'Don’t race today. Racing through this risks the marathon.',
+  rest: 'It’s already a rest day.'
+};
+function assessBody(inp, cat) {
+  const f = inp.fresh, n = inp.niggle;
+  if (n && n.on) {
+    if (n.redflag) return { level: 'stop', tone: 'red', head: 'Don’t run on this', change: 'No running today. This needs assessing before it’s loaded again.', why: 'Focal bone tenderness, night pain or pain on hopping is how a bone stress injury presents, and running through it is how a stress reaction becomes a fracture.', ref: 'Bone stress injury consensus' };
+    if (n.pain >= 6 || n.behave === 'worse' || n.morning === 'no' || n.trend === 'worse') {
+      const r = []; if (n.pain >= 6) r.push('pain above 5/10'); if (n.behave === 'worse') r.push('it worsens as you run'); if (n.morning === 'no') r.push('it hadn’t settled by this morning'); if (n.trend === 'worse') r.push('it’s worse than last week');
+      return { level: 'down', tone: 'red', head: 'Downgrade today', change: DOWNGRADE[cat] || 'Easy 30 min or cross-train.', why: 'The pain-monitoring model allows loading up to 5/10 only while it settles overnight and doesn’t worsen week to week. You’ve breached that on: ' + r.join(', ') + '. Reassess in 24–48 h; two breaches in a row means it needs looking at.', ref: 'Silbernagel 2007' };
+    }
+    if (n.pain >= 3) return { level: 'modify', tone: 'amber', head: 'Run it, but change the load', change: MODIFY[cat] || 'Keep the session, drop about 20% of the volume.', why: 'Pain of 3–5/10 that eases with a warm-up and settles overnight is within acceptable limits. It doesn’t need rest, but remove the part that provokes it and check again tomorrow.', ref: 'Silbernagel 2007' };
+    return { level: 'go', tone: 'green', head: 'Run as written', change: 'No change. Session stands.', why: 'Pain under 3/10 that warms up and settles overnight is background noise. Log it so the trend is visible.', ref: 'Silbernagel 2007' };
+  }
+  if (f === 'wrecked') return { level: 'down', tone: 'red', head: 'Downgrade today', change: DOWNGRADE[cat] || 'Easy 30 min or rest.', why: 'Self-reported wellness tracks accumulated load more sensitively than HRV. A quality session run in this state gives you the cost without the adaptation.', ref: 'Saw 2016' };
+  if (f === 'flat') {
+    const q = !!QUALITY[cat];
+    return { level: q ? 'modify' : 'go', tone: q ? 'amber' : 'green', head: q ? 'Judge it off the first rep' : 'Run as written',
+      change: q ? 'Start as written. If the first rep is more than about 5 s/km off target at the right effort, run the rest easy and move the session later in the week.' : 'No change. Easy days are meant to feel unremarkable.',
+      why: q ? 'One flat day is a poor reason to cancel quality work; flatness often clears in the warm-up. Two flat days in a row before a quality session is accumulated fatigue.' : 'Flat on an easy day is expected.', ref: 'Saw 2016' };
+  }
+  if (f === 'fresh') return { level: 'go', tone: 'green', head: 'Run as written', change: 'No change. Fresh means the faster end of the range, not extra distance or reps.', why: 'There’s good evidence for reducing load when the signals are poor, and none for adding load when they’re good.', ref: 'Saw 2016' };
+  return { level: 'go', tone: 'green', head: 'Run as written', change: 'No change. Session stands.', why: 'Nothing flagged.', ref: '' };
+}
+function fuelFor(d, z, kg, level, plan) {
+  let cat = catOf(d.type), km = d.km || 0, full = true;
+  if (level === 'stop') { cat = 'rest'; km = 0; full = false; }
+  else if (level === 'down') { full = false; km = Math.round(km * (cat === 'long' || cat === 'longlt2' ? 0.5 : 0.6) * 10) / 10; cat = km ? 'aerobic' : 'rest'; }
+  const m = full ? estMin(d, z) : estMin({ km }, z);
+  const raceKey = (d.parts || []).map(p => p.key).find(Boolean) || null;
+  let loadFor = null;
+  if (plan) for (const r of RACES) { const dd = daysBetween(d.date, r.date); if (r.key === 'valencia' && dd >= 1 && dd <= 2) loadFor = 'valencia'; if (r.key === 'half' && dd === 1) loadFor = 'half'; }
+  const tier = choTier(cat, m, { raceKey, loadFor });
+  const g = kg ? [Math.round(tier.g[0] * kg / 5) * 5, Math.round(tier.g[1] * kg / 5) * 5] : null;
+  return { m, tier, g, adjusted: level === 'stop' ? 'no run' : level === 'down' ? 'reduced' : null, inrun: inRunPlan(cat, m, raceKey), pp: prePost(cat, m),
+    day: (g && !tier.perMeal && tier.head !== 'Nothing special needed') ? sampleDay((g[0] + g[1]) / 2) : [] };
+}
+function nextKey(plan, fromIdx) {
+  for (let i = fromIdx + 1; i <= Math.min(LAST_IDX, fromIdx + 4); i++) { const d = plan[i]; if (d && ['KEY', 'VO2', 'STEADY', 'LONG', 'RACE'].includes(d.tag)) return { d, days: i - fromIdx }; }
+  return null;
+}
+function nextAdvice(n, z, kg) {
+  const m = estMin(n.d, z);
+  if (n.d.type === 'race') return n.d.parts.some(p => p.key === 'valencia') ? 'Load 10–12 g/kg across the 36–48 h before, then a familiar breakfast 3 h out.' : 'Eat well the day before (7–10 g/kg), then a familiar breakfast 2–3 h before.';
+  if (n.days > 1) return 'Nothing to do today. Carbohydrate eaten more than a day out isn’t retained usefully.';
+  if (m >= 120) return 'Tonight’s meal is the one that matters: a large carbohydrate dinner' + (kg ? ` (about ${Math.round(2 * kg / 5) * 5}–${Math.round(3 * kg / 5) * 5} g)` : '') + ', then a familiar breakfast 2–3 h before.';
+  if (QUALITY[catOf(n.d.type)]) return 'Eat normally today and get a proper carbohydrate meal in the 1–4 h before it. Don’t go in fasted.';
+  return 'No special preparation needed today.';
+}
+
+if (typeof module !== 'undefined') module.exports = { onTrackInfo, fmtPace1, kaizenVdot, upcomingKey, PLAN, AGREED_KM, buildPlan, weekPlanned, weekTarget, refitWeek, partsKm, mainLine, wuLine, dayPaces, zonesForWeek, refInfo, paceOffset, legacyZones, vdotFrom, timeFor, tPaceOf, fmtClock, fmtPace, paceRange, predictions, fitnessOn, anchorOf, parseTime, dateOfIdx, idxOfDate, weekOfDate, weekDays, fuelFor, assessBody, catOf, nextKey, strengthFor, RACES, LOCKED_WEEKS };
+/* ============================================================
+   3.09 — interface (Preact + htm, bundled inline, no network)
+   ============================================================ */
+const { h, render } = window.preact;
+const { useState, useEffect, useMemo, useRef } = window.preactHooks;
+const html = window.htm.bind(h);
+
+/* ---------- storage: same backends and keys as the previous app, so every logged run survives ---------- */
+const Store = (() => {
+  const mem = {};
+  const idb = (() => {
+    try {
+      if (!window.indexedDB) return null;
+      let dbp;
+      const open = () => dbp || (dbp = new Promise((res, rej) => { const r = indexedDB.open('mtp', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }));
+      return {
+        get: k => open().then(db => new Promise((res, rej) => { const t = db.transaction('kv', 'readonly').objectStore('kv').get(k); t.onsuccess = () => res(t.result); t.onerror = () => rej(t.error); })),
+        set: (k, v) => open().then(db => new Promise((res, rej) => { const t = db.transaction('kv', 'readwrite').objectStore('kv').put(v, k); t.onsuccess = () => res(); t.onerror = () => rej(t.error); }))
+      };
+    } catch (e) { return null; }
+  })();
+  const back = (() => {
+    const ws = typeof window !== 'undefined' ? window.storage : null;
+    if (ws) {
+      if (typeof ws.get === 'function' && typeof ws.set === 'function') return { name: 'window.storage', get: k => Promise.resolve(ws.get(k)), set: (k, v) => Promise.resolve(ws.set(k, v)) };
+      if (typeof ws.getItem === 'function' && typeof ws.setItem === 'function') return { name: 'window.storage', get: k => Promise.resolve(ws.getItem(k)), set: (k, v) => Promise.resolve(ws.setItem(k, v)) };
+    }
+    if (idb) return { name: 'on this device (IndexedDB)', get: idb.get, set: idb.set };
+    try { if (window.localStorage) { localStorage.setItem('__t', '1'); localStorage.removeItem('__t'); return { name: 'on this device (localStorage)', get: k => Promise.resolve(localStorage.getItem(k)), set: (k, v) => Promise.resolve(localStorage.setItem(k, v)) }; } } catch (e) {}
+    return { name: 'this session only', get: k => Promise.resolve(mem[k] == null ? null : mem[k]), set: (k, v) => { mem[k] = v; return Promise.resolve(); } };
+  })();
+  return {
+    name: back.name,
+    getJSON: (k, def) => back.get(k).then(v => { if (v == null) return def; try { return typeof v === 'string' ? JSON.parse(v) : v; } catch (e) { return def; } }).catch(() => def),
+    setJSON: (k, v) => back.set(k, JSON.stringify(v)).catch(() => {})
+  };
+})();
+function usePersistent(key, def, mergeObj) {
+  const [val, setVal] = useState(def);
+  const [ready, setReady] = useState(false);
+  const loaded = useRef(false);
+  useEffect(() => {
+    let live = true;
+    Store.getJSON(key, null).then(v => {
+      if (!live) return;
+      if (v != null) setVal(mergeObj && typeof v === 'object' && !Array.isArray(v) ? { ...def, ...v } : v);
+      loaded.current = true; setReady(true);
+    });
+    return () => { live = false; };
+  }, []);
+  useEffect(() => { if (loaded.current) Store.setJSON(key, val); }, [val]);
+  return [val, setVal, ready];
+}
+
+/* ---------- defaults ---------- */
+const DEF_SETTINGS = { unit: 'km', theme: 'dark', curDist: 'full', curTime: '3:26:00', refDate: PLAN_START, refSrc: 'manual', goalTime: '3:09:00', kg: null, maxHr: 200, restHr: 50, paceMode: 'kaizen', results: {}, rehab: '', startPred: '' };
+const DEF_VIDEOS = { recovery: '', threshold: '', aerobic: '', hills: '', marathon: '', long: '', rest: '' };
+const DEF_KAIZEN = { avg: 67.9, weekly: {}, entries: [{ date: '2026-09-22', m: '3:39:20', hm: '1:37:54', k10: '43:55', k5: '21:27', note: 'From your screenshot' }] };
+const YT = id => 'https://www.youtube.com/watch?v=' + id;
+const CURATED_VIDEOS = {
+  recovery: ['yjB23ki0HHE', 'UQltlMDoh1Q', 'iqH4HsSNY_Q'].map(YT), threshold: ['Jpd2XtGX8wo', 'lPXdra-X1DE', '67ylr5oCNBk', 'a48FA3YwShM'].map(YT),
+  aerobic: ['XhBPB1Hxsp4', 'T5M5NHPt3wY', 'sdCIir5rrzQ'].map(YT), hills: ['170kvQ04IVo', 'Cie5htX3T0o', 'H3yJ8d4aEf4'].map(YT),
+  marathon: ['YKYd0ch8x38', 'VRimgg7hc1k', 'Q5faozr-mWM'].map(YT), long: ['hXoiKl8RFRI', 'UsQX0tK8HHo', 'p8qSHEDRir8'].map(YT), rest: ['O7PNhV-CMJ4', 'tBlN2ZsjLeM', 'Sew5C70DhDQ'].map(YT)
+};
+function videoKey(type) {
+  return ({ easy: 'aerobic', recovery: 'recovery', shake: 'recovery', hills: 'hills', lt2: 'threshold', alt: 'threshold', altfree: 'threshold', altmin: 'threshold', mixed: 'threshold', lthr: 'threshold',
+    vo2: 'hills', lhills: 'hills', steady: 'marathon', lmp: 'marathon', parkrun: 'marathon', race: 'marathon', long: 'long', longlt2: 'long', llong: 'long' })[type] || 'rest';
+}
+function migrateSettings(s) {
+  const out = { ...s, v: 3 };
+  if ((s.v || 0) < 2) {
+    if (!s.goalTime || s.goalTime === '3:10:00') out.goalTime = '3:09:00';
+    if (!s.theme || s.theme === 'system') out.theme = 'dark';
+  }
+  if (!s.paceMode || s.paceMode === 'fitness') out.paceMode = 'kaizen';
+  if (!s.maxHr) out.maxHr = 200;
+  if (!s.restHr) out.restHr = 50;
+  if (!s.refDate) out.refDate = PLAN_START;
+  if (!s.refSrc) out.refSrc = 'manual';
+  if (!s.results) out.results = {};
+  return out;
+}
+
+/* ---------- Strava (same app, relay and token record; now also keeps heart rate, climbing and cross-training) ---------- */
+const STRAVA_CLIENT_ID = '273574';
+const STRAVA_RELAY = 'https://strava-relay.pauldonnelly2001.workers.dev';
+const STRAVA_SCOPE = 'activity:read_all';
+const stravaRedirect = () => location.origin + location.pathname;
+function stravaAuthUrl() {
+  const p = new URLSearchParams({ client_id: STRAVA_CLIENT_ID, response_type: 'code', redirect_uri: stravaRedirect(), approval_prompt: 'auto', scope: STRAVA_SCOPE });
+  return 'https://www.strava.com/oauth/authorize?' + p.toString();
+}
+async function stravaPost(path, body) {
+  const r = await fetch(STRAVA_RELAY + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok || j.error || (j.errors && j.errors.length)) throw new Error(j.message || j.error || 'Strava error');
+  return j;
+}
+async function stravaActivities(token, afterEpoch) {
+  let all = [];
+  for (let page = 1; page <= 5; page++) {
+    const r = await fetch(STRAVA_RELAY + '/activities?after=' + afterEpoch + '&per_page=100&page=' + page, { headers: { Authorization: 'Bearer ' + token } });
+    const arr = await r.json().catch(() => null);
+    if (!Array.isArray(arr) || arr.length === 0) break;
+    all = all.concat(arr);
+    if (arr.length < 100) break;
+  }
+  return all;
+}
+function stravaKind(sport) {
+  if (/run/i.test(sport)) return 'run';
+  if (/weight|workout|crossfit|pilates|hiit/i.test(sport)) return 'strength';
+  if (/ebike/i.test(sport)) return null;
+  if (/ride|cycl|swim|row|elliptical|stair|ski/i.test(sport)) return 'xtrain';
+  return null;                                   // walks, golf, hikes and the rest are ignored
+}
+function actToLog(a, plan) {
+  const date = (a.start_date_local || a.start_date || '').slice(0, 10);
+  const sport = a.sport_type || a.type || '';
+  const kind = stravaKind(sport);
+  if (!kind || !date) return null;
+  const d = plan[idxOfDate(date)];
+  const log = { id: 'strava-' + a.id, date, kind, type: kind === 'run' ? (d ? d.type : 'easy') : kind, km: +((a.distance || 0) / 1000).toFixed(3),
+    sec: Math.round(a.moving_time || a.elapsed_time || 0), el: Math.round(a.elapsed_time || 0), notes: a.name || '', sport, src: 'strava' };
+  if (a.average_heartrate) log.hr = Math.round(a.average_heartrate);
+  if (a.max_heartrate) log.mx = Math.round(a.max_heartrate);
+  if (a.total_elevation_gain != null) log.elev = Math.round(a.total_elevation_gain);
+  if (kind === 'run' && !(log.km > 0 && log.sec > 0)) return null;
+  if (kind !== 'run' && !(log.sec > 0)) return null;
+  return log;
+}
+function mergeStrava(prev, incoming) {
+  const byId = new Map(prev.map(l => [String(l.id), l]));
+  let added = 0;
+  for (const n of incoming) {
+    const old = byId.get(n.id);
+    if (old) byId.set(n.id, { ...n, ...old, hr: old.hr || n.hr, mx: old.mx || n.mx, elev: old.elev != null ? old.elev : n.elev, el: old.el || n.el, kind: old.kind || n.kind, sport: old.sport || n.sport });
+    else { byId.set(n.id, n); added++; }
+  }
+  return { logs: [...byId.values()].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)), added };
+}
+function timeAgo(ms) { if (!ms) return ''; const s = Math.floor((Date.now() - ms) / 1000); if (s < 60) return 'just now'; if (s < 3600) return Math.floor(s / 60) + ' min ago'; if (s < 86400) return Math.floor(s / 3600) + ' h ago'; return Math.floor(s / 86400) + ' days ago'; }
+
+/* ---------- calendar export (.ics) ---------- */
+function icsEsc(str) { return String(str == null ? '' : str).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n'); }
+function buildICS(plan) {
+  const now = new Date(), stamp = now.toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//3.09//Valencia 2026//EN', 'CALSCALE:GREGORIAN'];
+  for (const d of plan) {
+    if (d.type === 'rest' || d.type === 'tbc') continue;
+    const ds = d.date.replace(/-/g, ''), de = dateOfIdx(d.idx + 1).replace(/-/g, '');
+    const strength = strengthFor(d.w, d.dow);
+    const sum = d.title + (d.km ? ' — ' + fmtKm(d.km) : '') + (strength ? ' + ' + STRENGTH[strength].name : '');
+    lines.push('BEGIN:VEVENT', `UID:mtp2-${ds}@marathon-trainer`, `DTSTAMP:${stamp}`, `DTSTART;VALUE=DATE:${ds}`, `DTEND;VALUE=DATE:${de}`, `SUMMARY:${icsEsc(sum)}`, `DESCRIPTION:${icsEsc(mainLine(d) + (wuLine(d) ? '. ' + wuLine(d) + '.' : ''))}`, 'END:VEVENT');
+  }
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n');
+}
+function download(name, text, type) {
+  const blob = new Blob([text], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = name; a.rel = 'noopener';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+/* ---------- shared bits ---------- */
+const TAG_LABEL = { KEY: 'Key session', VO2: 'VO₂', STEADY: 'Steady', LONG: 'Long run', EASY: 'Easy', HILLS: 'Hills', REST: 'Rest', RACE: 'Race', TBC: 'To come' };
+function Tag({ t }) { return html`<span class=${'tag ' + t}>${TAG_LABEL[t] || t}</span>`; }
+function Sheet({ onClose, children, label }) {
+  useEffect(() => { const k = e => { if (e.key === 'Escape') onClose(); }; window.addEventListener('keydown', k); document.body.style.overflow = 'hidden'; return () => { window.removeEventListener('keydown', k); document.body.style.overflow = ''; }; }, []);
+  return html`<div class="scrim" onClick=${e => { if (e.target === e.currentTarget) onClose(); }}>
+    <div class="sheet" role="dialog" aria-modal="true" aria-label=${label || 'Details'}>
+      <div class="grip"></div>
+      <div class="top"><span></span><button class="x" aria-label="Close" onClick=${onClose}>×</button></div>
+      <div class="body">${children}</div>
+    </div>
+  </div>`;
+}
+const ICONS = {
+  today: 'M12 3v2M12 19v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M3 12h2M19 12h2M4.6 19.4 6 18M18 6l1.4-1.4M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',
+  plan: 'M4 6h16M4 12h16M4 18h10',
+  progress: 'M4 19V11M10 19V5M16 19v-6M22 19H2',
+  settings: 'M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM19.4 13a7.6 7.6 0 0 0 0-2l2-1.5-2-3.5-2.4 1a7.4 7.4 0 0 0-1.7-1L15 3.5h-4L10.7 6a7.4 7.4 0 0 0-1.7 1l-2.4-1-2 3.5 2 1.5a7.6 7.6 0 0 0 0 2l-2 1.5 2 3.5 2.4-1a7.4 7.4 0 0 0 1.7 1l.3 2.5h4l.3-2.5a7.4 7.4 0 0 0 1.7-1l2.4 1 2-3.5z'
+};
+function Icon({ n }) { return html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d=${ICONS[n]}/></svg>`; }
+function Chips({ paces }) { if (!paces || !paces.length) return null; return html`<div class="chips">${paces.map(([l, v]) => html`<span class="chip"><i>${l}</i><b>${v}${/\d:\d\d$/.test(v) ? '/km' : ''}</b></span>`)}</div>`; }
+function daysLabel(n) { return n === 1 ? 'day' : 'days'; }
+/* ---------- Today ---------- */
+function heroNumber(d) {
+  if (d.type === 'xtrain') { const p = d.parts[0]; return { n: `${p.lo}–${p.hi}`, u: 'min' }; }
+  const race = (d.parts || []).find(p => p.t === 'race');
+  if (!d.km && !race) return null;
+  const k = Math.round((race ? race.km : d.km) * 10) / 10;
+  return { n: Number.isInteger(k) ? String(k) : k.toFixed(1), u: 'km' };
+}
+function CheckInRow({ entry, onCheckIn, onUndo, d }) {
+  if (d.type === 'tbc') return null;
+  if (!entry) return html`<button class="ci-row" onClick=${onCheckIn}>
+    <span><span class="t">Check in before you run</span><br/><span class="s">Legs, any niggles, and what to eat today</span></span>
+    <span class="linkbtn">Start</span></button>`;
+  const v = entry.verdict || {};
+  if (entry.accepted && v.level && v.level !== 'go') return html`<div class="adj">
+    <div class="h"><span class=${'tone ' + v.tone}></span>${v.head}</div>
+    <p>${v.change}</p>
+    <div class="row" style="margin-top:12px"><button class="btn ghost sm" onClick=${onUndo}>Back to the plan</button><button class="btn ghost sm" onClick=${onCheckIn}>Check in again</button></div>
+  </div>`;
+  return html`<button class="ci-row" onClick=${onCheckIn}>
+    <span class="row"><span class=${'tone ' + (v.tone || 'green')}></span><span><span class="t">${v.head || 'Checked in'}</span><br/><span class="s">Checked in today. Tap to redo it or see fuelling.</span></span></span>
+  </button>`;
+}
+function Countdowns({ settings, onOpen }) {
+  const t = todayStr();
+  return html`<section aria-label="Races"><h2 class="sec-t">Days to go</h2><div class="counts">${RACES.map(r => {
+    const n = daysBetween(t, r.date), res = settings.results && settings.results[r.key];
+    if (n < 0) return html`<button class="count past" onClick=${() => onOpen(idxOfDate(r.date))}><div class="n sm">${res || 'Done'}</div><div class="l">${r.short}</div><div class="s">${res ? fmtShort(r.date) : 'Add your result'}</div></button>`;
+    return html`<div class="count"><div class="n">${n}</div><div class="l">${r.short}</div><div class="s">${n === 0 ? 'Today' : n === 1 ? 'Tomorrow' : fmtDay(r.date)}</div></div>`;
+  })}</div></section>`;
+}
+function predSource(p) {
+  if (!p) return '';
+  if (p.live) return 'From your recent runs on Strava';
+  if (p.anchor.kind === 'race') return `From your ${p.anchor.race.short.toLowerCase()} result`;
+  return 'From Kaizen, ' + fmtShort(p.anchor.date) + '. Your own runs take over once Strava has heart-rate data';
+}
+function PredictionBlock({ preds, settings }) {
+  const goal = parseTime(settings.goalTime) || 11340;
+  if (!preds) return html`<section class="pred"><h2 class="sec-t">Marathon prediction</h2><p class="muted small">Add Kaizen’s predictions in Progress and this appears.</p></section>`;
+  const m = preds.times.m, diff = Math.round(m - goal);
+  return html`<section class="pred" aria-label="Marathon prediction"><h2 class="sec-t">Marathon prediction</h2>
+    <div class="big">${fmtClock(m)}</div>
+    <div class="vs"><span>Goal <b>${fmtClock(goal)}</b></span><span>${diff > 0 ? html`<b>${fmtClock(diff)}</b> to find` : html`<b>${fmtClock(-diff)}</b> inside your goal`}</span></div>
+    <p class="hint">${predSource(preds)}.</p>
+  </section>`;
+}
+function WeekStrip({ plan, logs, w, onOpen }) {
+  const days = weekDays(plan, w), t = todayStr();
+  const planned = weekPlanned(plan, w), done = Math.round(weekDoneKm(logs, w));
+  const max = Math.max(8, ...days.map(x => Math.max(x.km || 0, runKmOn(logs, x.date))));
+  return html`<section aria-label="This week">
+    <div class="between"><h2 class="sec-t" style="margin:0">This week</h2><span class="small"><b>${done}</b> <span class="muted">of ${w === 16 ? 'race week' : planned + ' km'}</span></span></div>
+    <div class="wk">${days.map(x => {
+      const dn = runKmOn(logs, x.date), pk = x.km || 0;
+      const hgt = Math.max(pk, dn) / max * 52 + 4, fill = pk ? Math.min(1, dn / pk) : (dn ? 1 : 0);
+      return html`<button class=${'c' + (x.date === t ? ' today' : '')} onClick=${() => onOpen(x.idx)} aria-label=${x.title + ', ' + fmtDay(x.date)}>
+        <span class="bar" style=${'height:' + hgt.toFixed(1) + 'px'}><span style=${'height:' + Math.round(fill * 100) + '%'}></span></span>
+        <span class="d">${DOW[x.dow].slice(0, 1)}</span></button>`;
+    })}</div>
+  </section>`;
+}
+function TodayView({ plan, logs, settings, ctx, preds, checkins, onOpen, onCheckIn, onUndo, kz, track, onKaizen, onTrack }) {
+  const t = todayStr(), tIdx = idxOfDate(t), idx = clamp(tIdx, 0, LAST_IDX), d = plan[idx];
+  const z = ctx.zFor(d.w), paces = dayPaces(d, z, ctx.lz, { racePace: ctx.racePace(d) });
+  const dayLogs = logsOn(logs, d.date), done = runKmOn(logs, d.date);
+  const sKey = strengthFor(d.w, d.dow), sDone = dayLogs.some(l => kindOf(l) === 'strength');
+  const xDone = dayLogs.filter(l => kindOf(l) === 'xtrain').reduce((s, l) => s + l.sec / 60, 0);
+  const num = heroNumber(d), wu = wuLine(d);
+  return html`<div>
+    <div class="topline"><span><b>Week ${d.w}</b> of 16</span><span>${phaseOf(d.w)}</span></div>
+    ${tIdx < 0 && html`<p class="note">The plan starts on ${fmtLong(PLAN_START)}.</p>`}
+    ${tIdx > LAST_IDX && html`<p class="note">Valencia is done. Everything you logged is still here.</p>`}
+    <section class="hero" aria-label="Today’s session">
+      <div class="date">${d.date === t ? 'Today, ' : ''}${fmtLong(d.date)}</div>
+      <h1>${d.title}</h1>
+      ${num && html`<div class="km"><span class="n">${num.n}</span><span class="u">${num.u}</span></div>`}
+      <p class="line">${mainLine(d)}</p>
+      ${wu && html`<div class="wu">Plus a ${wu}.</div>`}
+      <${Chips} paces=${paces}/>
+      ${sKey && html`<button class=${'addon' + (sDone ? ' done' : '')} onClick=${() => onOpen(idx, 'strength')}>
+        <span class="badge">${sDone ? '✓' : sKey}</span>
+        <span><span class="t">${STRENGTH[sKey].name} after your run</span><br/><span class="s">About ${STRENGTH[sKey].min} min. ${STRENGTH[sKey].blurb}</span></span>
+      </button>`}
+      ${done > 0 && html`<div class="done-line"><span class="dot"></span>Done: ${fmtKm(done)}${d.km ? ' of ' + fmtKm(d.km) : ''}</div>`}
+      ${xDone > 0 && html`<div class="done-line"><span class="dot"></span>${Math.round(xDone)} min of cross-training logged</div>`}
+      <div class="actions"><button class="btn" onClick=${() => onOpen(idx)}>Session details</button></div>
+    </section>
+    <div class="rows"><${KaizenRow} kz=${kz} onOpen=${onKaizen}/><${CheckInRow} entry=${checkins[d.date]} onCheckIn=${onCheckIn} onUndo=${onUndo} d=${d}/></div>
+    <div class="rule"></div>
+    <${Countdowns} settings=${settings} onOpen=${onOpen}/>
+    <div class="rule"></div>
+    <${OnTrackBlock} info=${track} settings=${settings} onMore=${onTrack} onAddKaizen=${onKaizen}/>
+    <div class="rule"></div>
+    <${WeekStrip} plan=${plan} logs=${logs} w=${d.w} onOpen=${onOpen}/>
+  </div>`;
+}
+
+/* ---------- daily Kaizen entry + on track ---------- */
+function KaizenRow({ kz, onOpen }) {
+  const t = todayStr(), k = latestKaizen(kz);
+  if (!k || k.date !== t) return html`<button class="ci-row" onClick=${onOpen}>
+    <span><span class="t">Add today’s Kaizen predictions</span><br/><span class="s">${k ? 'Last added ' + fmtShort(k.date) + '. ' : ''}Sets your session paces and the on-track check</span></span>
+    <span class="linkbtn">Add</span></button>`;
+  const prev = ((kz.entries || []).filter(e => e.date < t && parseTime(e.m)).sort((a, b) => (a.date < b.date ? 1 : -1)))[0];
+  const d = prev && parseTime(k.m) ? parseTime(k.m) - parseTime(prev.m) : null;
+  return html`<button class="kz-done" onClick=${onOpen}><span class="tone green"></span>
+    <span>Kaizen today: marathon ${k.m || '—'}${d != null ? (d < 0 ? `, ${fmtClock(-d)} faster than ${fmtShort(prev.date)}` : d > 0 ? `, ${fmtClock(d)} slower than ${fmtShort(prev.date)}` : `, same as ${fmtShort(prev.date)}`) : ''}</span></button>`;
+}
+const TRACK_STATUS = { at: ['At goal pace', 'green'], on: ['On track', 'green'], close: ['Just behind', 'amber'], behind: ['Behind', 'red'], unknown: ['Needs more history', ''] };
+function catchUpPlan(info, plan, logs, kz, curW, today) {
+  const items = [];
+  if (curW > 1) {
+    const w = curW - 1, tgt = weekTarget(w, kz), done = weekDoneKm(logs, w), pct = tgt ? done / tgt : 1;
+    items.push(pct < 0.95
+      ? { h: 'Get the weekly volume in', p: `Last week you ran ${Math.round(done)} of ${Math.round(tgt)} km (${Math.round(pct * 100)}%). Kaizen’s prediction only improves when the load goes in, so this comes first.` }
+      : { h: 'Keep the weekly volume coming', p: `Last week you ran ${Math.round(done)} of ${Math.round(tgt)} km. Hitting the target week after week is what moves Kaizen’s prediction.` });
+  }
+  items.push({ h: 'Re-check Kaizen’s simulator', p: `Set its goal to ${fmtClock(info.goal)} and enter the 10-week average it gives you under Kaizen in Progress. The plan re-fits: sessions go back towards Scullion’s full versions first, then easy runs.` });
+  const keys = upcomingKey(plan, today, 7);
+  if (keys.length) items.push({ h: 'Protect the key sessions in the next 7 days', p: keys.map(d => `${fmtDay(d.date)}: ${d.title}`).join('; ') + '.' });
+  items.push({ h: 'Run them at your Kaizen paces, not goal pace', p: 'Scullion’s own week 9 note warns against chasing goal-fitness LT2 too soon. Your paces speed up by themselves as Kaizen’s predictions improve.' });
+  if (info.rate != null && info.rate > 0 && info.need > info.rate * 1.5) items.push({ h: 'Be clear about the size of the gap', p: `You need ${(info.need / info.rate).toFixed(1)} times your current rate of improvement. Volume, sized by Kaizen’s simulator, is the main lever left; everything else here protects what you’re already doing.` });
+  if (info.rate != null && info.rate <= 0) items.push({ h: 'Your prediction has stalled', p: 'Kaizen’s marathon prediction hasn’t improved over this period. Check sleep, illness and whether the weekly targets are being met before adding anything.' });
+  return items;
+}
+function StartInput({ settings, setSettings }) {
+  const [v, setV] = useState(settings.startPred || '');
+  return html`<div class="blk"><h3>Kaizen’s marathon prediction on 17 August</h3>
+    <p class="small muted" style="margin:0 0 8px">In Kaizen, tap the date at the top of the predictions screen, choose 17 August 2026, and copy the marathon time. It gives you the start of the block.</p>
+    <div class="two"><input class="inp" placeholder="h:mm:ss" value=${v} onInput=${e => setV(e.target.value)} aria-label="Marathon prediction on 17 August"/>
+      <button class="btn" onClick=${() => { const t = parseTime(v); if (t) setSettings({ ...settings, startPred: fmtClock(t) }); }}>Save</button></div>
+  </div>`;
+}
+function OnTrackBlock({ info, full, plan, logs, kz, settings, setSettings, curW, onMore, onAddKaizen }) {
+  const goalTxt = fmtClock(parseTime(settings.goalTime) || 11340);
+  if (!info) return html`<section class="track"><h2 class="sec-t">On track for ${goalTxt}?</h2>
+    <p class="small muted" style="margin:0 0 10px">Add today’s Kaizen predictions and this fills in.</p><button class="btn sm" onClick=${onAddKaizen}>Add Kaizen predictions</button></section>`;
+  const [label, tone] = TRACK_STATUS[info.status];
+  const hasStart = !!info.startSec;
+  const rateTxt = info.rate == null ? null : `${Math.abs(info.rate).toFixed(1)} s/km a week ${info.rate < 0 ? 'slower' : ''}`.trim();
+  const since = info.rateSrc === 'recent' ? 'across your Kaizen entries since ' + fmtShort(info.rateFrom) : info.rateSrc === 'start' ? 'since 17 Aug' : info.rateFrom ? 'since ' + fmtShort(info.rateFrom) : '';
+  const today = todayStr();
+  return html`<section class="track" aria-label="On track for the goal">
+    <div class="between"><h2 class="sec-t" style="margin:0">On track for ${fmtClock(info.goal)}?</h2>${tone ? html`<span class=${'status ' + tone}>${label}</span>` : html`<span class="small muted">${label}</span>`}</div>
+    <p class="xs muted" style="margin:6px 0 0">Marathon pace per km, from Kaizen’s prediction</p>
+    <div class="trio">
+      <div><span class="k">Start of block</span>${hasStart ? html`<span class="p">${fmtPace1(info.startSec / MAR)}</span><span class="s">${fmtClock(info.startSec)}</span>` : html`<span class="p faint">—</span><span class="s">17 Aug not added</span>`}</div>
+      <div class="now"><span class="k">Now</span><span class="p">${fmtPace1(info.curPace)}</span><span class="s">${fmtClock(info.curSec)}</span></div>
+      <div><span class="k">Goal</span><span class="p">${fmtPace1(info.goalPace)}</span><span class="s">${fmtClock(info.goal)}</span></div>
+    </div>
+    ${info.status === 'at' ? html`<p class="track-line">You’re at goal pace already. The job now is to hold it to 6 December.</p>`
+      : html`<p class="track-line"><b>${info.gapPerKm.toFixed(1)} s/km</b> to find, ${fmtClock(info.gapSec)} over the marathon, with ${info.weeksLeft.toFixed(1)} weeks to go.</p>`}
+    ${info.status !== 'at' && html`<p class="track-line">Needed: <b>${info.need.toFixed(1)} s/km a week</b>.${rateTxt ? html` Managing: <b>${rateTxt}</b> ${since}.` : ''}</p>`}
+    ${full && info.gainedPerKm != null && hasStart && html`<p class="track-line muted small">Gained since 17 Aug: ${info.gainedPerKm >= 0 ? info.gainedPerKm.toFixed(1) + ' s/km faster' : Math.abs(info.gainedPerKm).toFixed(1) + ' s/km slower'}.</p>`}
+    ${full && info.projSec != null && info.status !== 'at' && html`<p class="track-line muted small">At that rate you’d be ready for ${fmtClock(info.projSec)} on 6 December. That’s a straight-line projection with no taper bonus assumed.</p>`}
+    ${!full && html`<div class="actions" style="margin-top:16px"><button class="btn ghost sm" onClick=${onMore}>${info.status === 'close' || info.status === 'behind' ? 'See the plan to get back on track' : 'See the details'}</button></div>`}
+    ${full && !hasStart && html`<${StartInput} settings=${settings} setSettings=${setSettings}/>`}
+    ${full && (info.status === 'close' || info.status === 'behind') && html`<div class="blk"><h3>Getting back on track</h3>
+      <ol class="plan">${catchUpPlan(info, plan, logs, kz, curW, today).map(i => html`<li><b>${i.h}</b>${i.p}</li>`)}</ol></div>`}
+    ${full && (info.status === 'on' || info.status === 'at') && html`<div class="blk"><h3>Staying on track</h3>
+      <ol class="plan">${catchUpPlan(info, plan, logs, kz, curW, today).filter(i => !/simulator|size of the gap/.test(i.h)).map(i => html`<li><b>${i.h}</b>${i.p}</li>`)}</ol></div>`}
+    ${full && info.status === 'unknown' && html`<p class="hint">The on-track verdict needs either the 17 August prediction or a few more days of Kaizen entries. Until then: hit the weekly targets and add Kaizen’s predictions each morning.</p>`}
+  </section>`;
+}
+
+/* ---------- Plan ---------- */
+function weekNote(w, refit, target) {
+  const bits = [];
+  if (w <= 6) bits.push('Weeks 1 to 6 are the sessions you followed in the previous version of the app.');
+  if (w === 7) bits.push('Half marathon week: Wednesday trimmed, Thursday easy, Saturday a shakeout.');
+  if (w === 8) bits.push('Recovery from the half is built in: rest or easy on Monday, no VO₂ on Tuesday.');
+  if (w === 9) bits.push('Saturday’s parkrun replaces the 80-minute progression.');
+  if (w === 16) bits.push('Race week fills in once Scullion’s week 16 is added.');
+  if (refit && w >= 8 && w <= 15) bits.push(`Re-fitted to Kaizen’s ${Math.round(target)} km.`);
+  return bits.length ? html`<p class="note">${bits.join(' ')}</p>` : null;
+}
+function DayRow({ d, logs, onOpen }) {
+  const t = todayStr(), dn = runKmOn(logs, d.date), s = strengthFor(d.w, d.dow);
+  const xm = logsOn(logs, d.date).filter(l => kindOf(l) === 'xtrain').reduce((a, l) => a + l.sec / 60, 0);
+  return html`<button class=${'day' + (d.date === t ? ' today' : '')} onClick=${() => onOpen(d.idx)}>
+    <span class="dw">${DOW[d.dow]}<span class="dn">${new Date(ymd(d.date)).getUTCDate()}</span></span>
+    <span>
+      <span class="ti">${d.title}</span>
+      <span class="ln" style="display:block">${mainLine(d)}</span>
+      <span class="tags"><${Tag} t=${d.tag}/>${s && html`<span class="sbadge">+ ${STRENGTH[s].name}</span>`}</span>
+    </span>
+    <span class="kmr">
+      ${d.type === 'xtrain' ? html`<span class="p">${d.parts[0].lo}–${d.parts[0].hi}</span><div class="u">min</div>` : d.km ? html`<span class="p">${Math.round(d.km)}</span><div class="u">km</div>` : null}
+      ${dn > 0 && html`<div class="a">${fmtKm(dn)} done</div>`}
+      ${xm > 0 && html`<div class="a">${Math.round(xm)} min done</div>`}
+    </span>
+  </button>`;
+}
+function PlanView({ plan, logs, kz, onOpen, initial }) {
+  const tIdx = idxOfDate(todayStr()), curW = clamp(Math.floor(tIdx / 7) + 1, 1, 16);
+  const [sel, setSel] = useState(initial || curW);
+  const strip = useRef(null);
+  useEffect(() => { const el = strip.current && strip.current.querySelector('.on'); if (el && el.scrollIntoView) el.scrollIntoView({ inline: 'center', block: 'nearest' }); }, [sel]);
+  const days = weekDays(plan, sel);
+  const planned = weekPlanned(plan, sel), target = weekTarget(sel, kz), done = Math.round(weekDoneKm(logs, sel));
+  const refit = days.some(d => d.refit);
+  return html`<div>
+    <h1 class="page-t">Plan</h1>
+    <p class="page-s">Stephen Scullion’s sessions, fitted to Kaizen’s volume.</p>
+    <div class="weeks" ref=${strip}>${Array.from({ length: 16 }, (_, i) => i + 1).map(w => html`<button class=${'wkbtn' + (w === sel ? ' on' : '') + (w === curW ? ' cur' : '')} onClick=${() => setSel(w)} aria-label=${'Week ' + w} aria-pressed=${w === sel}>
+      <span class="n">${w}</span><span class="p">${w === 16 ? 'race' : weekPlanned(plan, w) + ' km'}</span></button>`)}</div>
+    <div class="wkhead"><h2>Week ${sel}</h2><span class="small muted">${fmtShort(days[0].date)} to ${fmtShort(days[6].date)}, ${phaseOf(sel).toLowerCase()}</span></div>
+    <div class="wkstats"><span>Planned <b>${sel === 16 ? 'to come' : planned + ' km'}</b></span><span>Target <b>${Math.round(target)} km</b></span><span>Done <b>${done} km</b></span></div>
+    ${weekNote(sel, refit, target)}
+    <div class="days">${days.map(d => html`<${DayRow} d=${d} logs=${logs} onOpen=${onOpen}/>`)}</div>
+  </div>`;
+}
+/* ---------- day detail sheet ---------- */
+function sessionLines(d) {
+  if (d.legacy) return [d.spec];
+  if (d.type === 'rest') return ['Rest, or easy recovery only'];
+  return d.parts.map(p => partText(p) + (p.t === 'longlt2' ? '. Practise fuelling' : ''));
+}
+function StrengthBlock({ k, w, done, rehab, onToggle }) {
+  const S = STRENGTH[k], L = strengthLoad(w);
+  return html`<div class="blk"><h3>${S.name}, after your run</h3>
+    <p class="small muted" style="margin:0 0 8px">${S.blurb} About ${S.min} min.${k !== 'L' ? ' ' + L.note : ''}</p>
+    <ul class="ex">${S.items.map(([a, b]) => html`<li><span>${a}</span><span>${b.replace('{r}', L.r)}</span></li>`)}</ul>
+    ${rehab && html`<p class="note">${rehab}</p>`}
+    <button class=${'btn block ' + (done ? 'quiet' : '')} style="margin-top:14px" onClick=${onToggle}>${done ? 'Done. Tap to undo' : 'Mark strength done'}</button>
+  </div>`;
+}
+function XtrainBlock({ d, dayLogs, addLog }) {
+  const p = d.parts[0];
+  const [min, setMin] = useState(String(p.lo));
+  const doneMin = dayLogs.filter(l => kindOf(l) === 'xtrain').reduce((a, l) => a + l.sec / 60, 0);
+  return html`<div class="blk"><h3>Cross-training</h3>
+    <p class="small muted" style="margin:0 0 8px">Bike, pool, rower or cross-trainer, all easy. It counts toward your weekly load. Running ${p.runKm} km easy instead is fine too.</p>
+    ${doneMin > 0 && html`<div class="done-line" style="margin:0 0 8px"><span class="dot"></span>${Math.round(doneMin)} min logged</div>`}
+    <div class="two"><input class="inp" inputmode="numeric" value=${min} onInput=${e => setMin(e.target.value)} aria-label="Minutes of cross-training"/>
+      <button class="btn" onClick=${() => { const m = parseFloat(min); if (m > 0) addLog({ kind: 'xtrain', date: d.date, sec: Math.round(m * 60), km: 0, notes: 'Cross-training' }); }}>Log minutes</button></div>
+  </div>`;
+}
+function RaceBlock({ d, raceKey, settings, dayLogs, saveResult }) {
+  const r = RACES.find(x => x.key === raceKey);
+  const cur = settings.results && settings.results[raceKey];
+  const run = dayLogs.filter(isRunLog).find(l => Math.abs(l.km - r.km) / r.km < 0.06);
+  const sug = run ? fmtClock(run.el || run.sec) : '';
+  const [val, setVal] = useState(cur || sug || '');
+  return html`<div class="blk"><h3>Your result</h3>
+    <p class="small muted" style="margin:0 0 8px">${r.ref ? 'Saving your time resets your training paces from this race and re-anchors your predictions.' : 'Log your finish time.'}${sug && !cur ? ' Filled in from Strava; check it against your chip time.' : ''}</p>
+    <div class="two"><input class="inp" placeholder=${r.km > 10 ? 'h:mm:ss' : 'mm:ss'} value=${val} onInput=${e => setVal(e.target.value)} aria-label="Finish time"/>
+      <button class="btn" onClick=${() => saveResult(r, val)}>Save result</button></div>
+    ${cur && html`<p class="hint">Saved: ${cur}</p>`}
+  </div>`;
+}
+function logSummary(l) {
+  const k = kindOf(l);
+  if (k === 'strength') return { t: l.notes || 'Strength', m: fmtMin((l.sec || 0) / 60) };
+  if (k === 'xtrain') return { t: l.notes || 'Cross-training', m: fmtMin((l.sec || 0) / 60) + (l.km ? ', ' + fmtKm(l.km) : '') };
+  return { t: fmtKm(+l.km) + ' at ' + fmtPace(l.sec / l.km) + '/km', m: [fmtClock(l.sec), l.hr ? l.hr + ' bpm' : '', l.elev ? l.elev + ' m climbing' : '', l.src === 'strava' ? 'Strava' : 'Logged by hand'].filter(Boolean).join(', ') };
+}
+function ActivityBlock({ d, dayLogs, addLog, delLog }) {
+  const [open, setOpen] = useState(false), [km, setKm] = useState(''), [t, setT] = useState('');
+  const save = () => { const k = parseFloat(km), s = parseTime(t); if (!(k > 0) || !s) return; addLog({ kind: 'run', date: d.date, km: +k.toFixed(3), sec: s, type: d.type, notes: '' }); setKm(''); setT(''); setOpen(false); };
+  return html`<div class="blk"><h3>Your activity</h3>
+    ${dayLogs.length === 0 && html`<p class="small muted" style="margin:0">Nothing logged yet. Runs arrive from Strava when you sync.</p>`}
+    ${dayLogs.map(l => { const s = logSummary(l); return html`<div class="act"><span>${s.t}<div class="m">${s.m}</div></span><span></span><button class="del" aria-label="Delete" onClick=${() => delLog(l.id)}>×</button></div>`; })}
+    ${!open && html`<button class="linkbtn" style="margin-top:12px" onClick=${() => setOpen(true)}>Log a run by hand</button>`}
+    ${open && html`<div class="two" style="margin-top:12px"><input class="inp" inputmode="decimal" placeholder="km" value=${km} onInput=${e => setKm(e.target.value)} aria-label="Distance in km"/><input class="inp" placeholder="h:mm:ss" value=${t} onInput=${e => setT(e.target.value)} aria-label="Time"/></div>
+      <button class="btn block" style="margin-top:10px" onClick=${save}>Save run</button>`}
+  </div>`;
+}
+function FuelBlock({ d, z, kg, plan, level }) {
+  const fuel = fuelFor(d, z, kg, level, plan), nxt = nextKey(plan, d.idx);
+  return html`<div class="fuel">
+    <div class="small muted">${fuel.adjusted ? 'For the adjusted session' : 'For this session'}</div>
+    <div style="font-weight:600;font-size:17px;margin-top:2px">${fuel.tier.head}</div>
+    <p class="small" style="margin:6px 0 0">${fuel.tier.why}</p>
+    ${fuel.g ? html`<div class="g">${fuel.g[0]}–${fuel.g[1]} g</div><div class="xs muted">${fuel.tier.perMeal ? 'carbohydrate in the 2–4 h before the start' : 'carbohydrate across the day'}, ${fuel.tier.g[0]}–${fuel.tier.g[1]} g/kg</div>`
+      : html`<p class="hint">Add your weight in Settings for gram targets.</p>`}
+    <div class="fl">
+      ${fuel.inrun.line && html`<i>During</i><span>${fuel.inrun.line}. ${fuel.inrun.note}</span>`}
+      ${fuel.pp.pre && html`<i>Before</i><span>${fuel.pp.pre}</span>`}
+      ${fuel.pp.post && html`<i>After</i><span>${fuel.pp.post}</span>`}
+      ${fuel.m ? html`<i>Time</i><span>About ${fuel.m} min at the prescribed effort</span>` : null}
+      ${nxt && html`<i>Next key</i><span>${nxt.days === 1 ? 'Tomorrow' : 'In ' + nxt.days + ' days'}: ${nxt.d.title}. ${nextAdvice(nxt, z, kg)}</span>`}
+    </div>
+    ${fuel.day.length > 0 && html`<div class="blk" style="margin-top:16px"><h3>One way to get there</h3><ul class="ex">${fuel.day.map(x => html`<li><span>${x.slot}: ${x.items}</span><span>${x.g} g</span></li>`)}</ul></div>`}
+  </div>`;
+}
+function VideoBlock({ d, videos, setVideos }) {
+  const vk = videoKey(d.type), custom = (videos[vk] || '').trim(), list = CURATED_VIDEOS[vk] || [];
+  const url = custom || list[(d.w - 1) % Math.max(1, list.length)] || '';
+  const [val, setVal] = useState(custom);
+  return html`<div>
+    ${url && html`<p style="margin:0 0 10px"><a class="linkbtn" href=${url} target="_blank" rel="noopener">Open the video for this type of session</a></p>`}
+    <label class="field" style="margin-top:0"><span>Your own video for sessions like this</span><input class="inp" placeholder="Paste a YouTube link" value=${val} onInput=${e => setVal(e.target.value)} onChange=${() => setVideos({ ...videos, [vk]: val.trim() })}/></label>
+  </div>`;
+}
+function DaySheet({ d, focus, plan, logs, settings, ctx, videos, setVideos, onClose, addLog, delLog, toggleStrength, saveResult }) {
+  const z = ctx.zFor(d.w), paces = dayPaces(d, z, ctx.lz, { racePace: ctx.racePace(d) });
+  const s = strengthFor(d.w, d.dow), dayLogs = logsOn(logs, d.date);
+  const sDone = dayLogs.some(l => kindOf(l) === 'strength');
+  const raceKey = (d.parts || []).map(p => p.key).find(Boolean);
+  const num = heroNumber(d), sp = SP[clamp(d.w, 7, 15)];
+  const sRef = useRef(null);
+  useEffect(() => { if (focus === 'strength' && sRef.current) setTimeout(() => sRef.current.scrollIntoView({ block: 'start', behavior: 'smooth' }), 120); }, []);
+  return html`<${Sheet} onClose=${onClose} label=${d.title}>
+    <div class="small muted">${fmtLong(d.date)}, week ${d.w}</div>
+    <h2 class="sh-t">${d.title}</h2>
+    ${num && html`<div class="sh-km">${num.n}<small>${num.u}</small></div>`}
+    <div style="margin-top:6px"><${Tag} t=${d.tag}/></div>
+    ${d.note && html`<p class="note">${d.note}</p>`}
+    ${d.refit && html`<p class="note">Re-fitted to this week’s Kaizen target.</p>`}
+    <div class="blk"><h3>Session</h3><ul class="lines">${sessionLines(d).map(x => html`<li>${x}</li>`)}</ul></div>
+    ${paces.length > 0 && html`<div class="blk"><h3>Paces</h3>
+      <dl class="kv">${paces.map(([l, v]) => html`<dt>${l}</dt><dd>${v}${/\d:\d\d$/.test(v) ? ' /km' : ''}</dd>`)}</dl>
+      ${(() => {
+        if (d.legacy || z.offset <= 0.5) return null;
+        const own = { Easy: SP_EASY, Recovery: SP_REC, LT2: sp.lt2, Steady: sp.steady, Float: [sp.float, sp.float], Reps: sp.vo2, '400s': sp.fast || sp.vo2 };
+        const hit = paces.find(([l]) => own[l]);
+        return hit ? html`<p class="hint">Set from ${ctx.ref.label}. Scullion’s own ${hit[0].toLowerCase()} pace for this week is ${paceRange(own[hit[0]])}/km.</p>` : null;
+      })()}
+    </div>`}
+    ${(d.sc || d.o) && html`<div class="blk"><h3>Scullion’s notes</h3><div class="oea">
+      ${d.sc && html`<div><span>${d.note || d.refit || d.km ? 'His session as written' : 'As written'}</span>${d.sc}</div>`}
+      ${d.o && html`<div><span>Objective</span>${d.o}</div>`}
+      ${d.e && html`<div><span>Execute</span>${d.e}</div>`}
+      ${d.a && html`<div><span>Avoid</span>${d.a}</div>`}
+    </div></div>`}
+    ${s && html`<div ref=${sRef}><${StrengthBlock} k=${s} w=${d.w} done=${sDone} rehab=${settings.rehab} onToggle=${() => toggleStrength(d, s)}/></div>`}
+    ${d.type === 'xtrain' && html`<${XtrainBlock} d=${d} dayLogs=${dayLogs} addLog=${addLog}/>`}
+    ${raceKey && html`<${RaceBlock} d=${d} raceKey=${raceKey} settings=${settings} dayLogs=${dayLogs} saveResult=${saveResult}/>`}
+    ${d.type !== 'tbc' && html`<${ActivityBlock} d=${d} dayLogs=${dayLogs} addLog=${addLog} delLog=${delLog}/>`}
+    ${d.type !== 'tbc' && d.type !== 'rest' && html`<details class="more"><summary>Fuelling</summary><div><${FuelBlock} d=${d} z=${z} kg=${settings.kg} plan=${plan}/></div></details>`}
+    ${d.type !== 'tbc' && html`<details class="more"><summary>Guidance video</summary><div><${VideoBlock} d=${d} videos=${videos} setVideos=${setVideos}/></div></details>`}
+  <//>`;
+}
+
+/* ---------- daily check-in (Silbernagel pain-monitoring + wellness; ported from the previous app) ---------- */
+function CheckInSheet({ d, z, kg, plan, onSave, onClose }) {
+  const [step, setStep] = useState(1), [fresh, setFresh] = useState(null), [on, setOn] = useState(null), [site, setSite] = useState('');
+  const [pain, setPain] = useState(null), [behave, setBehave] = useState(null), [morning, setMorning] = useState(null), [trend, setTrend] = useState(null), [redflag, setRedflag] = useState(false);
+  const niggle = on ? { on: true, site, pain: pain == null ? 0 : pain, behave, morning, trend, redflag } : { on: false };
+  const ready = on === false || (on === true && pain != null && behave && morning && trend);
+  const verdict = ready ? assessBody({ fresh, niggle }, catOf(d.type)) : null;
+  const pickRow = (opts, val, set) => html`<div class="pick">${opts.map(([k, t]) => html`<button class=${val === k ? 'on' : ''} onClick=${() => set(k)}>${t}</button>`)}</div>`;
+  return html`<${Sheet} onClose=${onClose} label="Check in">
+    ${step === 1 && html`<div>
+      <div class="small muted">Check in, ${d.title.toLowerCase()} today</div>
+      <h2 class="ci-q">How do the legs feel?</h2>
+      <div class="opts">${[['fresh', 'Fresh', 'Bouncy, keen to run'], ['normal', 'Normal', 'Nothing notable either way'], ['flat', 'Flat', 'Heavy legs, low drive'], ['wrecked', 'Wrecked', 'Genuinely depleted']].map(([k, t, s]) =>
+        html`<button class=${'opt' + (fresh === k ? ' on' : '')} onClick=${() => { setFresh(k); setStep(2); }}><b>${t}</b><span>${s}</span></button>`)}</div>
+    </div>`}
+    ${step === 2 && html`<div>
+      <h2 class="ci-q">Any niggle?</h2>
+      <div class="two"><button class=${'opt' + (on === false ? ' on' : '')} onClick=${() => { setOn(false); setStep(3); }}><b>Nothing</b></button><button class=${'opt' + (on === true ? ' on' : '')} onClick=${() => setOn(true)}><b>Something</b></button></div>
+      ${on === true && html`<div>
+        <div class="field"><span>Where</span>${pickRow(['Achilles', 'Calf', 'Knee', 'Shin', 'Hamstring', 'Hip', 'Foot', 'Other'].map(x => [x, x]), site, setSite)}</div>
+        <div class="field"><span>Worst pain during activity, 0 to 10</span><div class="scale">${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(v => html`<button class=${(pain === v ? 'on' : '') + (v > 5 ? ' hi' : '')} onClick=${() => setPain(v)}>${v}</button>`)}</div></div>
+        <div class="field"><span>Through a run it</span>${pickRow([['eases', 'Eases off'], ['same', 'Stays the same'], ['worse', 'Gets worse']], behave, setBehave)}</div>
+        <div class="field"><span>Settled by this morning?</span>${pickRow([['yes', 'Yes'], ['no', 'No']], morning, setMorning)}</div>
+        <div class="field"><span>Compared with last week</span>${pickRow([['better', 'Better'], ['same', 'Same'], ['worse', 'Worse']], trend, setTrend)}</div>
+        <button class=${'flag' + (redflag ? ' on' : '')} onClick=${() => setRedflag(!redflag)}><b>${redflag ? '✓' : ''}</b><span>Pinpoint tenderness on bone, night pain, or pain when hopping on it</span></button>
+        <button class="btn block" style="margin-top:16px" disabled=${!ready} onClick=${() => setStep(3)}>See what to do</button>
+      </div>`}
+    </div>`}
+    ${step === 3 && verdict && html`<div>
+      <div class=${'verdict ' + verdict.tone}><div class="h">${verdict.head}</div><p><b>${verdict.change}</b></p><p>${verdict.why}</p>${verdict.ref && html`<span class="ref">${verdict.ref}</span>`}</div>
+      <div class="blk"><h3>Fuelling today</h3><${FuelBlock} d=${d} z=${z} kg=${kg} plan=${plan} level=${verdict.level}/></div>
+      <div class="actions"><button class="btn" onClick=${() => onSave({ fresh, niggle, verdict, accepted: true })}>${verdict.level === 'go' ? 'Save check-in' : 'Apply to today'}</button>
+        ${verdict.level !== 'go' && html`<button class="btn ghost" onClick=${() => onSave({ fresh, niggle, verdict, accepted: false })}>Keep the plan</button>`}</div>
+    </div>`}
+  <//>`;
+}
+
+/* ---------- daily Kaizen predictions ---------- */
+function KaizenSheet({ kz, onSave, onClose }) {
+  const last = latestKaizen(kz) || {};
+  const [f, setF] = useState({ k5: last.k5 || '', k10: last.k10 || '', hm: last.hm || '', m: last.m || '' });
+  const [err, setErr] = useState('');
+  const save = () => {
+    const e = { date: todayStr() }; let n = 0;
+    for (const k of ['k5', 'k10', 'hm', 'm']) { if (!f[k]) continue; const t = parseTime(f[k]); if (!t) { setErr('Check the ' + ({ k5: '5 km', k10: '10 km', hm: 'half', m: 'marathon' })[k] + ' time.'); return; } e[k] = fmtClock(t); n++; }
+    if (!n) { setErr('Add at least the marathon time.'); return; }
+    onSave(e);
+  };
+  return html`<${Sheet} onClose=${onClose} label="Today’s Kaizen predictions">
+    <h2 class="sh-t">Today’s Kaizen predictions</h2>
+    <p class="small muted" style="margin:8px 0 4px">Open Kaizen and copy the four times under Predictions. They start filled in with your last entry${last.date ? ' (' + fmtShort(last.date) + ')' : ''}, so change only what moved.</p>
+    <p class="small muted" style="margin:0 0 6px">Your session paces come from the 10 km and half times; the on-track check uses the marathon.</p>
+    <div class="two">${[['k5', '5 km', 'mm:ss'], ['k10', '10 km', 'mm:ss'], ['hm', 'Half', 'h:mm:ss'], ['m', 'Marathon', 'h:mm:ss']].map(([k, l, ph]) =>
+      html`<label class="field"><span>${l}</span><input class="inp" inputmode="numeric" placeholder=${ph} value=${f[k]} onInput=${e => { setF(p => ({ ...p, [k]: e.target.value })); setErr(''); }}/></label>`)}</div>
+    ${err && html`<p class="hint" style="color:var(--rose)">${err}</p>`}
+    <button class="btn block" style="margin-top:18px" onClick=${save}>Save today’s predictions</button>
+  <//>`;
+}
+function OnTrackSheet(props) {
+  return html`<${Sheet} onClose=${props.onClose} label="On track"><${OnTrackBlock} ...${props} full=${true}/><//>`;
+}
+/* ---------- Progress ---------- */
+function Sparkline({ series, goal }) {
+  if (!series || series.length < 2) return null;
+  const vals = series.map(s => s.m).concat([goal]), lo = Math.min(...vals) - 60, hi = Math.max(...vals) + 60;
+  const W = 320, H = 80, x = i => 8 + i * (W - 16) / (series.length - 1), y = v => H - 8 - (v - lo) / (hi - lo) * (H - 16);
+  return html`<svg class="chart" viewBox=${`0 0 ${W} ${H}`} role="img" aria-label="Marathon prediction by week">
+    <line x1="0" x2=${W} y1=${y(goal)} y2=${y(goal)} stroke="var(--faint)" stroke-dasharray="3 4"/>
+    <polyline fill="none" stroke="var(--citrus)" stroke-width="2" points=${series.map((s, i) => x(i) + ',' + y(s.m)).join(' ')}/>
+    ${series.map((s, i) => html`<circle cx=${x(i)} cy=${y(s.m)} r="3" fill="var(--citrus)"/>`)}
+  </svg>`;
+}
+function WeekChart({ plan, logs, kz, curW, onPick }) {
+  const W = 336, H = 150, base = 124, slot = W / 16;
+  const rows = Array.from({ length: 16 }, (_, i) => { const w = i + 1; return { w, p: w === 16 ? 0 : weekPlanned(plan, w), d: weekDoneKm(logs, w), t: weekTarget(w, kz) }; });
+  const max = Math.max(90, ...rows.map(r => Math.max(r.p, r.d, r.t)));
+  const y = v => base - v / max * (base - 10);
+  return html`<svg class="chart" viewBox=${`0 0 ${W} ${H}`} role="img" aria-label="Planned, done and target km by week">
+    ${rows.map((r, i) => { const x = i * slot + 3, bw = slot - 6; return html`<g onClick=${() => onPick && onPick(r.w)} style="cursor:pointer">
+      ${r.p > 0 && html`<rect x=${x} y=${y(r.p)} width=${bw} height=${base - y(r.p)} rx="3" fill="none" stroke="var(--line)" stroke-width="1.2"/>`}
+      ${r.d > 0 && html`<rect x=${x + 2} y=${y(r.d)} width=${bw - 4} height=${base - y(r.d)} rx="2" fill="var(--sea)"/>`}
+      <line x1=${x - 1} x2=${x + bw + 1} y1=${y(r.t)} y2=${y(r.t)} stroke="var(--citrus)" stroke-width="2"/>
+      <text x=${x + bw / 2} y=${H - 8} text-anchor="middle" font-size="10" fill=${r.w === curW ? 'var(--citrus)' : 'var(--faint)'} font-weight=${r.w === curW ? '700' : '400'}>${r.w}</text>
+    </g>`; })}
+  </svg>
+  <div class="legend"><span><i style="border:1.2px solid var(--line)"></i>Planned</span><span><i style="background:var(--sea)"></i>Done</span><span><i style="background:var(--citrus);height:3px;vertical-align:3px"></i>Kaizen target</span></div>`;
+}
+function KaizenBlock({ kz, setKz, curW, toast, onKaizen }) {
+  const [avg, setAvg] = useState(String(kz.avg || DEFAULT_KAIZEN_AVG));
+  const [tw, setTw] = useState(clamp(curW, 8, 15));
+  const [wk, setWk] = useState(kz.weekly && kz.weekly[clamp(curW, 8, 15)] ? String(kz.weekly[clamp(curW, 8, 15)]) : '');
+  const saveVol = () => {
+    const a = parseFloat(avg), w = wk === '' ? null : parseFloat(wk);
+    if (!(a >= 30 && a <= 160)) { toast('Enter Kaizen’s average in km, e.g. 67.9'); return; }
+    if (w != null && !(w >= 15 && w <= 160)) { toast('Enter this week’s target in km'); return; }
+    const weekly = { ...(kz.weekly || {}) }; if (w == null) delete weekly[tw]; else weekly[tw] = w;
+    setKz({ ...kz, avg: a, weekly }); toast('Volume updated. The plan has been re-fitted.');
+  };
+  const hist = (kz.entries || []).slice().sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 5);
+  return html`<section aria-label="Kaizen">
+    <h2 class="sec-t">Kaizen</h2>
+    <label class="field"><span>10-week average from Kaizen’s simulator, km</span><input class="inp" inputmode="decimal" value=${avg} onInput=${e => setAvg(e.target.value)}/></label>
+    <p class="hint">Rescales every remaining week and keeps the build and taper shape.</p>
+    <div class="two">
+      <label class="field"><span>Kaizen’s target for</span><select class="inp" value=${tw} onChange=${e => { const w = +e.target.value; setTw(w); setWk(kz.weekly && kz.weekly[w] ? String(kz.weekly[w]) : ''); }}>${[8, 9, 10, 11, 12, 13, 14, 15].map(w => html`<option value=${w}>Week ${w}</option>`)}</select></label>
+      <label class="field"><span>km (optional)</span><input class="inp" inputmode="decimal" placeholder="Average" value=${wk} onInput=${e => setWk(e.target.value)}/></label>
+    </div>
+    <p class="hint">Re-fits that week only: easy runs first, then every session evenly. Race weeks 7 and 16 stay as they are.</p>
+    <button class="btn block" style="margin-top:14px" onClick=${saveVol}>Update volume</button>
+    <h3 class="sec-t" style="margin-top:26px">Kaizen’s predictions</h3>
+    <button class="btn ghost block" onClick=${onKaizen}>Add today’s predictions</button>
+    ${hist.length > 0 && html`<div style="margin-top:14px">${hist.map(e => html`<div class="act"><span>${fmtShort(e.date)}<div class="m">${[e.k5 && '5 km ' + e.k5, e.k10 && '10 km ' + e.k10, e.hm && 'half ' + e.hm, e.m && 'marathon ' + e.m].filter(Boolean).join(', ')}</div></span><span></span>
+      <button class="del" aria-label="Delete entry" onClick=${() => setKz({ ...kz, entries: (kz.entries || []).filter(x => x !== e) })}>×</button></div>`)}</div>`}
+  </section>`;
+}
+function ActivityList({ logs, addLog, delLog, toast }) {
+  const [n, setN] = useState(12), [open, setOpen] = useState(false);
+  const [f, setF] = useState({ kind: 'run', date: todayStr(), km: '', time: '', notes: '' });
+  const save = () => {
+    const sec = f.kind === 'run' ? parseTime(f.time) : Math.round((parseFloat(f.time) || 0) * 60), km = parseFloat(f.km) || 0;
+    if (!sec || (f.kind === 'run' && !(km > 0))) { toast(f.kind === 'run' ? 'Add distance and time' : 'Add minutes'); return; }
+    addLog({ kind: f.kind, date: f.date, km: +km.toFixed(3), sec, notes: f.notes.trim() || (f.kind === 'xtrain' ? 'Cross-training' : f.kind === 'strength' ? 'Strength' : '') });
+    setF({ kind: 'run', date: todayStr(), km: '', time: '', notes: '' }); setOpen(false);
+  };
+  const list = (logs || []).slice().sort((a, b) => (a.date < b.date ? 1 : -1));
+  return html`<section aria-label="Activity">
+    <div class="between"><h2 class="sec-t" style="margin:0">Activity</h2>${!open && html`<button class="linkbtn" onClick=${() => setOpen(true)}>Add activity</button>`}</div>
+    ${open && html`<div style="margin:12px 0 6px">
+      <div class="seg">${[['run', 'Run'], ['xtrain', 'Cross-training'], ['strength', 'Strength']].map(([k, l]) => html`<button class=${f.kind === k ? 'on' : ''} onClick=${() => setF(p => ({ ...p, kind: k }))}>${l}</button>`)}</div>
+      <div class="two" style="margin-top:10px"><input class="inp" type="date" value=${f.date} onInput=${e => setF(p => ({ ...p, date: e.target.value }))} aria-label="Date"/>
+        <input class="inp" placeholder=${f.kind === 'run' ? 'h:mm:ss' : 'minutes'} value=${f.time} onInput=${e => setF(p => ({ ...p, time: e.target.value }))} aria-label="Time"/></div>
+      ${f.kind !== 'strength' && html`<input class="inp" style="margin-top:10px" inputmode="decimal" placeholder=${f.kind === 'run' ? 'Distance, km' : 'Distance, km (optional)'} value=${f.km} onInput=${e => setF(p => ({ ...p, km: e.target.value }))} aria-label="Distance"/>`}
+      <div class="two" style="margin-top:10px"><button class="btn ghost" onClick=${() => setOpen(false)}>Cancel</button><button class="btn" onClick=${save}>Save</button></div>
+    </div>`}
+    ${list.length === 0 && html`<p class="empty" style="margin-top:12px">No activity yet. Connect Strava in Settings and your runs appear here.</p>`}
+    <div style="margin-top:6px">${list.slice(0, n).map(l => { const s = logSummary(l); return html`<div class="act"><span>${s.t}<div class="m">${fmtDay(l.date)}, ${s.m}</div></span><span></span><button class="del" aria-label="Delete" onClick=${() => delLog(l.id)}>×</button></div>`; })}</div>
+    ${list.length > n && html`<button class="linkbtn" style="margin-top:12px" onClick=${() => setN(n + 20)}>Show more</button>`}
+  </section>`;
+}
+function ProgressView({ plan, logs, settings, setSettings, kz, setKz, preds, series, addLog, delLog, toast, curW, openWeek, track, onKaizen }) {
+  const goal = parseTime(settings.goalTime) || 11340, k = latestKaizen(kz);
+  const load = weekLoad(logs, curW), lt = weekLoadTarget(weekTarget(curW, kz));
+  const anchorLabel = preds ? (preds.anchor.kind === 'race' ? `your ${preds.anchor.race.short.toLowerCase()} on ${fmtShort(preds.anchor.date)}` : `Kaizen’s numbers from ${fmtShort(preds.anchor.date)}`) : '';
+  const pct = preds ? Math.round((preds.ratio - 1) * 1000) / 10 : 0;
+  return html`<div>
+    <h1 class="page-t">Progress</h1>
+    <p class="page-s">Where you are against the goal, from Kaizen and your Strava runs.</p>
+    <${OnTrackBlock} info=${track} full=${true} plan=${plan} logs=${logs} kz=${kz} settings=${settings} setSettings=${setSettings} curW=${curW} onAddKaizen=${onKaizen}/>
+    <div class="rule"></div>
+    <section aria-label="Predictions">
+      <h2 class="sec-t">Race predictions</h2>
+      <table class="ptable"><thead><tr><th></th><th>Now</th><th>Kaizen</th></tr></thead><tbody>
+        ${PRED_DISTS.map(([key, label]) => html`<tr class=${key === 'm' ? 'm' : ''}><td>${label}</td><td class="now">${preds ? fmtClock(preds.times[key]) : '—'}</td><td>${k && k[key] ? k[key] : '—'}</td></tr>`)}
+        <tr><td>Goal</td><td class="now" style="font-size:20px">${fmtClock(goal)}</td><td></td></tr>
+      </tbody></table>
+      <p class="hint">${!preds ? 'Add Kaizen’s predictions below to anchor these.' : preds.live ? (Math.abs(pct) < 0.5 ? `Your runs so far match ${anchorLabel}. As you train, this moves with your heart-rate and pace data.` : `Your runs since then have moved your fitness ${pct >= 0 ? 'up' : 'down'} ${Math.abs(pct)}% from ${anchorLabel}.`) : `Showing ${anchorLabel}. Sync Strava with heart-rate data and your own trend takes over.`}</p>
+      <${Sparkline} series=${series} goal=${goal}/>
+      <details class="more"><summary>How predictions work</summary><div class="small">
+        <p style="margin-top:0">Each run over 20 minutes with heart rate gives a fitness estimate: its pace (with climbing added) tells us the oxygen cost, and your heart-rate reserve tells us how hard that was. The last six weeks are averaged, with recent and longer runs counting most.</p>
+        <p>That trend is applied to your latest anchor: a race result if you’ve saved one, otherwise Kaizen’s numbers. Race results win because they’re true maximal efforts. Kaizen’s shape between distances (its marathon is relatively slower than its half, reflecting endurance) is kept.</p>
+        <p style="margin-bottom:0">Max and resting heart rate are in Settings. Max is set to 200 from your Strava zones.</p>
+      </div></details>
+    </section>
+    <div class="rule"></div>
+    <section aria-label="Weekly volume"><h2 class="sec-t">Weekly volume</h2><${WeekChart} plan=${plan} logs=${logs} kz=${kz} curW=${curW} onPick=${openWeek}/></section>
+    <div class="rule"></div>
+    <section aria-label="Load">
+      <div class="between"><h2 class="sec-t" style="margin:0">Load this week</h2><span class="small"><b>${Math.round(load)}</b> <span class="muted">of ${Math.round(lt)}</span></span></div>
+      <div class="gapbar"><span style=${'width:' + Math.min(100, load / lt * 100).toFixed(1) + '%'}></span></div>
+      <p class="hint">Distance weighted by pace (a km at 4:15 counts about 1.2, at 6:00 about 0.84), plus 1 per 100 m climbed and 1 per 10 min of cross-training. The target is this week’s km plus Kaizen’s 280 m of climbing and 60 min of cross-training.</p>
+    </section>
+    <div class="rule"></div>
+    <${KaizenBlock} kz=${kz} setKz=${setKz} curW=${curW} toast=${toast} onKaizen=${onKaizen}/>
+    <div class="rule"></div>
+    <${ActivityList} logs=${logs} addLog=${addLog} delLog=${delLog} toast=${toast}/>
+  </div>`;
+}
+
+/* ---------- Settings ---------- */
+function SettingsView({ settings, setSettings, strava, busy, onConnect, onSync, onDisconnect, plan, refNow, exportData, importData, resetAll, toast }) {
+  const set = (k, v) => setSettings({ ...settings, [k]: v });
+  const fileRef = useRef(null);
+  const [confirmReset, setConfirmReset] = useState(false);
+  return html`<div>
+    <h1 class="page-t">Settings</h1>
+    <p class="page-s">Everything is stored ${Store.name}.</p>
+    <section class="set-g"><h3>Strava</h3>
+      ${!strava ? html`<p class="small muted">Connect once on each device. Runs, heart rate, climbing and cross-training sync in.</p><button class="btn" onClick=${onConnect}>${busy ? 'Connecting…' : 'Connect Strava'}</button>`
+        : html`<div class="setrow"><span>Connected${strava.athlete && strava.athlete.firstname ? ' as ' + strava.athlete.firstname : ''}</span><span class="muted small">${strava.lastSync ? 'synced ' + timeAgo(strava.lastSync) : 'not synced yet'}</span></div>
+          <div class="row" style="margin-top:12px"><button class="btn sm" onClick=${onSync}>${busy ? 'Syncing…' : 'Sync now'}</button><button class="btn ghost sm" onClick=${onDisconnect}>Disconnect</button></div>`}
+    </section>
+    <section class="set-g"><h3>Goal</h3>
+      <label class="field"><span>Valencia goal time</span><input class="inp" value=${settings.goalTime} onChange=${e => { if (parseTime(e.target.value)) set('goalTime', fmtClock(parseTime(e.target.value))); }}/></label>
+    </section>
+    <section class="set-g"><h3>Training paces</h3>
+      <div class="seg" style="margin-top:10px">${[['kaizen', 'From Kaizen'], ['scullion', 'Scullion’s paces']].map(([k, l]) => html`<button class=${(settings.paceMode === k || (k === 'kaizen' && settings.paceMode !== 'scullion')) ? 'on' : ''} onClick=${() => set('paceMode', k)}>${l}</button>`)}</div>
+      <p class="hint">${settings.paceMode === 'scullion' ? 'Uses the exact paces published on 262iq.com for each week, which assume goal fitness.' : `Every session’s paces come from ${refNow.label}: your LT2 is ${fmtPace(refNow.T)}/km. They update each time you add Kaizen’s predictions, and never go faster than Scullion’s.`}</p>
+      <label class="field"><span>Kaizen’s marathon prediction on 17 August, the start of the block</span><input class="inp" placeholder="h:mm:ss" value=${settings.startPred || ''} onChange=${e => { const t = parseTime(e.target.value); set('startPred', t ? fmtClock(t) : ''); }}/></label>
+      <details class="more"><summary>If there’s no Kaizen entry</summary><div>
+        <p class="small muted" style="margin-top:0">Paces fall back to this until you add Kaizen’s predictions.</p>
+        <div class="two">
+          <label class="field"><span>Fitness from</span><select class="inp" value=${settings.curDist} onChange=${e => set('curDist', e.target.value)}>
+            <option value="5k">5 km</option><option value="10k">10 km</option><option value="hm">Half</option><option value="full">Marathon</option></select></label>
+          <label class="field"><span>Time</span><input class="inp" value=${settings.curTime} onChange=${e => { const t = parseTime(e.target.value); if (t) set('curTime', fmtClock(t)); }}/></label>
+        </div>
+      </div></details>
+    </section>
+    <section class="set-g"><h3>Heart rate, for predictions</h3>
+      <div class="two"><label class="field"><span>Max</span><input class="inp" inputmode="numeric" value=${settings.maxHr || ''} onChange=${e => set('maxHr', parseInt(e.target.value, 10) || null)}/></label>
+        <label class="field"><span>Resting</span><input class="inp" inputmode="numeric" value=${settings.restHr || ''} onChange=${e => set('restHr', parseInt(e.target.value, 10) || null)}/></label></div>
+    </section>
+    <section class="set-g"><h3>Fuelling</h3>
+      <label class="field"><span>Body weight, kg, for gram targets</span><input class="inp" inputmode="decimal" value=${settings.kg || ''} onChange=${e => set('kg', parseFloat(e.target.value) || null)}/></label>
+    </section>
+    <section class="set-g"><h3>Strength</h3>
+      <label class="field"><span>Rehab or notes to show with every strength session</span><textarea class="inp" onChange=${e => set('rehab', e.target.value.trim())}>${settings.rehab || ''}</textarea></label>
+    </section>
+    <section class="set-g"><h3>Appearance</h3>
+      <div class="seg" style="margin-top:10px">${[['dark', 'Dark'], ['light', 'Light']].map(([k, l]) => html`<button class=${settings.theme === k ? 'on' : ''} onClick=${() => set('theme', k)}>${l}</button>`)}</div>
+    </section>
+    <section class="set-g"><h3>Calendar</h3>
+      <p class="small muted">Adds every training day, with strength sessions noted, to your calendar app.</p>
+      <button class="btn ghost" onClick=${() => { download('valencia-plan.ics', buildICS(plan), 'text/calendar;charset=utf-8'); toast('Calendar file downloaded'); }}>Export plan to calendar</button>
+    </section>
+    <section class="set-g"><h3>Your data</h3>
+      <div class="row" style="flex-wrap:wrap;margin-top:10px"><button class="btn ghost sm" onClick=${exportData}>Download a backup</button><button class="btn ghost sm" onClick=${() => fileRef.current && fileRef.current.click()}>Restore a backup</button>
+        <input ref=${fileRef} type="file" accept="application/json" style="display:none" onChange=${e => { const f = e.target.files && e.target.files[0]; if (f) importData(f); e.target.value = ''; }}/></div>
+      ${!confirmReset ? html`<button class="linkbtn" style="margin-top:16px;color:var(--rose)" onClick=${() => setConfirmReset(true)}>Erase everything on this device</button>`
+        : html`<div class="adj" style="margin-top:14px"><div class="h">Erase all runs, check-ins and settings?</div><p>Download a backup first if you might want them back.</p><div class="row" style="margin-top:10px"><button class="btn sm" style="background:var(--rose);color:#fff" onClick=${() => { resetAll(); setConfirmReset(false); }}>Erase</button><button class="btn ghost sm" onClick=${() => setConfirmReset(false)}>Cancel</button></div></div>`}
+    </section>
+    <details class="more"><summary>What the guidance is based on</summary><div class="refs">${REFS.map(([a, b]) => html`<div><b>${a}</b>${b}</div>`)}</div></details>
+  </div>`;
+}
+
+/* ---------- App ---------- */
+function App() {
+  const [settings, setSettings, sReady] = usePersistent('mtp:settings', DEF_SETTINGS, true);
+  const [videos, setVideos] = usePersistent('mtp:videos', DEF_VIDEOS, true);
+  const [logs, setLogs, lReady] = usePersistent('mtp:logs', []);
+  const [strava, setStrava, stReady] = usePersistent('mtp:strava', null);
+  const [checkins, setCheckins] = usePersistent('mtp:checkin', {}, true);
+  const [kz, setKz] = usePersistent('mtp:kaizen', DEF_KAIZEN, true);
+  const [tab, setTab] = useState('today');
+  const [sheet, setSheet] = useState(null);
+  const [ciOpen, setCiOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const [pendingSync, setPendingSync] = useState(null);
+  const [planWeek, setPlanWeek] = useState(null);
+  const toast = m => { setMsg(m); clearTimeout(window.__tt); window.__tt = setTimeout(() => setMsg(null), 2200); };
+
+  useEffect(() => { if (sReady && (settings.v || 0) < 3) setSettings(migrateSettings(settings)); }, [sReady]);
+  useEffect(() => {
+    const dark = settings.theme !== 'light';
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    const tc = document.querySelector('meta[name=theme-color]'); if (tc) tc.setAttribute('content', dark ? '#0F2A33' : '#EDF1F0');
+  }, [settings.theme]);
+
+  const today = todayStr();
+  const plan = useMemo(() => buildPlan(kz), [kz]);
+  const refNow = useMemo(() => refInfo(settings, kz, today), [settings.curDist, settings.curTime, settings.results, kz, today]);
+  const track = useMemo(() => onTrackInfo(kz, settings, today), [kz, settings.goalTime, settings.startPred, today]);
+  const [kzOpen, setKzOpen] = useState(false);
+  const [trackOpen, setTrackOpen] = useState(false);
+  const preds = useMemo(() => predictions(today, logs, settings, kz, settings.results), [logs, settings.maxHr, settings.restHr, settings.results, kz, today]);
+  const tIdx = clamp(idxOfDate(today), 0, LAST_IDX), curW = Math.floor(tIdx / 7) + 1;
+  const series = useMemo(() => {
+    const out = [];
+    for (let w = 1; w <= curW; w++) { const date = w === curW ? today : dateOfIdx((w - 1) * 7 + 6); const p = predictions(date, logs, settings, kz, settings.results); if (p && p.live) out.push({ w, m: p.times.m }); }
+    return out;
+  }, [logs, settings.maxHr, settings.restHr, settings.results, kz, curW, today]);
+  const ctx = useMemo(() => {
+    const cache = {};
+    return {
+      ref: refNow,
+      zFor: w => cache[w] || (cache[w] = zonesForWeek(w, refNow, settings.paceMode)),
+      lz: legacyZones(refNow),
+      racePace: d => {
+        const p = (d.parts || []).find(x => x.t === 'race'); if (!p) return null;
+        if (p.key === 'valencia') return fmtPace((parseTime(settings.goalTime) || 11340) / MAR) + '/km, goal';
+        const key = p.key === 'half' ? 'hm' : 'k5';
+        return preds && preds.times[key] ? fmtPace(preds.times[key] / p.km) + '/km, predicted' : null;
+      }
+    };
+  }, [refNow, settings.paceMode, settings.goalTime, preds]);
+
+  async function doSync(rec0) {
+    let rec = rec0 || strava;
+    if (!rec) { toast('Connect Strava first'); return; }
+    if (!lReady) return;
+    setBusy(true);
+    try {
+      const now = Math.floor(Date.now() / 1000);
+      if (!rec.expires_at || rec.expires_at <= now + 60) { const t = await stravaPost('/refresh', { refresh_token: rec.refresh_token }); rec = { ...rec, access_token: t.access_token, refresh_token: t.refresh_token, expires_at: t.expires_at }; }
+      const acts = await stravaActivities(rec.access_token, Math.floor(ymd(PLAN_START) / 1000) - 86400);
+      const r = mergeStrava(logs, acts.map(a => actToLog(a, plan)).filter(Boolean));
+      setLogs(r.logs);
+      setStrava({ ...rec, lastSync: Date.now() });
+      toast(r.added ? `Synced ${r.added} new ${r.added > 1 ? 'activities' : 'activity'}` : 'Strava is up to date');
+    } catch (e) { toast('Strava sync failed. Try again.'); }
+    finally { setBusy(false); }
+  }
+  useEffect(() => {
+    const q = new URLSearchParams(location.search);
+    if (q.get('error')) { history.replaceState(null, '', location.pathname); toast('Strava connection cancelled'); return; }
+    const code = q.get('code');
+    if (code && q.get('scope')) {
+      setBusy(true);
+      stravaPost('/exchange', { code }).then(tk => {
+        if (tk && tk.access_token) { const rec = { access_token: tk.access_token, refresh_token: tk.refresh_token, expires_at: tk.expires_at, athlete: tk.athlete || null, lastSync: 0 }; setStrava(rec); history.replaceState(null, '', location.pathname); toast('Strava connected'); setPendingSync(rec); }
+        else toast('Strava connection failed');
+      }).catch(() => toast('Strava connection failed')).finally(() => setBusy(false));
+    }
+  }, []);
+  useEffect(() => { if (pendingSync && lReady) { const r = pendingSync; setPendingSync(null); doSync(r); } }, [pendingSync, lReady]);
+  const autoSynced = useRef(false);
+  useEffect(() => { if (!autoSynced.current && lReady && stReady && strava && Date.now() - (strava.lastSync || 0) > 20 * 60000) { autoSynced.current = true; doSync(); } }, [lReady, stReady, strava]);
+
+  const addLog = e => { setLogs([{ id: 'app-' + Date.now(), src: 'app', ...e }, ...logs].sort((a, b) => (a.date < b.date ? 1 : -1))); toast('Saved'); };
+  const delLog = id => setLogs(logs.filter(l => l.id !== id));
+  const toggleStrength = (d, key) => {
+    const ex = logs.find(l => l.date === d.date && kindOf(l) === 'strength');
+    if (ex) setLogs(logs.filter(l => l !== ex));
+    else addLog({ kind: 'strength', date: d.date, km: 0, sec: STRENGTH[key].min * 60, notes: STRENGTH[key].name, sid: key });
+  };
+  const saveResult = (r, val) => {
+    const t = parseTime(val); if (!t) { toast('Enter your time, e.g. ' + (r.km > 10 ? '1:32:40' : '19:45')); return; }
+    setSettings({ ...settings, results: { ...(settings.results || {}), [r.key]: fmtClock(t) } });
+    toast(r.ref ? 'Result saved. It sets your paces until your next Kaizen entry.' : 'Result saved');
+  };
+  const saveCheckIn = data => { setCheckins({ ...checkins, [plan[tIdx].date]: { ...data, ts: new Date().toISOString() } }); setCiOpen(false); toast(data.accepted && data.verdict.level !== 'go' ? 'Today adjusted' : 'Check-in saved'); };
+  const undoAdjust = () => { const k = plan[tIdx].date, e = checkins[k]; if (e) { setCheckins({ ...checkins, [k]: { ...e, accepted: false } }); toast('Back to the plan as written'); } };
+  const exportData = () => { download('marathon-trainer-backup.json', JSON.stringify({ app: 'marathon-trainer', version: 2, exported: new Date().toISOString(), settings, videos, logs, checkins, kaizen: kz }, null, 2), 'application/json'); toast('Backup downloaded'); };
+  const importData = file => {
+    const r = new FileReader();
+    r.onload = () => { try { const d = JSON.parse(r.result); if (d.settings) setSettings({ ...DEF_SETTINGS, ...d.settings }); if (d.videos) setVideos({ ...DEF_VIDEOS, ...d.videos }); if (Array.isArray(d.logs)) setLogs(d.logs); if (d.checkins) setCheckins(d.checkins); if (d.kaizen) setKz({ ...DEF_KAIZEN, ...d.kaizen }); toast('Backup restored'); } catch (e) { toast('That file isn’t a backup from this app'); } };
+    r.readAsText(file);
+  };
+  const resetAll = () => { setSettings({ ...DEF_SETTINGS, v: 3 }); setVideos(DEF_VIDEOS); setLogs([]); setCheckins({}); setKz(DEF_KAIZEN); toast('Erased'); };
+  const saveKaizen = e => { setKz({ ...kz, entries: (kz.entries || []).filter(x => x.date !== e.date).concat([e]) }); setKzOpen(false); toast('Saved. Paces and the on-track check are updated.'); };
+  const openDay = (idx, focus) => setSheet({ idx, focus });
+  const openWeek = w => { setPlanWeek(w); setTab('plan'); };
+
+  return html`<div class="app">
+    ${tab === 'today' && html`<${TodayView} plan=${plan} logs=${logs} settings=${settings} ctx=${ctx} preds=${preds} checkins=${checkins} onOpen=${openDay} onCheckIn=${() => setCiOpen(true)} onUndo=${undoAdjust} kz=${kz} track=${track} onKaizen=${() => setKzOpen(true)} onTrack=${() => setTrackOpen(true)}/>`}
+    ${tab === 'plan' && html`<${PlanView} key=${'pv' + (planWeek || 0)} plan=${plan} logs=${logs} kz=${kz} onOpen=${openDay} initial=${planWeek}/>`}
+    ${tab === 'progress' && html`<${ProgressView} plan=${plan} logs=${logs} settings=${settings} setSettings=${setSettings} track=${track} onKaizen=${() => setKzOpen(true)} kz=${kz} setKz=${setKz} preds=${preds} series=${series} addLog=${addLog} delLog=${delLog} toast=${toast} curW=${curW} openWeek=${openWeek}/>`}
+    ${tab === 'settings' && html`<${SettingsView} settings=${settings} setSettings=${setSettings} strava=${strava} busy=${busy} onConnect=${() => { location.href = stravaAuthUrl(); }} onSync=${() => doSync()} onDisconnect=${() => { setStrava(null); toast('Strava disconnected'); }} plan=${plan} refNow=${refNow} exportData=${exportData} importData=${importData} resetAll=${resetAll} toast=${toast}/>`}
+    ${sheet && html`<${DaySheet} d=${plan[sheet.idx]} focus=${sheet.focus} plan=${plan} logs=${logs} settings=${settings} ctx=${ctx} videos=${videos} setVideos=${setVideos} onClose=${() => setSheet(null)} addLog=${addLog} delLog=${delLog} toggleStrength=${toggleStrength} saveResult=${saveResult}/>`}
+    ${ciOpen && html`<${CheckInSheet} d=${plan[tIdx]} z=${ctx.zFor(plan[tIdx].w)} kg=${settings.kg} plan=${plan} onSave=${saveCheckIn} onClose=${() => setCiOpen(false)}/>`}
+    ${kzOpen && html`<${KaizenSheet} kz=${kz} onSave=${saveKaizen} onClose=${() => setKzOpen(false)}/>`}
+    ${trackOpen && html`<${OnTrackSheet} info=${track} plan=${plan} logs=${logs} kz=${kz} settings=${settings} setSettings=${setSettings} curW=${curW} onAddKaizen=${() => { setTrackOpen(false); setKzOpen(true); }} onClose=${() => setTrackOpen(false)}/>`}
+    ${msg && html`<div class="toast" role="status">${msg}</div>`}
+    <nav class="tabbar" aria-label="Sections"><div class="in">${[['today', 'Today'], ['plan', 'Plan'], ['progress', 'Progress'], ['settings', 'Settings']].map(([k, l]) =>
+      html`<button class=${'tab' + (tab === k ? ' on' : '')} aria-current=${tab === k ? 'page' : null} onClick=${() => { if (k === 'plan') setPlanWeek(null); setTab(k); window.scrollTo(0, 0); }}><${Icon} n=${k}/>${l}</button>`)}</div></nav>
+  </div>`;
+}
+render(html`<${App}/>`, document.getElementById('root'));
+</script>
+</body>
+</html>
